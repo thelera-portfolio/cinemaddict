@@ -1,8 +1,7 @@
-export // раздел с фильмами
-  const createAllFilmsTemplate = () => {
-    return (
-      `<section class="films">
-    </section>`
-    );
-  };
-  
+// раздел с фильмами
+export const createAllFilmsTemplate = () => {
+  return (
+    `<section class="films">
+  </section>`
+  );
+};
