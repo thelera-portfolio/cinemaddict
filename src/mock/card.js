@@ -1,4 +1,118 @@
-const filmsInfo = {
+import {getRandomDate, getRandomIntegerNumber, getRandomFloatNumber, getRandomArrayItem, getSeveralRandomArrayItems} from "../utils.js";
+
+const filmsData = {
+  actors: {
+    quantity: 3,
+    names: [
+      `Jack Nicholson`,
+      `Marlon Brando`,
+      `Robert De Niro`,
+      `Al Pacino`,
+      `Daniel Day-Lewis`,
+      `Dustin Hoffman`,
+      `Tom Hanks`,
+      `Anthony Hopkins`,
+      `Paul Newman`,
+      `Denzel Washington`,
+      `Spencer Tracy`,
+      `Laurence Olivier`,
+      `Jack Lemmon`,
+      `Michael Caine`,
+      `James Stewart`,
+      `Robin Williams`,
+      `Robert Duvall`,
+    ],
+  },
+  controls: [
+    `watchlist`,
+    `watched`,
+    `favorite`,
+  ],
+  countries: [
+    `Argentina`,
+    `Australia`,
+    `Austria`,
+    `Belarus`,
+    `Belgium`,
+    `Bolivia`,
+    `Brazil`,
+    `Bulgaria`,
+    `Cambodia`,
+    `Canada`,
+    `Chile`,
+    `China`,
+    `Colombia`,
+    `Cuba`,
+    `Czech Republic`,
+    `Ethiopia`,
+    `Finland`,
+    `France`,
+    `Georgia`,
+    `Germany`,
+    `Guatemala`,
+    `Hong Kong`,
+    `Hungary`,
+    `India`,
+    `Indonesia`,
+    `Iran`,
+    `Israel`,
+    `Italy`,
+    `Japan`,
+    `North Korea`,
+    `South Korea`,
+    `Mexico`,
+    `Netherlands`,
+    `New Zealand`,
+    `Norway`,
+    `Peru`,
+    `Portugal`,
+    `Russia`,
+    `Spain`,
+    `Sweden`,
+    `Switzerland`,
+    `Thailand`,
+    `Turkey`,
+    `Ukraine`,
+    `United Kingdom`,
+    `United States`,
+    `Vietnam`,
+  ],
+  description: {
+    string: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
+    maxLength: 140,
+    sentencesCount: 5
+  },
+  directors: [
+    `Woody Allen`,
+    `Robert Altman`,
+    `Ingmar Bergman`,
+    `Mel Brooks`,
+    `Tim Burton`,
+    `James Cameron`,
+    `Frank Capra`,
+    `John Cassavetes`,
+    `Charlie Chaplin`,
+    `Coen, Joel and Ethan`,
+    `Francis Ford Coppola`,
+    `George Cukor`,
+    `Michael Curtiz`,
+  ],
+  durationInMinutes: {
+    min: 30,
+    max: 180
+  },
+  genres: {
+    quantity: 3,
+    list: [
+      `Musical`,
+      `Western`,
+      `Drama`,
+      `Comedy`,
+      `Cartoon`,
+      `Mistery`,
+    ],
+  },
+  maxFilmRating: 10,
   names: [
     `The Dance of Life`,
     `Sagebrush Trail`,
@@ -15,54 +129,28 @@ const filmsInfo = {
     `./images/posters/the-great-flamarion.jpg`,
     `./images/posters/the-man-with-the-golden-arm.jpg`,
   ],
-  genres: [
-    `Musical`,
-    `Western`,
-    `Drama`,
-    `Comedy`,
-    `Cartoon`,
-    `Mistery`,
-  ],
-  description: {
-    string: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
-    maxLength: 140,
-    sentencesCount: 5
-  },
-  maxFilmRating: 10,
-  year: {
-    min: 1920,
-    max: 2020
-  },
-  durationInMinutes: {
-    min: 30,
-    max: 180
-  },
-  commentsInfo: {
-    authors: [`name1`, `name2`, `name3`],
-    date: new Date(),
-    emotions: [
-      `smile`,
-      `sleeping`,
-      `puke`,
-      `angry`
+  writers: {
+    quantity: 3,
+    names: [
+      `Billy Wilder`,
+      `Ethan Coen and Joel Coen`,
+      `Robert Towne`,
+      `Quentin Tarantino`,
+      `Francis Ford Coppola`,
+      `William Goldman`,
+      `Charlie Kaufman`,
+      `Woody Allen`,
+      `Nora Ephron`,
+      `Ernest Lehman`,
+      `Paul Schrader`,
+      `Oliver Stone`,
+      `Aaron Sorkin`,
+      `Paddy Chayefsky`,
     ],
-    messages: [`message`, `message`, `message`],
-    maxCommentCount: 5,
-  }
+  },
 };
 
-const getRandomArrayItem = (array) => {
-  const arrayIndex = Math.floor(Math.random() * array.length);
-  return array[arrayIndex];
-};
-
-const getRandomIntegerNumber = (min, max) => { // [min, max]
-  return min + Math.floor(Math.random() * ((max + 1) - min));
-};
-
-const getRandomFloatNumber = (max) => { // [0, max]
-  return (Math.random() * (max + 1)).toFixed(1);
-};
+export const GENRES = filmsData.genres.list;
 
 const fromMinutesToHours = (timeInMinutes) => {
   const hours = Math.floor(timeInMinutes / 60);
@@ -79,39 +167,42 @@ const fromMinutesToHours = (timeInMinutes) => {
   return time;
 };
 
-const getFilmDescriptionFromString = (string, sentencesCount, maxDescriptionLength) => {
-  const arrayOfStrings = string.split(`. `).map((it) => it.concat('.'));
+const getFilmDescriptionFromString = (string, sentencesCount) => {
+  const arrayOfStrings = string.split(`. `).map((it) => it.concat(`.`));
   let description = ``;
   while (sentencesCount > 0) {
     description += `${getRandomArrayItem(arrayOfStrings)} `;
     sentencesCount--;
   }
 
-  return description.length >= maxDescriptionLength ? `${description.slice(0, maxDescriptionLength)}...` : description;
+  return description;
 };
 
-// const generateComment = () => {
-//   return {
-//     author: getRandomArrayItem(filmsInfo.commentsInfo.authors),
-//     date: filmsInfo.commentsInfo.date,
-//     emotion: getRandomArrayItem(filmsInfo.commentsInfo.emotions),
-//     message: getRandomArrayItem(filmsInfo.commentsInfo.messages),
-//   }
-// };
+const generateControls = () => {
+  const randomIndex = getRandomIntegerNumber(0, filmsData.controls.length);
+  const controls = filmsData.controls.map((it, i) => ({name: it, isActive: i === randomIndex}));
+  return controls;
+};
 
 export const generateCard = () => {
   return {
-    title: getRandomArrayItem(filmsInfo.names),
-    rating: getRandomFloatNumber(filmsInfo.maxFilmRating),
-    year: getRandomIntegerNumber(filmsInfo.year.min, filmsInfo.year.max),
-    duration: fromMinutesToHours(getRandomIntegerNumber(filmsInfo.durationInMinutes.min, filmsInfo.durationInMinutes.max)),
-    category: getRandomArrayItem(filmsInfo.genres),
-    image: getRandomArrayItem(filmsInfo.posters),
-    description: getFilmDescriptionFromString(filmsInfo.description.string, filmsInfo.description.sentencesCount, filmsInfo.description.maxLength),
-    commentsCount: getRandomIntegerNumber(0, filmsInfo.commentsInfo.maxCommentCount),
+    actors: getSeveralRandomArrayItems(filmsData.actors.quantity, filmsData.actors.names),
+    age: getRandomIntegerNumber(0, 18),
+    commentsCount: getRandomIntegerNumber(0, 100),
+    controls: generateControls(),
+    country: getRandomArrayItem(filmsData.countries),
+    description: getFilmDescriptionFromString(filmsData.description.string, filmsData.description.sentencesCount),
+    director: getRandomArrayItem(filmsData.directors),
+    duration: fromMinutesToHours(getRandomIntegerNumber(filmsData.durationInMinutes.min, filmsData.durationInMinutes.max)),
+    genres: getSeveralRandomArrayItems(filmsData.genres.quantity, filmsData.genres.list),
+    image: getRandomArrayItem(filmsData.posters),
+    title: getRandomArrayItem(filmsData.names),
+    rating: getRandomFloatNumber(filmsData.maxFilmRating),
+    releaseDate: getRandomDate(),
+    writers: getSeveralRandomArrayItems(filmsData.writers.quantity, filmsData.writers.names),
   };
 };
 
 export const generateCards = (count) => {
-  return new Array(count).fill(``).map((it) => generateCard());
+  return new Array(count).fill(``).map(() => generateCard());
 };

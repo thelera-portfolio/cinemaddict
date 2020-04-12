@@ -1,13 +1,14 @@
 import {createFilmCardTemplate} from "./components/card.js";
-import { createFilmDetailsPopupTemplate } from "./components/details-popup.js";
-import { createExtraFilmTemplate } from "./components/extra-films.js";
-import { createMainFilmListTemplate } from "./components/films-list.js";
-import { createAllFilmsTemplate } from "./components/films.js";
-import { createNavigationTemplate } from "./components/navigation.js";
-import { createUserProfileRatingTemplate } from "./components/rating.js";
-import { createShowMoreButtonTemplate } from "./components/show-more-button.js";
-import { createSortingTemplate } from "./components/sorting.js";
-import { generateCards } from "./mock/card.js";
+import {createFilmDetailsPopupTemplate} from "./components/details-popup.js";
+import {createExtraFilmTemplate} from "./components/extra-films.js";
+import {createMainFilmListTemplate} from "./components/films-list.js";
+import {createAllFilmsTemplate} from "./components/films.js";
+import {createNavigationTemplate} from "./components/navigation.js";
+import {createUserProfileRatingTemplate} from "./components/rating.js";
+import {createShowMoreButtonTemplate} from "./components/show-more-button.js";
+import {createStatisticsTemplate} from "./components/statistics.js";
+import {createSortingTemplate} from "./components/sorting.js";
+import {generateCards} from "./mock/card.js";
 
 const FILMS_COUNT = 22;
 const EXTRA_FILMS_COUNT = 2;
@@ -63,6 +64,9 @@ extraFilms.forEach(title => {
   }
 });
 
-// отрисовываем поп-ап
+//отрисовываем поп-ап
 const siteBodyElement = document.querySelector(`body`);
 render(siteBodyElement, createFilmDetailsPopupTemplate(films[0]));
+
+//отрисовываем страницу со статистикой
+render(siteMainElement, createStatisticsTemplate());
