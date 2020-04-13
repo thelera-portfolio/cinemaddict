@@ -4,16 +4,14 @@ import {createExtraFilmTemplate} from "./components/extra-films.js";
 import {createMainFilmListTemplate} from "./components/films-list.js";
 import {createAllFilmsTemplate} from "./components/films.js";
 import {createNavigationTemplate} from "./components/navigation.js";
+import {createFiltersTemplate } from "./components/filter.js";
 import {createUserProfileRatingTemplate} from "./components/rating.js";
 import {createShowMoreButtonTemplate} from "./components/show-more-button.js";
 import {createStatisticsTemplate} from "./components/statistics.js";
 import {createSortingTemplate} from "./components/sorting.js";
 import {generateCards} from "./mock/card.js";
-
-const FILMS_COUNT = 22;
-const EXTRA_FILMS_COUNT = 2;
-const SHOWING_FILMS_COUNT_ON_START = 5;
-const SHOWING_FILMS_COUNT_BY_BUTTON = 5;
+import {createFilters} from "./mock/filter.js";
+import {FILMS_COUNT, EXTRA_FILMS_COUNT, SHOWING_FILMS_COUNT_ON_START, SHOWING_FILMS_COUNT_BY_BUTTON} from "./consts.js";
 
 const render = (container, template, place = `beforeend`) => {
   container.insertAdjacentHTML(place, template);
@@ -21,12 +19,19 @@ const render = (container, template, place = `beforeend`) => {
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = document.querySelector(`.header`);
-render(siteHeaderElement, createUserProfileRatingTemplate());
-render(siteMainElement, createNavigationTemplate());
-render(siteMainElement, createSortingTemplate());
-render(siteMainElement, createAllFilmsTemplate());
 
-//отрисовываем фильмы
+// отрисовываем звание пользователя, сортировку
+render(siteHeaderElement, createUserProfileRatingTemplate());
+render(siteMainElement, createSortingTemplate());
+
+// отрисовываем навигацию (фильтры и статистику)
+const filters = createFilters();
+render(siteMainElement, createNavigationTemplate());
+const navigationFiltersListElement = siteMainElement.querySelector(`.main-navigation__items`);
+render(navigationFiltersListElement, createFiltersTemplate(filters));
+
+// отрисовываем фильмы
+render(siteMainElement, createAllFilmsTemplate());
 const filmsContainerElement = siteMainElement.querySelector(`.films`);
 render(filmsContainerElement, createMainFilmListTemplate());
 
@@ -66,7 +71,7 @@ extraFilms.forEach(title => {
 
 //отрисовываем поп-ап
 const siteBodyElement = document.querySelector(`body`);
-render(siteBodyElement, createFilmDetailsPopupTemplate(films[0]));
+//render(siteBodyElement, createFilmDetailsPopupTemplate(films[0]));
 
 //отрисовываем страницу со статистикой
 render(siteMainElement, createStatisticsTemplate());

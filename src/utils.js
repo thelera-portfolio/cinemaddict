@@ -1,10 +1,3 @@
-// export const getRandomDate = () => {
-//   const targetDate = new Date();
-//   targetDate.setTime(targetDate.getTime() - Math.random() * targetDate.getTime());
-
-//   return targetDate;
-// };
-
 export const getRandomDate = (start = new Date(1920, 0, 1), end = new Date()) => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
@@ -25,11 +18,11 @@ export const getRandomFloatNumber = (max) => { // [0, max]
 };
 
 export const formatDate = (date) => {
-  const day = date.getDate() < 10 ? `0${date.getDate()}` : date.getDate();
-  const month = date.getMonth() < 10 ? `0${date.getMonth() + 1}` : date.getMonth() + 1;
+  const day = String(date.getDate()).padStart(2, `0`);
+  const month = String((date.getMonth() + 1)).padStart(2, `0`);;
   const year = date.getFullYear();
-  const hours = date.getHours() < 10 ? `0${date.getHours() + 1}` : date.getHours() + 1;
-  const minutes = date.getMinutes() < 10 ? `0${date.getMinutes() + 1}` : date.getMinutes() + 1;
+  const hours = String((date.getHours() + 1)).padStart(2, `0`);
+  const minutes = String((date.getMinutes() + 1)).padStart(2, `0`);
 
   return { day, month, year, hours, minutes };
 }

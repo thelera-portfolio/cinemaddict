@@ -1,34 +1,20 @@
 import {getRandomDate, getRandomIntegerNumber, getRandomFloatNumber, getRandomArrayItem, getSeveralRandomArrayItems} from "../utils.js";
 
-const filmsData = {
-  actors: {
-    quantity: 3,
-    names: [
-      `Jack Nicholson`,
-      `Marlon Brando`,
-      `Robert De Niro`,
-      `Al Pacino`,
-      `Daniel Day-Lewis`,
-      `Dustin Hoffman`,
-      `Tom Hanks`,
-      `Anthony Hopkins`,
-      `Paul Newman`,
-      `Denzel Washington`,
-      `Spencer Tracy`,
-      `Laurence Olivier`,
-      `Jack Lemmon`,
-      `Michael Caine`,
-      `James Stewart`,
-      `Robin Williams`,
-      `Robert Duvall`,
+const FilmDataConstant = {
+  Controls: {
+    NAMES: [
+      `watchlist`,
+      `watched`,
+      `favorite`,
+    ],
+    CLASS_NAME: `film-card__controls-item`,
+    LABELS: [
+      `add-to-`,
+      `mark-as-`,
+      ``
     ],
   },
-  controls: [
-    `watchlist`,
-    `watched`,
-    `favorite`,
-  ],
-  countries: [
+  COUNTRIES: [
     `Argentina`,
     `Australia`,
     `Austria`,
@@ -77,12 +63,8 @@ const filmsData = {
     `United States`,
     `Vietnam`,
   ],
-  description: {
-    string: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
-    maxLength: 140,
-    sentencesCount: 5
-  },
-  directors: [
+  STRING: `Lorem ipsum dolor sit amet, consectetur adipiscing elit. Cras aliquet varius magna, non porta ligula feugiat eget. Fusce tristique felis at fermentum pharetra. Aliquam id orci ut lectus varius viverra. Nullam nunc ex, convallis sed finibus eget, sollicitudin eget ante. Phasellus eros mauris, condimentum sed nibh vitae, sodales efficitur ipsum. Sed blandit, eros vel aliquam faucibus, purus ex euismod diam, eu luctus nunc ante ut dui. Sed sed nisi sed augue convallis suscipit in sed felis. Aliquam erat volutpat. Nunc fermentum tortor ac porta dapibus. In rutrum ac purus sit amet tempus.`,
+  DIRECTORS: [
     `Woody Allen`,
     `Robert Altman`,
     `Ingmar Bergman`,
@@ -97,30 +79,49 @@ const filmsData = {
     `George Cukor`,
     `Michael Curtiz`,
   ],
-  durationInMinutes: {
-    min: 30,
-    max: 180
-  },
-  genres: {
+  ACTORS: {
     quantity: 3,
-    list: [
-      `Musical`,
-      `Western`,
-      `Drama`,
-      `Comedy`,
-      `Cartoon`,
-      `Mistery`,
+    names: [
+      `Jack Nicholson`,
+      `Marlon Brando`,
+      `Robert De Niro`,
+      `Al Pacino`,
+      `Daniel Day-Lewis`,
+      `Dustin Hoffman`,
+      `Tom Hanks`,
+      `Anthony Hopkins`,
+      `Paul Newman`,
+      `Denzel Washington`,
+      `Spencer Tracy`,
+      `Laurence Olivier`,
+      `Jack Lemmon`,
+      `Michael Caine`,
+      `James Stewart`,
+      `Robin Williams`,
+      `Robert Duvall`,
     ],
   },
-  maxFilmRating: 10,
-  names: [
+  GENRES: [
+    `Musical`,
+    `Western`,
+    `Drama`,
+    `Comedy`,
+    `Cartoon`,
+    `Mistery`,
+  ],
+  GENRES_COUNT: 3,
+  durationInMinutes: {
+    MIN: 30,
+    MAX: 180
+  },
+  NAMES: [
     `The Dance of Life`,
     `Sagebrush Trail`,
     `The Man with the Golden Arm`,
     `Santa Claus Conquers the Martians`,
     `Popeye the Sailor Meets Sindbad the Sailor`,
   ],
-  posters: [
+  POSTERS: [
     `./images/posters/made-for-each-other.png`,
     `./images/posters/popeye-meets-sinbad.png`,
     `./images/posters/sagebrush-trail.jpg`,
@@ -129,28 +130,60 @@ const filmsData = {
     `./images/posters/the-great-flamarion.jpg`,
     `./images/posters/the-man-with-the-golden-arm.jpg`,
   ],
+  WRITERS: [
+    `Billy Wilder`,
+    `Ethan Coen and Joel Coen`,
+    `Robert Towne`,
+    `Quentin Tarantino`,
+    `Francis Ford Coppola`,
+    `William Goldman`,
+    `Charlie Kaufman`,
+    `Woody Allen`,
+    `Nora Ephron`,
+    `Ernest Lehman`,
+    `Paul Schrader`,
+    `Oliver Stone`,
+    `Aaron Sorkin`,
+    `Paddy Chayefsky`,
+  ],
+  Description: {
+    MAX_LENGTH: 140,
+    SENTENCES_COUNT: 5
+  },
+  MAX_FILM_RATING: 10,
+  WRITERS_COUNT: 3,
+};
+
+const filmsData = {
+  actors: FilmDataConstant.ACTORS,
+  controls: {
+    names: FilmDataConstant.Controls.NAMES,
+    className: FilmDataConstant.Controls.CLASS_NAME,
+    labels: FilmDataConstant.Controls.LABELS
+  },
+  countries: FilmDataConstant.COUNTRIES,
+  description: {
+    string: FilmDataConstant.STRING,
+    maxLength: FilmDataConstant.Description.MAX_LENGTH,
+    sentencesCount: FilmDataConstant.Description.SENTENCES_COUNT
+  },
+  directors: FilmDataConstant.DIRECTORS,
+  duration: FilmDataConstant.durationInMinutes,
+  genres: {
+    quantity: FilmDataConstant.GENRES_COUNT,
+    list: FilmDataConstant.GENRES
+  },
+  maxFilmRating: FilmDataConstant.MAX_FILM_RATING,
+  names: FilmDataConstant.NAMES,
+  posters: FilmDataConstant.POSTERS,
   writers: {
-    quantity: 3,
-    names: [
-      `Billy Wilder`,
-      `Ethan Coen and Joel Coen`,
-      `Robert Towne`,
-      `Quentin Tarantino`,
-      `Francis Ford Coppola`,
-      `William Goldman`,
-      `Charlie Kaufman`,
-      `Woody Allen`,
-      `Nora Ephron`,
-      `Ernest Lehman`,
-      `Paul Schrader`,
-      `Oliver Stone`,
-      `Aaron Sorkin`,
-      `Paddy Chayefsky`,
-    ],
+    quantity: FilmDataConstant.WRITERS_COUNT,
+    names: FilmDataConstant.WRITERS
   },
 };
 
 export const GENRES = filmsData.genres.list;
+export const MAX_DESCRIPTION_LENGTH = FilmDataConstant.Description.MAX_LENGTH;
 
 const fromMinutesToHours = (timeInMinutes) => {
   const hours = Math.floor(timeInMinutes / 60);
@@ -179,8 +212,15 @@ const getFilmDescriptionFromString = (string, sentencesCount) => {
 };
 
 const generateControls = () => {
-  const randomIndex = getRandomIntegerNumber(0, filmsData.controls.length);
-  const controls = filmsData.controls.map((it, i) => ({name: it, isActive: i === randomIndex}));
+  const randomIndex = getRandomIntegerNumber(0, filmsData.controls.names.length - 1);
+
+  const controls = filmsData.controls.names.map((it, i) => ({
+    name: it,
+    isActive: i === randomIndex,
+    className: filmsData.controls.className,
+    label: filmsData.controls.labels[i]
+  }));
+
   return controls;
 };
 
@@ -193,7 +233,7 @@ export const generateCard = () => {
     country: getRandomArrayItem(filmsData.countries),
     description: getFilmDescriptionFromString(filmsData.description.string, filmsData.description.sentencesCount),
     director: getRandomArrayItem(filmsData.directors),
-    duration: fromMinutesToHours(getRandomIntegerNumber(filmsData.durationInMinutes.min, filmsData.durationInMinutes.max)),
+    duration: fromMinutesToHours(getRandomIntegerNumber(filmsData.duration.MIN, filmsData.duration.MAX)),
     genres: getSeveralRandomArrayItems(filmsData.genres.quantity, filmsData.genres.list),
     image: getRandomArrayItem(filmsData.posters),
     title: getRandomArrayItem(filmsData.names),

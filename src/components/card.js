@@ -1,9 +1,17 @@
 // карточка фильма
-const MAX_DESCRIPTION_LENGTH = 140;
+import {MAX_DESCRIPTION_LENGTH} from "../mock/card.js";
+
+const createButtonMarkup = (button) => {
+  const {isActive, className, name, label} = button;
+  return (
+    `<button class="${className} ${isActive ? `${className}--active` : ``} button ${className}--${label}${name}">Add to ${name}</button>`
+  );
+};
 
 export const createFilmCardTemplate = (card) => {
   const {commentsCount, controls, description, duration, genres, image, rating, releaseDate, title} = card;
   const shortDescription = description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
+  const buttonsTemplate = controls.map((it) => createButtonMarkup(it)).join(`\n`);
 
   return (
     `<article class="film-card">
@@ -17,11 +25,7 @@ export const createFilmCardTemplate = (card) => {
       <img src=${image} alt="" class="film-card__poster">
       <p class="film-card__description">${shortDescription}</p>
       <a class="film-card__comments">${commentsCount} comments</a>
-      <form class="film-card__controls">
-        <button class="film-card__controls-item ${controls[0].isActive ? `film-card__controls-item--active` : ``} button film-card__controls-item--add-to-${controls[0].name}">Add to ${controls[0].name}</button>
-        <button class="film-card__controls-item ${controls[1].isActive ? `film-card__controls-item--active` : ``} button film-card__controls-item--mark-as-${controls[1].name}">Mark as ${controls[1].name}</button>
-        <button class="film-card__controls-item ${controls[2].isActive ? `film-card__controls-item--active` : ``} button film-card__controls-item--${controls[2].name}">Mark as ${controls[2].name}</button>
-      </form>
+      <form class="film-card__controls">${buttonsTemplate}</form>
     </article>`
   );
 };

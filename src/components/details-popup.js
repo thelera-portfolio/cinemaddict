@@ -1,19 +1,20 @@
 
 // подробная информация о фильме (поп-ап)
-import {getRandomIntegerNumber, formatDate} from "../utils.js";
-import {MONTH_NAMES} from "../consts.js";
+import {formatDate} from "../utils.js";
+import {COMMENT_COUNT} from "../consts.js";
 import {generateComments} from "../mock/comment.js";
 import {createCommentsTemplate} from "../components/comment.js";
-
-const COMMENT_COUNT = getRandomIntegerNumber(0, 5);
 
 const comments = generateComments(COMMENT_COUNT);
 const commentsMarkup = comments.map((it) => createCommentsTemplate(it)).join(`\n`);
 
 export const createFilmDetailsPopupTemplate = (card) => {
   const {actors, age, controls, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
-  const {day, month, year} = formatDate(releaseDate);
-  const formattedDate = `${day} ${MONTH_NAMES[Number(month)]} ${year}`;
+  const {day, year} = formatDate(releaseDate);
+  const formatter = new Intl.DateTimeFormat(`en-US`, {
+    month: `long`
+  });
+  const formattedDate = `${day} ${formatter.format(releaseDate)} ${year}`;
 
   return (
     `<section class="film-details">

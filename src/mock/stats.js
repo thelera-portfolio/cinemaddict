@@ -1,13 +1,12 @@
 import {getRandomIntegerNumber, getRandomArrayItem} from "../utils";
 import {GENRES} from "./card.js";
-
-const RANKS = [`Sci-Fighter`, `King Of Drama`, `Comic`, `Cartoon lover`, `Movie Buff`];
+import {RANKS, StatsData} from "../consts.js";
 
 export const createStats = () => ({
   rank: getRandomArrayItem(RANKS),
-  watchedCount: getRandomIntegerNumber(0, 100),
+  watchedCount: getRandomIntegerNumber(0, StatsData.MAX_WATCHED_COUNT),
   duration: {
-    hours: getRandomIntegerNumber(0, 100),
+    hours: getRandomIntegerNumber(0, StatsData.MAX_HOURS_DURATIONn),
     minutes: getRandomIntegerNumber(0, 59)
   },
   topGenre: getRandomArrayItem(GENRES),
