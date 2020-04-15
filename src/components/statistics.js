@@ -1,10 +1,11 @@
 // страница со статистикой
 import {createStats} from "../mock/stats.js";
+import {createElement} from "../utils.js";
 
 const statisticData = createStats();
 const {rank, watchedCount, duration, topGenre} = statisticData;
 
-export const createStatisticsTemplate = () => {
+const createStatisticsTemplate = () => {
   return (
     `<section class="statistic">
       <p class="statistic__rank">
@@ -53,3 +54,26 @@ export const createStatisticsTemplate = () => {
     </section>`
   );
 };
+
+export default class Statistics {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createStatisticsTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+

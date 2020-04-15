@@ -1,10 +1,11 @@
 // звание пользователя
 import {createStats} from "../mock/stats.js";
+import {createElement} from "../utils.js";
 
 const statisticData = createStats();
 const {rank} = statisticData;
 
-export const createUserProfileRatingTemplate = () => {
+const createUserProfileRatingTemplate = () => {
   return (
     `<section class="header__profile profile">
       <p class="profile__rating">${rank}</p>
@@ -12,3 +13,26 @@ export const createUserProfileRatingTemplate = () => {
     </section>`
   );
 };
+
+export default class Rating {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createUserProfileRatingTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+

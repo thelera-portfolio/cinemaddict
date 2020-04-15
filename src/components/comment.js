@@ -1,6 +1,6 @@
-import {formatDate} from "../utils.js";
+import {formatDate, createElement} from "../utils.js";
 
-export const createCommentsTemplate = (comment) => {
+const createCommentsTemplate = (comment) => {
   const {author, date, emotion, message} = comment;
   const {day, month, year, hours, minutes} = formatDate(date);
   const formattedDate = `${year}/${month}/${day} ${hours}:${minutes}`;
@@ -21,3 +21,25 @@ export const createCommentsTemplate = (comment) => {
     </li>`
   );
 };
+
+export default class Comment {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createCommentsTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

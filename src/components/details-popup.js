@@ -1,5 +1,5 @@
 // подробная информация о фильме (поп-ап)
-import {formatDate} from "../utils.js";
+import {formatDate, createElement} from "../utils.js";
 import {COMMENT_COUNT} from "../consts.js";
 import {generateComments} from "../mock/comment.js";
 import {createCommentsTemplate} from "../components/comment.js";
@@ -15,7 +15,7 @@ const createControlMarkup = (control) => {
   );
 };
 
-export const createFilmDetailsPopupTemplate = (card) => {
+const createFilmDetailsPopupTemplate = (card) => {
   const {actors, age, controls, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
   const {day, year} = formatDate(releaseDate);
   const formatter = new Intl.DateTimeFormat(`en-US`, {
@@ -135,3 +135,27 @@ export const createFilmDetailsPopupTemplate = (card) => {
     </section>`
   );
 };
+
+export default class DetailsPopup {
+  constructor(card) {
+    this._card = card;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsPopupTemplate(this._card);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+
