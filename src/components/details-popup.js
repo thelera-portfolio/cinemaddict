@@ -1,4 +1,3 @@
-
 // подробная информация о фильме (поп-ап)
 import {formatDate} from "../utils.js";
 import {COMMENT_COUNT} from "../consts.js";
@@ -8,6 +7,14 @@ import {createCommentsTemplate} from "../components/comment.js";
 const comments = generateComments(COMMENT_COUNT);
 const commentsMarkup = comments.map((it) => createCommentsTemplate(it)).join(`\n`);
 
+const createControlMarkup = (control) => {
+  const {name} = control;
+  return (
+    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}">
+    <label for="${name}" class="film-details__control-label film-details__control-label--${name}">Add to ${name}</label>`
+  );
+};
+
 export const createFilmDetailsPopupTemplate = (card) => {
   const {actors, age, controls, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
   const {day, year} = formatDate(releaseDate);
@@ -15,6 +22,7 @@ export const createFilmDetailsPopupTemplate = (card) => {
     month: `long`
   });
   const formattedDate = `${day} ${formatter.format(releaseDate)} ${year}`;
+  const controlsTemplate = controls.map((it) => createControlMarkup(it)).join(`\n`);
 
   return (
     `<section class="film-details">
@@ -80,14 +88,7 @@ export const createFilmDetailsPopupTemplate = (card) => {
           </div>
 
           <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="${controls[0].name}" name="${controls[0].name}">
-            <label for="${controls[0].name}" class="film-details__control-label film-details__control-label--${controls[0].name}">Add to ${controls[0].name}</label>
-
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="${controls[1].name}" name="${controls[1].name}">
-            <label for="${controls[1].name}" class="film-details__control-label film-details__control-label--${controls[1].name}">Already ${controls[1].name}</label>
-
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="${controls[2].name}" name="${controls[2].name}">
-            <label for="${controls[2].name}" class="film-details__control-label film-details__control-label--${controls[2].name}">Add to ${controls[2].name}s</label>
+            ${controlsTemplate}
           </section>
         </div>
 

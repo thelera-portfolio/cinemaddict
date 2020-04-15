@@ -71,7 +71,7 @@ extraFilms.forEach(title => {
 
 //отрисовываем поп-ап
 const siteBodyElement = document.querySelector(`body`);
-//render(siteBodyElement, createFilmDetailsPopupTemplate(films[0]));
+render(siteBodyElement, createFilmDetailsPopupTemplate(films[0]));
 
 //отрисовываем страницу со статистикой
 render(siteMainElement, createStatisticsTemplate());
