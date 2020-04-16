@@ -9,8 +9,8 @@ const createButtonMarkup = (button) => {
   );
 };
 
-const createFilmCardTemplate = (card) => {
-  const {commentsCount, controls, description, duration, genres, image, rating, releaseDate, title} = card;
+const createFilmCardTemplate = (card, commentsCount) => {
+  const {controls, description, duration, genres, image, rating, releaseDate, title} = card;
   const shortDescription = description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
   const buttonsTemplate = controls.map((it) => createButtonMarkup(it)).join(`\n`);
 
@@ -32,13 +32,14 @@ const createFilmCardTemplate = (card) => {
 };
 
 export default class Card {
-  constructor(card) {
+  constructor(card, commentsCount) {
     this._card = card;
     this._element = null;
+    this._commentsCount = commentsCount;
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._card);
+    return createFilmCardTemplate(this._card, this._commentsCount);
   }
 
   getElement() {

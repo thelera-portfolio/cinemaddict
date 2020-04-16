@@ -1,5 +1,5 @@
-import {ESC_BUTTON, FILMS_COUNT, EXTRA_FILMS_COUNT, SHOWING_FILMS_COUNT_ON_START, SHOWING_FILMS_COUNT_BY_BUTTON, RenderPosition} from "./consts.js";
-import {render} from "./utils.js";
+import {ESC_BUTTON, COMMENTS_TO_SHOW,FILMS_COUNT, EXTRA_FILMS_COUNT, SHOWING_FILMS_COUNT_ON_START, SHOWING_FILMS_COUNT_BY_BUTTON, RenderPosition} from "./consts.js";
+import {render, getRandomIntegerNumber} from "./utils.js";
 import {generateCards} from "./mock/card.js";
 import {createFilters} from "./mock/filter.js";
 import {generateComments} from "./mock/comment.js";
@@ -19,14 +19,21 @@ import CommentsComponent from "./components/comment.js";
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = document.querySelector(`.header`);
 
-const renderCard = (filmsListContainerElement, card) => {
-  const cardComponent = new FilmCardComponent(card);
+const showComments = (container, comments) => {
+  const commentsToShow = COMMENTS_TO_SHOW <= comments.length ? COMMENTS_TO_SHOW : comments.length;
+  for (let i = 0; i < commentsToShow; i++) {
+    render(container, new CommentsComponent(comments[i]).getElement());
+  }
+};
 
+const renderCard = (filmsListContainerElement, card) => {
   const comments = generateComments();
+
+  const cardComponent = new FilmCardComponent(card, comments.length);
   const popupComponent = new DetailsPopupComponent(card, comments.length);
 
   const commentsList = popupComponent.getElement().querySelector(`.film-details__comments-list`);
-  comments.forEach((it) => render(commentsList, new CommentsComponent(it).getElement()));
+  showComments(commentsList, comments);
 
   const siteBodyElement = document.querySelector(`body`);
   const cardImage = cardComponent.getElement().querySelector(`.film-card__poster`);

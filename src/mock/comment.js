@@ -10,7 +10,7 @@ const commentsData = {
     `angry`
   ],
   messages: [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`, `I like that`],
-  maxCommentCount: 5,
+  maxCommentCount: 100,
 };
 
 const generateComment = () => {
