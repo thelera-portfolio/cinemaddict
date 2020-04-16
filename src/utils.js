@@ -1,3 +1,5 @@
+import {RenderPosition} from "./consts.js";
+
 export const getRandomDate = (start = new Date(1920, 0, 1), end = new Date()) => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
@@ -32,4 +34,15 @@ export const createElement = (template) => {
   newElement.innerHTML = template;
 
   return newElement.firstChild;
+};
+
+export const render = (container, element, place = RenderPosition.BEFOREEND) => {
+  switch (place) {
+    case RenderPosition.BEFOREEND:
+      container.append(element);
+      break;
+    case RenderPosition.AFTEREEND:
+      container.prepend(element);
+      break;
+  }
 };

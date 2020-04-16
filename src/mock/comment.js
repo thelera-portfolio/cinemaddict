@@ -1,4 +1,4 @@
-import {getRandomDate, getRandomArrayItem} from "../utils.js";
+import {getRandomIntegerNumber, getRandomDate, getRandomArrayItem} from "../utils.js";
 
 const commentsData = {
   authors: [`Tim Macoveev`, `John Doe`, `Olly Olsen`, `Rusty James`, `Olivia`],
@@ -22,6 +22,7 @@ const generateComment = () => {
   };
 };
 
-export const generateComments = (count) => {
-  return new Array(count).fill(``).map(() => generateComment());
+export const generateComments = () => {
+  const commentsCount = getRandomIntegerNumber(0, commentsData.maxCommentCount);
+  return new Array(commentsCount).fill(``).map(() => generateComment());
 };

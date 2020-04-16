@@ -1,11 +1,5 @@
 // подробная информация о фильме (поп-ап)
 import {formatDate, createElement} from "../utils.js";
-import {COMMENT_COUNT} from "../consts.js";
-import {generateComments} from "../mock/comment.js";
-import {createCommentsTemplate} from "../components/comment.js";
-
-const comments = generateComments(COMMENT_COUNT);
-const commentsMarkup = comments.map((it) => createCommentsTemplate(it)).join(`\n`);
 
 const createControlMarkup = (control) => {
   const {name} = control;
@@ -15,7 +9,7 @@ const createControlMarkup = (control) => {
   );
 };
 
-const createFilmDetailsPopupTemplate = (card) => {
+const createFilmDetailsPopupTemplate = (card, commentsCount) => {
   const {actors, age, controls, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
   const {day, year} = formatDate(releaseDate);
   const formatter = new Intl.DateTimeFormat(`en-US`, {
@@ -94,10 +88,9 @@ const createFilmDetailsPopupTemplate = (card) => {
 
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${COMMENT_COUNT}</span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
             <ul class="film-details__comments-list">
-              ${commentsMarkup}
             </ul>
 
             <div class="film-details__new-comment">
@@ -137,13 +130,14 @@ const createFilmDetailsPopupTemplate = (card) => {
 };
 
 export default class DetailsPopup {
-  constructor(card) {
+  constructor(card, commentsCount) {
     this._card = card;
+    this._commentsCount = commentsCount;
     this._element = null;
   }
 
   getTemplate() {
-    return createFilmDetailsPopupTemplate(this._card);
+    return createFilmDetailsPopupTemplate(this._card, this._commentsCount);
   }
 
   getElement() {

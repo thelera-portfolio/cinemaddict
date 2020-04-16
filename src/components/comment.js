@@ -23,12 +23,13 @@ const createCommentsTemplate = (comment) => {
 };
 
 export default class Comment {
-  constructor() {
+  constructor(comment) {
     this._element = null;
+    this._comment = comment;
   }
 
   getTemplate() {
-    return createCommentsTemplate();
+    return createCommentsTemplate(this._comment);
   }
 
   getElement() {

@@ -1,5 +1,5 @@
 // основной список фильмов
-import { createElement } from "../utils.js";
+import {createElement} from "../utils.js";
 
 const createMainFilmListTemplate = () => {
   return (

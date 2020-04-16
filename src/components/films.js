@@ -1,5 +1,5 @@
 // раздел с фильмами
-import { createElement } from "../utils.js";
+import {createElement} from "../utils.js";
 
 const createAllFilmsTemplate = () => {
   return (

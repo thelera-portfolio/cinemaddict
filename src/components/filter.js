@@ -9,7 +9,11 @@ const createFilterMarkup = (filter, isActive) => {
 
 const createFiltersTemplate = (filters) => {
   const filtersMarkup = filters.map((it, i) => createFilterMarkup(it, i === 0)).join(`\n`);
-  return filtersMarkup;
+  return (
+    `<div class="main-navigation__items">
+      ${filtersMarkup}
+    </div>`
+  );
 };
 
 export default class Filter {
