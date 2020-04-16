@@ -117,4 +117,4 @@ extraFilms.forEach(title => {
 });
 
 //отрисовываем страницу со статистикой
-render(siteMainElement, new StatisticsComponent());
+render(siteMainElement, new StatisticsComponent().getElement());
