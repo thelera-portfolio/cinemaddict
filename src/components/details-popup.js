@@ -1,20 +1,22 @@
-
 // подробная информация о фильме (поп-ап)
-import {formatDate} from "../utils.js";
-import {COMMENT_COUNT} from "../consts.js";
-import {generateComments} from "../mock/comment.js";
-import {createCommentsTemplate} from "../components/comment.js";
+import {formatDate, createElement} from "../utils.js";
 
-const comments = generateComments(COMMENT_COUNT);
-const commentsMarkup = comments.map((it) => createCommentsTemplate(it)).join(`\n`);
+const createControlMarkup = (control) => {
+  const {name} = control;
+  return (
+    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}">
+    <label for="${name}" class="film-details__control-label film-details__control-label--${name}">Add to ${name}</label>`
+  );
+};
 
-export const createFilmDetailsPopupTemplate = (card) => {
+const createFilmDetailsPopupTemplate = (card, commentsCount) => {
   const {actors, age, controls, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
   const {day, year} = formatDate(releaseDate);
   const formatter = new Intl.DateTimeFormat(`en-US`, {
     month: `long`
   });
   const formattedDate = `${day} ${formatter.format(releaseDate)} ${year}`;
+  const controlsTemplate = controls.map((it) => createControlMarkup(it)).join(`\n`);
 
   return (
     `<section class="film-details">
@@ -80,23 +82,15 @@ export const createFilmDetailsPopupTemplate = (card) => {
           </div>
 
           <section class="film-details__controls">
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="${controls[0].name}" name="${controls[0].name}">
-            <label for="${controls[0].name}" class="film-details__control-label film-details__control-label--${controls[0].name}">Add to ${controls[0].name}</label>
-
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="${controls[1].name}" name="${controls[1].name}">
-            <label for="${controls[1].name}" class="film-details__control-label film-details__control-label--${controls[1].name}">Already ${controls[1].name}</label>
-
-            <input type="checkbox" class="film-details__control-input visually-hidden" id="${controls[2].name}" name="${controls[2].name}">
-            <label for="${controls[2].name}" class="film-details__control-label film-details__control-label--${controls[2].name}">Add to ${controls[2].name}s</label>
+            ${controlsTemplate}
           </section>
         </div>
 
         <div class="form-details__bottom-container">
           <section class="film-details__comments-wrap">
-            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${COMMENT_COUNT}</span></h3>
+            <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
             <ul class="film-details__comments-list">
-              ${commentsMarkup}
             </ul>
 
             <div class="film-details__new-comment">
@@ -134,3 +128,28 @@ export const createFilmDetailsPopupTemplate = (card) => {
     </section>`
   );
 };
+
+export default class DetailsPopup {
+  constructor(card, commentsCount) {
+    this._card = card;
+    this._commentsCount = commentsCount;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilmDetailsPopupTemplate(this._card, this._commentsCount);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
+

@@ -1,5 +1,6 @@
 // карточка фильма
 import {MAX_DESCRIPTION_LENGTH} from "../mock/card.js";
+import {createElement} from "../utils.js";
 
 const createButtonMarkup = (button) => {
   const {isActive, className, name, label} = button;
@@ -8,8 +9,8 @@ const createButtonMarkup = (button) => {
   );
 };
 
-export const createFilmCardTemplate = (card) => {
-  const {commentsCount, controls, description, duration, genres, image, rating, releaseDate, title} = card;
+const createFilmCardTemplate = (card, commentsCount) => {
+  const {controls, description, duration, genres, image, rating, releaseDate, title} = card;
   const shortDescription = description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
   const buttonsTemplate = controls.map((it) => createButtonMarkup(it)).join(`\n`);
 
@@ -29,3 +30,27 @@ export const createFilmCardTemplate = (card) => {
     </article>`
   );
 };
+
+export default class Card {
+  constructor(card, commentsCount) {
+    this._card = card;
+    this._element = null;
+    this._commentsCount = commentsCount;
+  }
+
+  getTemplate() {
+    return createFilmCardTemplate(this._card, this._commentsCount);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

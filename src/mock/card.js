@@ -228,7 +228,6 @@ export const generateCard = () => {
   return {
     actors: getSeveralRandomArrayItems(filmsData.actors.quantity, filmsData.actors.names),
     age: getRandomIntegerNumber(0, 18),
-    commentsCount: getRandomIntegerNumber(0, 100),
     controls: generateControls(),
     country: getRandomArrayItem(filmsData.countries),
     description: getFilmDescriptionFromString(filmsData.description.string, filmsData.description.sentencesCount),
