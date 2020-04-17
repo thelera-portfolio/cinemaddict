@@ -31,7 +31,7 @@ export const RenderPosition = {
   AFTEREEND: `aftereend`,
 };
 
-export const FILMS_COUNT = 22;
+export const FILMS_COUNT = 20;
 export const EXTRA_FILMS_COUNT = 2;
 export const SHOWING_FILMS_COUNT_ON_START = 5;
 export const SHOWING_FILMS_COUNT_BY_BUTTON = 5;
