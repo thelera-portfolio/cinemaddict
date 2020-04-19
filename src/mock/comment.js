@@ -1,4 +1,4 @@
-import {getRandomIntegerNumber, getRandomDate, getRandomArrayItem} from "../utils.js";
+import {getRandomIntegerNumber, getRandomDate, getRandomArrayItem} from "../utils/common.js";
 
 const commentsData = {
   authors: [`Tim Macoveev`, `John Doe`, `Olly Olsen`, `Rusty James`, `Olivia`],

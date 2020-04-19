@@ -1,4 +1,4 @@
-import {createElement} from "../utils.js";
+import {createElement} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createSortingTemplate = () => {

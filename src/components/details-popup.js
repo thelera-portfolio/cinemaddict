@@ -1,5 +1,5 @@
 // подробная информация о фильме (поп-ап)
-import {formatDate, createElement} from "../utils.js";
+import {formatDate, createElement} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createControlMarkup = (control) => {
@@ -139,6 +139,11 @@ export default class DetailsPopup extends AbstractComponent{
 
   getTemplate() {
     return createFilmDetailsPopupTemplate(this._card, this._commentsCount);
+  }
+
+  setCloseButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
   }
 }
 

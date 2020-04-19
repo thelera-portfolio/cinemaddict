@@ -1,6 +1,6 @@
-import {getRandomIntegerNumber, getRandomArrayItem} from "../utils";
+import {getRandomIntegerNumber, getRandomArrayItem} from "../utils/common";
 import {GENRES} from "./card.js";
-import {RANKS, StatsData} from "../consts.js";
+import {RANKS, StatsData} from "../utils/consts.js";
 
 export const createStats = () => ({
   rank: getRandomArrayItem(RANKS),

@@ -1,8 +1,8 @@
-import { ESC_BUTTON, COMMENTS_TO_SHOW, FILMS_COUNT, EXTRA_FILMS_COUNT, SHOWING_FILMS_COUNT_ON_START, SHOWING_FILMS_COUNT_BY_BUTTON, RenderPosition } from "./consts.js";
-import { render } from "./utils.js";
-import { generateCards } from "./mock/card.js";
-import { createFilters } from "./mock/filter.js";
-import { generateComments } from "./mock/comment.js";
+import {ESC_BUTTON, COMMENTS_TO_SHOW, FilmsCount, RenderPosition} from "./utils/consts.js";
+import {render, remove} from "./utils/render.js";
+import {generateCards} from "./mock/card.js";
+import {createFilters} from "./mock/filter.js";
+import {generateComments } from "./mock/comment.js";
 import FilmCardComponent from "./components/card.js";
 import ExtraFilmComponent from "./components/extra-films.js";
 import MainFilmListComponent from "./components/films-list.js";
@@ -17,13 +17,10 @@ import DetailsPopupComponent from "./components/details-popup.js";
 import CommentsComponent from "./components/comment.js";
 import NoFilmsComponent from "./components/no-films.js";
 
-const siteMainElement = document.querySelector(`.main`);
-const siteHeaderElement = document.querySelector(`.header`);
-
-const showComments = (container, comments) => {
+const showComments = (containerElement, comments) => {
   const commentsToShow = COMMENTS_TO_SHOW <= comments.length ? COMMENTS_TO_SHOW : comments.length;
   for (let i = 0; i < commentsToShow; i++) {
-    render(container, new CommentsComponent(comments[i]).getElement());
+    render(containerElement, new CommentsComponent(comments[i]));
   }
 };
 
@@ -37,100 +34,96 @@ const renderCard = (filmsListContainerElement, card) => {
   showComments(commentsList, comments);
 
   const siteBodyElement = document.querySelector(`body`);
-  const cardImage = cardComponent.getElement().querySelector(`.film-card__poster`);
-  const cardTitle = cardComponent.getElement().querySelector(`.film-card__title`);
-  const cardComments = cardComponent.getElement().querySelector(`.film-card__comments`);
 
-  const onEscKeyDown = (evt) => {
+  const escKeyDownHandler = (evt) => {
     if (evt.key === ESC_BUTTON) {
-      popupComponent.getElement().remove();
-      popupComponent.removeElement();
-      document.removeEventListener(`keydown`, onEscKeyDown);
+      remove(popupComponent);
+      document.removeEventListener(`keydown`, escKeyDownHandler);
     }
   };
 
-  const onPopupCloseButtonClick = () => {
-    popupComponent.getElement().remove();
-    popupComponent.removeElement();
-    document.removeEventListener(`keydown`, onEscKeyDown);
+  const closeButtonClickHandler = () => {
+    remove(popupComponent);
+    document.removeEventListener(`keydown`, escKeyDownHandler);
+  }
+
+  const cardClickHandler = (evt) => {
+      render(siteBodyElement, popupComponent);
+
+      popupComponent.setCloseButtonClickHandler(closeButtonClickHandler);
+
+      document.addEventListener(`keydown`, escKeyDownHandler);
   };
 
-  const onCardClick = () => {
-    render(siteBodyElement, popupComponent.getElement());
+  render(filmsListContainerElement, cardComponent);
 
-    const popupCloseButton = popupComponent.getElement().querySelector(`.film-details__close-btn`);
-
-    popupCloseButton.addEventListener(`click`, onPopupCloseButtonClick);
-    document.addEventListener(`keydown`, onEscKeyDown);
-  };
-
-  render(filmsListContainerElement, cardComponent.getElement());
-
-  cardImage.addEventListener(`click`, onCardClick);
-  cardTitle.addEventListener(`click`, onCardClick);
-  cardComments.addEventListener(`click`, onCardClick);
+  cardComponent.setClickHandler(cardClickHandler);
 };
 
 const renderFilms = (filmsContainerElement, films) => {
-  const filmsListElement = new MainFilmListComponent().getElement();
-  render(siteMainElement, filmsContainerElement);
-  render(filmsContainerElement, filmsListElement);
-
-  if (FILMS_COUNT === 0) {
-    render(filmsListElement, new NoFilmsComponent().getElement());
+  if (FilmsCount.FILMS_COUNT === 0) {
+    render(filmsContainerElement, new NoFilmsComponent());
     return;
   }
 
-  const filmsListContainerElement = filmsListElement.querySelector(`.films-list__container`);
+  const filmsListContainerElement = filmsContainerElement.querySelector(`.films-list__container`);
 
-  const showingFilmsCount = SHOWING_FILMS_COUNT_ON_START;
+  const showingFilmsCount = FilmsCount.SHOWING_FILMS_COUNT_ON_START;
   films.slice(0, showingFilmsCount).forEach((it) => renderCard(filmsListContainerElement, it));
 
   const showMoreButtonComponent = new ShowMoreButtonComponent();
-  render(filmsListElement, showMoreButtonComponent.getElement());
+  render(filmsContainerElement, showMoreButtonComponent);
 
   let previousFilmsCount = showingFilmsCount;
-  showMoreButtonComponent.getElement().addEventListener(`click`, () => {
-    films.slice(previousFilmsCount, previousFilmsCount + SHOWING_FILMS_COUNT_BY_BUTTON).forEach((it) => renderCard(filmsListContainerElement, it));
-    previousFilmsCount += SHOWING_FILMS_COUNT_BY_BUTTON;
+  showMoreButtonComponent.setClickHandler(() => {
+    films.slice(previousFilmsCount, previousFilmsCount + FilmsCount.SHOWING_FILMS_COUNT_BY_BUTTON).forEach((it) => renderCard(filmsListContainerElement, it));
+    previousFilmsCount += FilmsCount.SHOWING_FILMS_COUNT_BY_BUTTON;
     if (previousFilmsCount >= films.length) {
-      showMoreButtonComponent.getElement().remove();
-      showMoreButtonComponent.getElement().removeElement();
-    }
-  });
-
-  const extraFilms = ['Top rated', 'Most commented'];
-  extraFilms.forEach(title => {
-    render(filmsContainerElement, new ExtraFilmComponent(title).getElement());
-
-    const extraFilmListTitleElements = filmsContainerElement.querySelectorAll(`.films-list__title`);
-    for (const element of extraFilmListTitleElements) {
-      if (element.textContent === title) {
-        const container = element.nextElementSibling;
-        for (let i = 0; i < EXTRA_FILMS_COUNT; i++) {
-          renderCard(container, films[i]);
-        }
-      }
+      remove(showMoreButtonComponent);
     }
   });
 };
 
+const renderExtraFilms = (filmsContainerElement, films) => {
+  const filmsListContainerElement = filmsContainerElement.querySelector(`.films-list__container`);
+
+  for (let i = 0; i < FilmsCount.EXTRA_FILMS_COUNT; i++) {
+    renderCard(filmsListContainerElement, films[i]);
+  }
+}
+
+const siteMainElement = document.querySelector(`.main`);
+const siteHeaderElement = document.querySelector(`.header`);
+
 // отрисовываем звание пользователя
-render(siteHeaderElement, new RatingComponent().getElement());
+render(siteHeaderElement, new RatingComponent());
 
 // отрисовываем навигацию (фильтры и статистику)
 const filters = createFilters();
-const navigationElement = new NavigationComponent().getElement();
-render(siteMainElement, navigationElement);
-render(navigationElement, new FilterComponent(filters).getElement(), RenderPosition.AFTEREEND);
+const navigationComponent = new NavigationComponent();
+
+render(siteMainElement, navigationComponent);
+render(navigationComponent.getElement(), new FilterComponent(filters), RenderPosition.AFTEREEND);
 
 // отрисовываем сортировку
-render(siteMainElement, new SortingComponent().getElement());
+render(siteMainElement, new SortingComponent());
 
 // отрисовываем фильмы
-const films = generateCards(FILMS_COUNT);
-const filmsContainerElement = new AllFilmsComponent().getElement();
-renderFilms(filmsContainerElement, films);
+const films = generateCards(FilmsCount.FILMS_COUNT);
+const filmsContainerComponent = new AllFilmsComponent();
+const filmsListComponent = new MainFilmListComponent();
+render(siteMainElement, filmsContainerComponent);
+render(filmsContainerComponent.getElement(), filmsListComponent);
+
+renderFilms(filmsListComponent.getElement(), films);
+
+// отрисовываем секции с экстра-фильмами
+const extraFilms = ['Top rated', 'Most commented'];
+extraFilms.forEach(title => {
+  const extraFilmsListComponent = new ExtraFilmComponent(title);
+  render(filmsContainerComponent.getElement(), extraFilmsListComponent);
+  renderExtraFilms(extraFilmsListComponent.getElement(), films);
+});
 
 //отрисовываем страницу со статистикой
-render(siteMainElement, new StatisticsComponent().getElement());
+render(siteMainElement, new StatisticsComponent());

@@ -1,5 +1,5 @@
 // основное меню (фильтры и статистика)
-import {createElement} from "../utils.js";
+import {createElement} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createNavigationTemplate = () => {

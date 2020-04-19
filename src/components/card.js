@@ -1,6 +1,6 @@
 // карточка фильма
 import {MAX_DESCRIPTION_LENGTH} from "../mock/card.js";
-import {createElement} from "../utils.js";
+import {createElement} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createButtonMarkup = (button) => {
@@ -41,5 +41,11 @@ export default class Card extends AbstractComponent{
 
   getTemplate() {
     return createFilmCardTemplate(this._card, this._commentsCount);
+  }
+
+  setClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__poster`).addEventListener(`click`, handler);
+    this.getElement().querySelector(`.film-card__title`).addEventListener(`click`, handler);
+    this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, handler);
   }
 }
