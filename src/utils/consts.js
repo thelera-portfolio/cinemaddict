@@ -33,9 +33,15 @@ export const RenderPosition = {
 
 export const COMMENTS_TO_SHOW = 5;
 export const ESC_BUTTON = `Escape`;
+
 export const FilmsCount = {
-  FILMS_COUNT: 22,
+  FILMS_COUNT: 20,
   EXTRA_FILMS_COUNT: 2,
   SHOWING_FILMS_COUNT_ON_START: 5,
   SHOWING_FILMS_COUNT_BY_BUTTON: 5,
 };
+
+export const extraFilms = [
+  'Top rated',
+  'Most commented',
+];

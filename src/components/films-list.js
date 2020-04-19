@@ -1,5 +1,4 @@
 // основной список фильмов
-import {createElement} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createMainFilmListTemplate = () => {

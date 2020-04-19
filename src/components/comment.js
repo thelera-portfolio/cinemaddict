@@ -1,4 +1,4 @@
-import {formatDate, createElement} from "../utils/common.js";
+import {formatDate} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createCommentsTemplate = (comment) => {

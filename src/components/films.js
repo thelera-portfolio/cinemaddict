@@ -1,5 +1,4 @@
 // раздел с фильмами
-import {createElement} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createAllFilmsTemplate = () => {

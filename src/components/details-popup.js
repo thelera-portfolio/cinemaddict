@@ -1,5 +1,5 @@
 // подробная информация о фильме (поп-ап)
-import {formatDate, createElement} from "../utils/common.js";
+import {formatDate} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createControlMarkup = (control) => {

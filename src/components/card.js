@@ -1,6 +1,5 @@
 // карточка фильма
 import {MAX_DESCRIPTION_LENGTH} from "../mock/card.js";
-import {createElement} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createButtonMarkup = (button) => {
