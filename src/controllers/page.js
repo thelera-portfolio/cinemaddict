@@ -1,4 +1,4 @@
-import {ESC_BUTTON, COMMENTS_TO_SHOW, FilmsCount, extraFilms} from "../utils/consts.js";
+import {ESC_BUTTON, COMMENTS_TO_SHOW, FilmsCount, extraFilms, RenderPosition} from "../utils/consts.js";
 import {render, remove} from "../utils/render.js";
 import DetailsPopupComponent from "../components/details-popup.js";
 import CommentsComponent from "../components/comment.js";
@@ -50,6 +50,10 @@ const renderCard = (filmsListContainerElement, card, comments) => {
   cardComponent.setClickHandler(cardClickHandler);
 };
 
+const renderShowMoreButton = () => {
+
+};
+
 export default class PageController {
   constructor(container) {
     this._container = container;
@@ -59,7 +63,7 @@ export default class PageController {
   }
 
   render(films, comments) {
-    render(this._container.getElement(), this._filmsListComponent);
+    render(this._container.getElement(), this._filmsListComponent, RenderPosition.AFTERBEGIN);
 
     if (FilmsCount.FILMS_COUNT === 0) {
       render(this._filmsListComponent.getElement(), this._noFilmsComponent);
@@ -73,17 +77,19 @@ export default class PageController {
     if (FilmsCount.FILMS_COUNT <= FilmsCount.SHOWING_FILMS_COUNT_ON_START) {
       return;
     }
-
+    //const showMoreButtonComponent = new ShowMoreButtonComponent();
     render(this._filmsListComponent.getElement(), this._showMoreButtonComponent);
 
     let previousFilmsCount = showingFilmsCount;
-    this._showMoreButtonComponent.setClickHandler(() => {
+    const buttonClickHandler = () => {
       films.slice(previousFilmsCount, previousFilmsCount + FilmsCount.SHOWING_FILMS_COUNT_BY_BUTTON).forEach((it, index) => renderCard(filmsListContainerElement, it, comments[index]));
       previousFilmsCount += FilmsCount.SHOWING_FILMS_COUNT_BY_BUTTON;
       if (previousFilmsCount >= films.length) {
         remove(this._showMoreButtonComponent);
       }
-    });
+    }
+
+    this._showMoreButtonComponent.setClickHandler(buttonClickHandler);
   }
 
   renderExtra(films, comments) {
@@ -98,5 +104,11 @@ export default class PageController {
         renderCard(filmsListContainerElement, films[i], comments[i]);
       }
     });
+  }
+
+  clearFilmList() {
+    //this._filmsListComponent.getElement().innerHTML = ``;
+    //this._showMoreButtonComponent.removeClickHandler(buttonClickHandler);
+    remove(this._filmsListComponent);
   }
 };

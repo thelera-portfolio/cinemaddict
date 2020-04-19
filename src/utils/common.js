@@ -16,7 +16,7 @@ export const getRandomIntegerNumber = (min, max) => { // [min, max]
 };
 
 export const getRandomFloatNumber = (max) => { // [0, max]
-  return (Math.random() * (max + 1)).toFixed(1);
+  return (Math.random() * (max)).toFixed(1);
 };
 
 export const formatDate = (date) => {

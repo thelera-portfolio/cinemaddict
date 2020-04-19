@@ -28,7 +28,7 @@ export const StatsData = {
 
 export const RenderPosition = {
   BEFOREEND: `beforeend`,
-  AFTEREEND: `aftereend`,
+  AFTERBEGIN: `afterbegin`,
 };
 
 export const COMMENTS_TO_SHOW = 5;
