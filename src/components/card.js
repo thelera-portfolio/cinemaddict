@@ -1,6 +1,7 @@
 // карточка фильма
 import {MAX_DESCRIPTION_LENGTH} from "../mock/card.js";
 import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createButtonMarkup = (button) => {
   const {isActive, className, name, label} = button;
@@ -31,26 +32,14 @@ const createFilmCardTemplate = (card, commentsCount) => {
   );
 };
 
-export default class Card {
+export default class Card extends AbstractComponent{
   constructor(card, commentsCount) {
+    super();
     this._card = card;
-    this._element = null;
     this._commentsCount = commentsCount;
   }
 
   getTemplate() {
     return createFilmCardTemplate(this._card, this._commentsCount);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

@@ -1,6 +1,7 @@
 // звание пользователя
 import {createStats} from "../mock/stats.js";
 import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const statisticData = createStats();
 const {rank} = statisticData;
@@ -14,25 +15,9 @@ const createUserProfileRatingTemplate = () => {
   );
 };
 
-export default class Rating {
-  constructor() {
-    this._element = null;
-  }
-
+export default class Rating extends AbstractComponent{
   getTemplate() {
     return createUserProfileRatingTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 

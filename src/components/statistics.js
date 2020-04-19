@@ -1,6 +1,7 @@
 // страница со статистикой
 import {createStats} from "../mock/stats.js";
 import {createElement} from "../utils.js";
+import AbstractComponent from "./abstract-component.js";
 
 const statisticData = createStats();
 const {rank, watchedCount, duration, topGenre} = statisticData;
@@ -55,25 +56,9 @@ const createStatisticsTemplate = () => {
   );
 };
 
-export default class Statistics {
-  constructor() {
-    this._element = null;
-  }
-
+export default class Statistics extends AbstractComponent{
   getTemplate() {
     return createStatisticsTemplate();
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
 
