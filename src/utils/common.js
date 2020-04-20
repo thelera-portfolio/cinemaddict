@@ -1,5 +1,3 @@
-import {RenderPosition} from "./consts.js";
-
 export const getRandomDate = (start = new Date(1920, 0, 1), end = new Date()) => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
@@ -16,33 +14,15 @@ export const getRandomIntegerNumber = (min, max) => { // [min, max]
 };
 
 export const getRandomFloatNumber = (max) => { // [0, max]
-  return (Math.random() * (max + 1)).toFixed(1);
+  return (Math.random() * (max)).toFixed(1);
 };
 
 export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, `0`);
-  const month = String((date.getMonth() + 1)).padStart(2, `0`);;
+  const month = String((date.getMonth() + 1)).padStart(2, `0`);
   const year = date.getFullYear();
   const hours = String((date.getHours() + 1)).padStart(2, `0`);
   const minutes = String((date.getMinutes() + 1)).padStart(2, `0`);
 
-  return { day, month, year, hours, minutes };
-}
-
-export const createElement = (template) => {
-  const newElement = document.createElement(`div`);
-  newElement.innerHTML = template;
-
-  return newElement.firstChild;
-};
-
-export const render = (container, element, place = RenderPosition.BEFOREEND) => {
-  switch (place) {
-    case RenderPosition.BEFOREEND:
-      container.append(element);
-      break;
-    case RenderPosition.AFTEREEND:
-      container.prepend(element);
-      break;
-  }
+  return {day, month, year, hours, minutes};
 };

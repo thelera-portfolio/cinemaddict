@@ -1,4 +1,4 @@
-import {getRandomIntegerNumber} from "../utils";
+import {getRandomIntegerNumber} from "../utils/common";
 
 const FILTER_NAMES = [`All movies`, `Watchlist`, `History`, `Favorites`];
 

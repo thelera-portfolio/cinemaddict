@@ -1,5 +1,6 @@
 // подробная информация о фильме (поп-ап)
-import {formatDate, createElement} from "../utils.js";
+import {formatDate} from "../utils/common.js";
+import AbstractComponent from "./abstract-component.js";
 
 const createControlMarkup = (control) => {
   const {name} = control;
@@ -129,27 +130,19 @@ const createFilmDetailsPopupTemplate = (card, commentsCount) => {
   );
 };
 
-export default class DetailsPopup {
+export default class DetailsPopup extends AbstractComponent {
   constructor(card, commentsCount) {
+    super();
     this._card = card;
     this._commentsCount = commentsCount;
-    this._element = null;
   }
 
   getTemplate() {
     return createFilmDetailsPopupTemplate(this._card, this._commentsCount);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setCloseButtonClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
   }
 }
-
