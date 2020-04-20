@@ -35,9 +35,9 @@ const renderCard = (filmsListContainerElement, card, comments) => {
   const closeButtonClickHandler = () => {
     remove(popupComponent);
     document.removeEventListener(`keydown`, escKeyDownHandler);
-  }
+  };
 
-  const cardClickHandler = (evt) => {
+  const cardClickHandler = () => {
     render(siteBodyElement, popupComponent);
 
     popupComponent.setCloseButtonClickHandler(closeButtonClickHandler);
@@ -50,10 +50,6 @@ const renderCard = (filmsListContainerElement, card, comments) => {
   cardComponent.setClickHandler(cardClickHandler);
 };
 
-const renderShowMoreButton = () => {
-
-};
-
 export default class PageController {
   constructor(container) {
     this._container = container;
@@ -62,7 +58,7 @@ export default class PageController {
     this._showMoreButtonComponent = new ShowMoreButtonComponent();
   }
 
-  render(films, comments) {
+  renderFilms(films, comments) {
     render(this._container.getElement(), this._filmsListComponent, RenderPosition.AFTERBEGIN);
 
     if (FilmsCount.FILMS_COUNT === 0) {
@@ -77,7 +73,7 @@ export default class PageController {
     if (FilmsCount.FILMS_COUNT <= FilmsCount.SHOWING_FILMS_COUNT_ON_START) {
       return;
     }
-    //const showMoreButtonComponent = new ShowMoreButtonComponent();
+
     render(this._filmsListComponent.getElement(), this._showMoreButtonComponent);
 
     let previousFilmsCount = showingFilmsCount;
@@ -87,19 +83,19 @@ export default class PageController {
       if (previousFilmsCount >= films.length) {
         remove(this._showMoreButtonComponent);
       }
-    }
+    };
 
     this._showMoreButtonComponent.setClickHandler(buttonClickHandler);
   }
 
-  renderExtra(films, comments) {
-    extraFilms.forEach(title => {
+  renderExtraFilms(films, comments) {
+    extraFilms.forEach((title) => {
       const extraFilmsListComponent = new ExtraFilmComponent(title);
       render(this._container.getElement(), extraFilmsListComponent);
 
       const filmsListContainerElement = extraFilmsListComponent.getElement().querySelector(`.films-list__container`);
 
-      for (let i = 0; i < FilmsCount.EXTRA_FILMS_COUNT; i++) {
+      for (let j = 0; j < FilmsCount.EXTRA_FILMS_COUNT; j++) {
         const i = getRandomIntegerNumber(0, FilmsCount.FILMS_COUNT - 1);
         renderCard(filmsListContainerElement, films[i], comments[i]);
       }
@@ -107,8 +103,6 @@ export default class PageController {
   }
 
   clearFilmList() {
-    //this._filmsListComponent.getElement().innerHTML = ``;
-    //this._showMoreButtonComponent.removeClickHandler(buttonClickHandler);
     remove(this._filmsListComponent);
   }
-};
+}

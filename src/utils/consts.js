@@ -42,6 +42,6 @@ export const FilmsCount = {
 };
 
 export const extraFilms = [
-  'Top rated',
-  'Most commented',
+  `Top rated`,
+  `Most commented`,
 ];

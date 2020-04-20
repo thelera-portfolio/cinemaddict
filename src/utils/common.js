@@ -1,5 +1,3 @@
-import {RenderPosition} from "./consts.js";
-
 export const getRandomDate = (start = new Date(1920, 0, 1), end = new Date()) => {
   return new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime()));
 };
@@ -21,10 +19,10 @@ export const getRandomFloatNumber = (max) => { // [0, max]
 
 export const formatDate = (date) => {
   const day = String(date.getDate()).padStart(2, `0`);
-  const month = String((date.getMonth() + 1)).padStart(2, `0`);;
+  const month = String((date.getMonth() + 1)).padStart(2, `0`);
   const year = date.getFullYear();
   const hours = String((date.getHours() + 1)).padStart(2, `0`);
   const minutes = String((date.getMinutes() + 1)).padStart(2, `0`);
 
-  return { day, month, year, hours, minutes };
-}
+  return {day, month, year, hours, minutes};
+};

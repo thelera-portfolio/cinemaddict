@@ -6,17 +6,14 @@ export const SortType = {
   DEFAULT: `default`
 };
 
-const createSortingTemplate = () => {
-  return (
-    `<ul class="sort">
-      <li><a href="#" data-sort-type="${SortType.DEFAULT}" class="sort__button sort__button--active">Sort by default</a></li>
-      <li><a href="#" data-sort-type="${SortType.BY_DATE}" class="sort__button">Sort by date</a></li>
-      <li><a href="#" data-sort-type="${SortType.BY_RATING}" class="sort__button">Sort by rating</a></li>
-    </ul>`
-  );
-};
+const createSortingTemplate = () =>
+  `<ul class="sort">
+    <li><a href="#" data-sort-type="${SortType.DEFAULT}" class="sort__button sort__button--active">Sort by default</a></li>
+    <li><a href="#" data-sort-type="${SortType.BY_DATE}" class="sort__button">Sort by date</a></li>
+    <li><a href="#" data-sort-type="${SortType.BY_RATING}" class="sort__button">Sort by rating</a></li>
+  </ul>`;
 
-export default class Sorting extends AbstractComponent{
+export default class Sorting extends AbstractComponent {
   constructor() {
     super();
     this._currentSortType = SortType.DEFAULT;
@@ -46,6 +43,6 @@ export default class Sorting extends AbstractComponent{
       this._currentSortType = sortType;
 
       handler(this._currentSortType);
-    })
+    });
   }
 }

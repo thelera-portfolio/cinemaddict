@@ -1,4 +1,3 @@
-import {createElement} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createFilterMarkup = (filter, isActive) => {
@@ -17,7 +16,7 @@ const createFiltersTemplate = (filters) => {
   );
 };
 
-export default class Filter extends AbstractComponent{
+export default class Filter extends AbstractComponent {
   constructor(filters) {
     super();
     this._filters = filters;
@@ -27,4 +26,3 @@ export default class Filter extends AbstractComponent{
     return createFiltersTemplate(this._filters);
   }
 }
-

@@ -31,7 +31,7 @@ const createFilmCardTemplate = (card, commentsCount) => {
   );
 };
 
-export default class Card extends AbstractComponent{
+export default class Card extends AbstractComponent {
   constructor(card, commentsCount) {
     super();
     this._card = card;

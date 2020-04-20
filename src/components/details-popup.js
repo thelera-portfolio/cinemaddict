@@ -130,7 +130,7 @@ const createFilmDetailsPopupTemplate = (card, commentsCount) => {
   );
 };
 
-export default class DetailsPopup extends AbstractComponent{
+export default class DetailsPopup extends AbstractComponent {
   constructor(card, commentsCount) {
     super();
     this._card = card;
@@ -146,4 +146,3 @@ export default class DetailsPopup extends AbstractComponent{
       .addEventListener(`click`, handler);
   }
 }
-

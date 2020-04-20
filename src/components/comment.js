@@ -23,7 +23,7 @@ const createCommentsTemplate = (comment) => {
   );
 };
 
-export default class Comment extends AbstractComponent{
+export default class Comment extends AbstractComponent {
   constructor(comment) {
     super();
     this._comment = comment;
