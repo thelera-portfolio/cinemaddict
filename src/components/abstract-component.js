@@ -1,15 +1,16 @@
 import {createElement} from "../utils/render.js";
+import {ClassError} from "../utils/consts.js";
 
 export default class AbstractComponent {
   constructor() {
     if (new.target === AbstractComponent) {
-      throw new Error(`Can't instantiate AbstractComponent, only concrete one.`);
+      throw new Error(ClassError.CONSTRUCTOR);
     }
     this._element = null;
   }
 
   getTemplate() {
-    throw new Error(`Abstract method is not implemented: getTemplate`);
+    throw new Error(ClassError.GET_TEMPLATE);
   }
 
   getElement() {

@@ -7,6 +7,7 @@ import FilmCardComponent from "../components/card.js";
 import ShowMoreButtonComponent from "../components/show-more-button.js";
 import ExtraFilmComponent from "../components/extra-films.js";
 import FilmListComponent from "../components/films-list.js";
+import SortComponent, {SortType} from "../components/sort.js";
 import {getRandomIntegerNumber} from "../utils/common.js";
 
 const showComments = (containerElement, comments) => {
@@ -50,15 +51,41 @@ const renderCard = (filmsListContainerElement, card, comments) => {
   cardComponent.setClickHandler(cardClickHandler);
 };
 
+const sortFilms = (films, sortType) => {
+  let sortedFilms = [];
+  const filmsToSort = [...films];
+
+  switch (sortType) {
+    case SortType.DEFAULT:
+      sortedFilms = filmsToSort;
+      break;
+    case SortType.BY_RATING:
+      sortedFilms = filmsToSort.sort((a, b) => b.rating - a.rating);
+      break;
+    case SortType.BY_DATE:
+      sortedFilms = filmsToSort.sort((a, b) => b.releaseDate - a.releaseDate);
+      break;
+  }
+
+  return sortedFilms;
+};
+
 export default class PageController {
   constructor(container) {
     this._container = container;
     this._filmsListComponent = new FilmListComponent();
     this._noFilmsComponent = new NoFilmsComponent();
     this._showMoreButtonComponent = new ShowMoreButtonComponent();
+    this._sortComponent = new SortComponent();
   }
 
   renderFilms(films, comments) {
+    // отрисуем сортировку
+    const siteMainElement = document.querySelector(`.main`);
+    render(siteMainElement, this._sortComponent);
+
+    // отрисовываем фильмы
+    render(siteMainElement, this._container);
     render(this._container.getElement(), this._filmsListComponent, RenderPosition.AFTERBEGIN);
 
     if (FilmsCount.FILMS_COUNT === 0) {
@@ -67,25 +94,48 @@ export default class PageController {
     }
 
     const filmsListContainerElement = this._container.getElement().querySelector(`.films-list__container`);
-    const showingFilmsCount = FilmsCount.SHOWING_FILMS_COUNT_ON_START;
+    let showingFilmsCount = FilmsCount.SHOWING_FILMS_COUNT_ON_START;
+
     films.slice(0, showingFilmsCount).forEach((it, index) => renderCard(filmsListContainerElement, it, comments[index]));
 
     if (FilmsCount.FILMS_COUNT <= FilmsCount.SHOWING_FILMS_COUNT_ON_START) {
       return;
     }
 
+    // отрисуем кпонку
     render(this._filmsListComponent.getElement(), this._showMoreButtonComponent);
 
-    let previousFilmsCount = showingFilmsCount;
     const buttonClickHandler = () => {
-      films.slice(previousFilmsCount, previousFilmsCount + FilmsCount.SHOWING_FILMS_COUNT_BY_BUTTON).forEach((it, index) => renderCard(filmsListContainerElement, it, comments[index]));
+      let previousFilmsCount = showingFilmsCount;
+      showingFilmsCount = previousFilmsCount + FilmsCount.SHOWING_FILMS_COUNT_BY_BUTTON;
+
+      const sortedFilms = sortFilms(films, this._sortComponent.getSortType());
+
+      sortedFilms.slice(previousFilmsCount, showingFilmsCount).forEach((it, index) => renderCard(filmsListContainerElement, it, comments[index]));
       previousFilmsCount += FilmsCount.SHOWING_FILMS_COUNT_BY_BUTTON;
+
       if (previousFilmsCount >= films.length) {
         remove(this._showMoreButtonComponent);
       }
     };
 
     this._showMoreButtonComponent.setClickHandler(buttonClickHandler);
+
+    // сортировка
+    this._sortComponent.setSortTypeChangeHandler((sortType) => {
+      showingFilmsCount = FilmsCount.SHOWING_FILMS_COUNT_BY_BUTTON;
+      const sortedFilms = sortFilms(films, sortType);
+
+      filmsListContainerElement.innerHTML = ``;
+      remove(this._showMoreButtonComponent);
+
+      sortedFilms.slice(0, showingFilmsCount).forEach((it, index) => renderCard(filmsListContainerElement, it, comments[index]));
+      this._sortComponent.setActiveElement(sortType);
+      // отрисуем кпонку
+      render(this._filmsListComponent.getElement(), this._showMoreButtonComponent);
+
+      this._showMoreButtonComponent.setClickHandler(buttonClickHandler);
+    });
   }
 
   renderExtraFilms(films, comments) {
@@ -100,9 +150,5 @@ export default class PageController {
         renderCard(filmsListContainerElement, films[i], comments[i]);
       }
     });
-  }
-
-  clearFilmList() {
-    remove(this._filmsListComponent);
   }
 }

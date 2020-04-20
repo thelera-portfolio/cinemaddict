@@ -29,6 +29,7 @@ export const StatsData = {
 export const RenderPosition = {
   BEFOREEND: `beforeend`,
   AFTERBEGIN: `afterbegin`,
+  BEFORE: `before`,
 };
 
 export const COMMENTS_TO_SHOW = 5;
@@ -45,3 +46,8 @@ export const extraFilms = [
   `Top rated`,
   `Most commented`,
 ];
+
+export const ClassError = {
+  CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
+  GET_TEMPLATE: `Abstract method is not implemented: getTemplate`,
+};
