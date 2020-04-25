@@ -4,6 +4,7 @@ export const SortType = {
   DEFAULT: `default`,
   BY_DATE: `date`,
   BY_RATING: `rating`,
+  BY_COMMENTS: `comments`,
 };
 
 const createSortingTemplate = () =>
@@ -37,7 +38,7 @@ export default class Sorting extends AbstractComponent {
 
       const sortType = evt.target.dataset.sortType;
 
-      this._setActiveElement(sortType);
+      this.setActiveElement(sortType);
 
       if (this._currentSortType === sortType) {
         return;
@@ -49,7 +50,7 @@ export default class Sorting extends AbstractComponent {
     });
   }
 
-  _setActiveElement(sortType) {
+  setActiveElement(sortType) {
     const currentElement = this.getElement().querySelector(`[data-sort-type=${this._currentSortType}]`);
     const activeElement = this.getElement().querySelector(`[data-sort-type=${sortType}]`);
     currentElement.classList.remove(`sort__button--active`);

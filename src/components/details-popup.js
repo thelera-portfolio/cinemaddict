@@ -2,22 +2,24 @@
 import {formatDate} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
-const createControlMarkup = (control) => {
-  const {name} = control;
+const createButtonMarkup = (name, label, isChecked) => {
   return (
-    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}">
-    <label for="${name}" class="film-details__control-label film-details__control-label--${name}">Add to ${name}</label>`
+    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${isChecked ? `checked` : ``}>
+    <label for="${name}" class="film-details__control-label film-details__control-label--${name}">${label}</label>`
   );
 };
 
 const createFilmDetailsPopupTemplate = (card, commentsCount) => {
-  const {actors, age, controls, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
+  const {actors, age, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
   const {day, year} = formatDate(releaseDate);
   const formatter = new Intl.DateTimeFormat(`en-US`, {
     month: `long`
   });
   const formattedDate = `${day} ${formatter.format(releaseDate)} ${year}`;
-  const controlsTemplate = controls.map((it) => createControlMarkup(it)).join(`\n`);
+
+  const watchlistButton = createButtonMarkup(`watchlist`, `Add to watchlist`, card.controls.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(`watched`, `Already watched`, card.controls.isWatched);
+  const favouritesButton = createButtonMarkup(`favorite`, `Add to favourites`, card.controls.isFavourite);
 
   return (
     `<section class="film-details">
@@ -83,7 +85,9 @@ const createFilmDetailsPopupTemplate = (card, commentsCount) => {
           </div>
 
           <section class="film-details__controls">
-            ${controlsTemplate}
+            ${watchlistButton}
+            ${watchedButton}
+            ${favouritesButton}
           </section>
         </div>
 
@@ -143,6 +147,21 @@ export default class DetailsPopup extends AbstractComponent {
 
   setCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
+      .addEventListener(`click`, handler);
+  }
+
+  setAddToWatchlistClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, handler);
+  }
+
+  setMarkAsWatchedClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, handler);
+  }
+
+  setAddToFavouritesClickHandler(handler) {
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, handler);
   }
 }

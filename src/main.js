@@ -31,7 +31,7 @@ render(navigationComponent.getElement(), new FilterComponent(filters), RenderPos
 const filmsContainerComponent = new AllFilmsComponent();
 const pageController = new PageController(filmsContainerComponent);
 pageController.renderFilms(films, comments);
-pageController.renderExtraFilms(films, comments);
+pageController.renderExtraFilms();
 
 //отрисовываем страницу со статистикой
 //render(siteMainElement, new StatisticsComponent());

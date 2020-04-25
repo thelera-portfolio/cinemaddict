@@ -43,8 +43,14 @@ export const FilmsCount = {
 };
 
 export const extraFilms = [
-  `Top rated`,
-  `Most commented`,
+  {
+    title: `Top rated`,
+    sortType: `rating`,
+  },
+  {
+    title: `Most commented`,
+    sortType: `comments`,
+  },
 ];
 
 export const ClassError = {

@@ -1,19 +1,6 @@
 import {getRandomDate, getRandomIntegerNumber, getRandomFloatNumber, getRandomArrayItem, getSeveralRandomArrayItems} from "../utils/common.js";
 
 const FilmDataConstant = {
-  Controls: {
-    NAMES: [
-      `watchlist`,
-      `watched`,
-      `favorite`,
-    ],
-    CLASS_NAME: `film-card__controls-item`,
-    LABELS: [
-      `add-to-`,
-      `mark-as-`,
-      ``
-    ],
-  },
   COUNTRIES: [
     `Argentina`,
     `Australia`,
@@ -156,11 +143,6 @@ const FilmDataConstant = {
 
 const filmsData = {
   actors: FilmDataConstant.ACTORS,
-  controls: {
-    names: FilmDataConstant.Controls.NAMES,
-    className: FilmDataConstant.Controls.CLASS_NAME,
-    labels: FilmDataConstant.Controls.LABELS
-  },
   countries: FilmDataConstant.COUNTRIES,
   description: {
     string: FilmDataConstant.STRING,
@@ -211,24 +193,15 @@ const getFilmDescriptionFromString = (string, sentencesCount) => {
   return description;
 };
 
-const generateControls = () => {
-  const randomIndex = getRandomIntegerNumber(0, filmsData.controls.names.length - 1);
-
-  const controls = filmsData.controls.names.map((it, i) => ({
-    name: it,
-    isActive: i === randomIndex,
-    className: filmsData.controls.className,
-    label: filmsData.controls.labels[i]
-  }));
-
-  return controls;
-};
-
 export const generateCard = () => {
   return {
     actors: getSeveralRandomArrayItems(filmsData.actors.quantity, filmsData.actors.names),
     age: getRandomIntegerNumber(0, 18),
-    controls: generateControls(),
+    controls: {
+      isAddedToWatchlist: Math.random() > 0.5,
+      isWatched: Math.random() > 0.5,
+      isFavourite: Math.random() > 0.5,
+    },
     country: getRandomArrayItem(filmsData.countries),
     description: getFilmDescriptionFromString(filmsData.description.string, filmsData.description.sentencesCount),
     director: getRandomArrayItem(filmsData.directors),
