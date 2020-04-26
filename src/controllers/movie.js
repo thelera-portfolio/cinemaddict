@@ -1,4 +1,3 @@
-
 import DetailsPopupComponent from "../components/details-popup.js";
 import FilmCardComponent from "../components/card.js";
 import {ESC_BUTTON} from "../utils/consts.js";

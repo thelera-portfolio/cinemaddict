@@ -64,3 +64,10 @@ export const Emotions = {
   PUKE: `puke`,
   ANGRY: `angry`
 };
+
+export const SortType = {
+  DEFAULT: `default`,
+  BY_DATE: `date`,
+  BY_RATING: `rating`,
+  BY_COMMENTS: `comments`,
+};

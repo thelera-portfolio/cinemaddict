@@ -1,11 +1,11 @@
-import {FilmsCount, extraFilms, RenderPosition} from "../utils/consts.js";
-import {render, remove} from "../utils/render.js";
-import NoFilmsComponent from "../components/no-films.js";
-import ShowMoreButtonComponent from "../components/show-more-button.js";
+import {extraFilms, FilmsCount, RenderPosition, SortType} from "../utils/consts.js";
+import {remove, render} from "../utils/render.js";
 import ExtraFilmComponent from "../components/extra-films.js";
 import FilmListComponent from "../components/films-list.js";
-import SortComponent, {SortType} from "../components/sort.js";
 import MovieController from "./movie.js";
+import NoFilmsComponent from "../components/no-films.js";
+import ShowMoreButtonComponent from "../components/show-more-button.js";
+import SortComponent from "../components/sort.js";
 
 export default class PageController {
   constructor(container) {
@@ -15,11 +15,14 @@ export default class PageController {
     this._comments = [];
     this._showedFilmsControllers = [];
     this._showedExtraFilmsControllers = [];
+
     this._showingFilmsCount = FilmsCount.SHOWING_FILMS_COUNT_ON_START;
+
     this._filmsListComponent = new FilmListComponent();
     this._noFilmsComponent = new NoFilmsComponent();
     this._showMoreButtonComponent = new ShowMoreButtonComponent();
     this._sortComponent = new SortComponent();
+
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
   }
@@ -61,9 +64,7 @@ export default class PageController {
 
       const newSortedFilms = this._renderCards(filmsListContainerElement, sortedFilms);
       this._showedFilmsControllers = newSortedFilms;
-      this._sortComponent.setActiveElement(sortType);
 
-      // отрисуем кпонку
       this._renderShowMoreButton();
     });
   }
@@ -143,6 +144,7 @@ export default class PageController {
 
   _onViewChange() {
     this._showedFilmsControllers.forEach((it) => it.setDefaultView());
+    this._showedExtraFilmsControllers.forEach((it) => it.setDefaultView());
   }
 
   _getSortedFilms(films, sortType, from, to) {

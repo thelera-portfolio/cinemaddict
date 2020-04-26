@@ -34,7 +34,7 @@ const createEmojiMarkup = (emotion, isEmojiChecked) => {
       <img src="./images/emoji/${emotion}.png" width="30" height="30" alt="emoji">
     </label>`
   );
-}
+};
 
 const createEmojiTemplate = (emotions, checkedEmotion) => {
   return emotions.map((it) => createEmojiMarkup(it, it === checkedEmotion)).join(``);
@@ -194,7 +194,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
         createEmojiImageMarkup(Emotions.SMILE);
         this._emotion = Emotions.SMILE;
         this.rerender();
-    });
+      });
 
     this.getElement().querySelector(`[for=emoji-sleeping]`)
       .addEventListener(`click`, () => {
