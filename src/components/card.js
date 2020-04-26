@@ -8,9 +8,11 @@ const createButtonMarkup = (name, label, isActive = true) => {
   );
 };
 
-const createFilmCardTemplate = (card, commentsCount) => {
+const createFilmCardTemplate = (card, comments) => {
   const {description, duration, genres, image, rating, releaseDate, title} = card;
   const shortDescription = description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
+
+  const commentsCount = comments.length;
 
   const watchlistButton = createButtonMarkup(`add-to-watchlist`, `Add to watchlist`, card.controls.isAddedToWatchlist);
   const watchedButton = createButtonMarkup(`mark-as-watched`, `Mark as watched`, card.controls.isWatched);
@@ -38,14 +40,14 @@ const createFilmCardTemplate = (card, commentsCount) => {
 };
 
 export default class Card extends AbstractComponent {
-  constructor(card, commentsCount) {
+  constructor(card, comments) {
     super();
     this._card = card;
-    this._commentsCount = commentsCount;
+    this._comments = comments;
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._card, this._commentsCount);
+    return createFilmCardTemplate(this._card, this._comments);
   }
 
   setClickHandler(handler) {

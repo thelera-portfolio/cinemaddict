@@ -21,6 +21,7 @@ export default class PageController {
     this._showMoreButtonComponent = new ShowMoreButtonComponent();
     this._sortComponent = new SortComponent();
     this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
   }
 
   renderFilms(films, comments) {
@@ -108,7 +109,7 @@ export default class PageController {
 
   _renderCards(container, films) {
     return films.map((film) => {
-      const filmController = new MovieController(container, this._onDataChange);
+      const filmController = new MovieController(container, this._onDataChange, this._onViewChange);
       const commentsOfFilm = this._comments.find((comment) => film.id === comment.id);
       filmController.render(film, commentsOfFilm);
 
@@ -138,6 +139,10 @@ export default class PageController {
         it.render(newCard, commentsOfFilm);
       }
     });
+  }
+
+  _onViewChange() {
+    this._showedFilmsControllers.forEach((it) => it.setDefaultView());
   }
 
   _getSortedFilms(films, sortType, from, to) {

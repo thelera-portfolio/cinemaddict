@@ -57,3 +57,10 @@ export const ClassError = {
   CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
   GET_TEMPLATE: `Abstract method is not implemented: getTemplate`,
 };
+
+export const Emotions = {
+  SMILE: `smile`,
+  SLEEPING: `sleeping`,
+  PUKE: `puke`,
+  ANGRY: `angry`
+};
