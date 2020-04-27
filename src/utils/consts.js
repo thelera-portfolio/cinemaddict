@@ -55,15 +55,14 @@ export const extraFilms = [
 
 export const ClassError = {
   CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
-  GET_TEMPLATE: `Abstract method is not implemented: getTemplate`,
 };
 
-export const Emotions = {
-  SMILE: `smile`,
-  SLEEPING: `sleeping`,
-  PUKE: `puke`,
-  ANGRY: `angry`
-};
+export const Emotions = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
+];
 
 export const SortType = {
   DEFAULT: `default`,
@@ -71,3 +70,34 @@ export const SortType = {
   BY_RATING: `rating`,
   BY_COMMENTS: `comments`,
 };
+
+export const Buttons = {
+  WATCHLIST: {
+    name: `add-to-watchlist`,
+    label: `Add to watchlist`,
+  },
+  WATCHED: {
+    name: `mark-as-watched`,
+    label: `Mark as watched`,
+  },
+  FAVOURITE: {
+    name: `favorite`,
+    label: `Mark as favourite`,
+  },
+};
+
+export const PopupButtons = {
+  WATCHLIST: {
+    name: `watchlist`,
+    label: `Add to watchlist`,
+  },
+  WATCHED: {
+    name: `watched`,
+    label: `Already watched`,
+  },
+  FAVOURITE: {
+    name: `favorite`,
+    label: `Add to favourites`,
+  },
+};
+

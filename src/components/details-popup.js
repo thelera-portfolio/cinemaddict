@@ -1,7 +1,7 @@
 // подробная информация о фильме (поп-ап)
 import {formatDate} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {COMMENTS_TO_SHOW, Emotions} from "../utils/consts.js";
+import {COMMENTS_TO_SHOW, Emotions, PopupButtons} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
 
 const createCommentsMarkup = (comments) => {
@@ -49,9 +49,9 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
   });
   const formattedDate = `${day} ${formatter.format(releaseDate)} ${year}`;
 
-  const watchlistButton = createButtonMarkup(`watchlist`, `Add to watchlist`, card.controls.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(`watched`, `Already watched`, card.controls.isWatched);
-  const favouritesButton = createButtonMarkup(`favorite`, `Add to favourites`, card.controls.isFavourite);
+  const watchlistButton = createButtonMarkup(PopupButtons.WATCHLIST.name, PopupButtons.WATCHLIST.label, card.controls.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(PopupButtons.WATCHED.name, PopupButtons.WATCHED.label, card.controls.isWatched);
+  const favouritesButton = createButtonMarkup(PopupButtons.FAVOURITE.name, PopupButtons.FAVOURITE.label, card.controls.isFavourite);
 
   return (
     `<section class="film-details">
@@ -141,7 +141,7 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
               </label>
 
               <div class="film-details__emoji-list">
-                ${createEmojiTemplate(Object.values(Emotions), emotion)}
+                ${createEmojiTemplate(Emotions, emotion)}
               </div>
             </div>
           </section>
@@ -189,33 +189,14 @@ export default class DetailsPopup extends AbstractSmartComponent {
   }
 
   _subscribeOnEvents() {
-    this.getElement().querySelector(`[for=emoji-smile]`)
-      .addEventListener(`click`, () => {
-        createEmojiImageMarkup(Emotions.SMILE);
-        this._emotion = Emotions.SMILE;
-        this.rerender();
-      });
-
-    this.getElement().querySelector(`[for=emoji-sleeping]`)
-      .addEventListener(`click`, () => {
-        createEmojiImageMarkup(Emotions.SLEEPING);
-        this._emotion = Emotions.SLEEPING;
-        this.rerender();
-      });
-
-    this.getElement().querySelector(`[for=emoji-puke]`)
-      .addEventListener(`click`, () => {
-        createEmojiImageMarkup(Emotions.PUKE);
-        this._emotion = Emotions.PUKE;
-        this.rerender();
-      });
-
-    this.getElement().querySelector(`[for=emoji-angry]`)
-      .addEventListener(`click`, () => {
-        createEmojiImageMarkup(Emotions.ANGRY);
-        this._emotion = Emotions.ANGRY;
-        this.rerender();
-      });
+    Emotions.forEach((it) => {
+      this.getElement().querySelector(`[for=emoji-${it}]`)
+        .addEventListener(`click`, () => {
+          createEmojiImageMarkup(it);
+          this._emotion = it;
+          this.rerender();
+        });
+    });
   }
 
   recoveryListeners() {

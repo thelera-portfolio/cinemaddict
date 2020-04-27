@@ -1,6 +1,7 @@
 // карточка фильма
 import {MAX_DESCRIPTION_LENGTH} from "../mock/card.js";
 import AbstractComponent from "./abstract-component.js";
+import { Buttons } from "../utils/consts.js";
 
 const createButtonMarkup = (name, label, isActive = true) => {
   return (
@@ -14,9 +15,9 @@ const createFilmCardTemplate = (card, comments) => {
 
   const commentsCount = comments.length;
 
-  const watchlistButton = createButtonMarkup(`add-to-watchlist`, `Add to watchlist`, card.controls.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(`mark-as-watched`, `Mark as watched`, card.controls.isWatched);
-  const favouritesButton = createButtonMarkup(`favorite`, `Mark as favourite`, card.controls.isFavourite);
+  const watchlistButton = createButtonMarkup(Buttons.WATCHLIST.name, Buttons.WATCHLIST.label, card.controls.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(Buttons.WATCHED.name, Buttons.WATCHED.label, card.controls.isWatched);
+  const favouritesButton = createButtonMarkup(Buttons.FAVOURITE.name, Buttons.FAVOURITE.label, card.controls.isFavourite);
 
   return (
     `<article class="film-card">
