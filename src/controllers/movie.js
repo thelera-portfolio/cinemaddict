@@ -52,6 +52,7 @@ export default class MovieController {
       render(siteBodyElement, this._popupComponent);
 
       this._subscribePopupOnEvents();
+      this._popupComponent.subscribeOnEvents();
       this._popupComponent.setCloseButtonClickHandler(closeButtonClickHandler);
       document.addEventListener(`keydown`, escKeyDownHandler);
     };
@@ -61,31 +62,18 @@ export default class MovieController {
 
     // кнопки watchlist, watched, favourite
     this._cardComponent.setAddToWatchlistClickHandler(() => {
-      this._onDataChange(this.card, Object.assign({}, this.card, {
-        controls: {
-          isAddedToWatchlist: !this.card.controls.isAddedToWatchlist,
-          isWatched: this.card.controls.isWatched,
-          isFavourite: this.card.controls.isFavourite,
-        },
-      }));
+      const changedControls = Object.assign(this.card.controls, {isAddedToWatchlist: !this.card.controls.isAddedToWatchlist});
+      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
     });
+
     this._cardComponent.setMarkAsWatchedClickHandler(() => {
-      this._onDataChange(this.card, Object.assign({}, this.card, {
-        controls: {
-          isAddedToWatchlist: this.card.controls.isAddedToWatchlist,
-          isWatched: !this.card.controls.isWatched,
-          isFavourite: this.card.controls.isFavourite,
-        },
-      }));
+      const changedControls = Object.assign(this.card.controls, {isWatched: !this.card.controls.isWatched});
+      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
     });
+
     this._cardComponent.setAddToFavouritesClickHandler(() => {
-      this._onDataChange(this.card, Object.assign({}, this.card, {
-        controls: {
-          isAddedToWatchlist: this.card.controls.isAddedToWatchlist,
-          isWatched: this.card.controls.isWatched,
-          isFavourite: !this.card.controls.isFavourite,
-        },
-      }));
+      const changedControls = Object.assign(this.card.controls, {isFavourite: !this.card.controls.isFavourite});
+      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
     });
   }
 
@@ -95,31 +83,16 @@ export default class MovieController {
 
   _subscribePopupOnEvents() {
     this._popupComponent.setAddToWatchlistClickHandler(() => {
-      this._onDataChange(this.card, Object.assign({}, this.card, {
-        controls: {
-          isAddedToWatchlist: !this.card.controls.isAddedToWatchlist,
-          isWatched: this.card.controls.isWatched,
-          isFavourite: this.card.controls.isFavourite,
-        },
-      }));
+      const changedControls = Object.assign(this.card.controls, {isAddedToWatchlist: !this.card.controls.isAddedToWatchlist});
+      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
     });
     this._popupComponent.setMarkAsWatchedClickHandler(() => {
-      this._onDataChange(this.card, Object.assign({}, this.card, {
-        controls: {
-          isAddedToWatchlist: this.card.controls.isAddedToWatchlist,
-          isWatched: !this.card.controls.isWatched,
-          isFavourite: this.card.controls.isFavourite,
-        },
-      }));
+      const changedControls = Object.assign(this.card.controls, {isWatched: !this.card.controls.isWatched});
+      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
     });
     this._popupComponent.setAddToFavouritesClickHandler(() => {
-      this._onDataChange(this.card, Object.assign({}, this.card, {
-        controls: {
-          isAddedToWatchlist: this.card.controls.isAddedToWatchlist,
-          isWatched: this.card.controls.isWatched,
-          isFavourite: !this.card.controls.isFavourite,
-        },
-      }));
+      const changedControls = Object.assign(this.card.controls, {isFavourite: !this.card.controls.isFavourite});
+      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
     });
   }
 }

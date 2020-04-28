@@ -157,7 +157,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._card = card;
     this._comments = comments;
     this._emotion = null;
-    this._subscribeOnEvents();
+    this.subscribeOnEvents();
   }
 
   getTemplate() {
@@ -188,7 +188,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     super.rerender();
   }
 
-  _subscribeOnEvents() {
+  subscribeOnEvents() {
     Emotions.forEach((it) => {
       this.getElement().querySelector(`[for=emoji-${it}]`)
         .addEventListener(`click`, () => {
@@ -200,6 +200,6 @@ export default class DetailsPopup extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this._subscribeOnEvents();
+    this.subscribeOnEvents();
   }
 }
