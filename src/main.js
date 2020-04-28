@@ -17,25 +17,6 @@ const siteHeaderElement = document.querySelector(`.header`);
 const films = generateCards(FilmsCount.FILMS_COUNT);
 const comments = generateComments(FilmsCount.FILMS_COUNT);
 
-const sortFilms = (films, sortType) => {
-  let sortedFilms = [];
-  const filmsToSort = [...films];
-
-  switch (sortType) {
-    case SortType.DEFAULT:
-      sortedFilms = filmsToSort;
-      break;
-    case SortType.BY_RATING:
-      sortedFilms = filmsToSort.sort((a, b) => b.rating - a.rating);
-      break;
-    case SortType.BY_DATE:
-      sortedFilms = filmsToSort.sort((a, b) => b.releaseDate - a.releaseDate);
-      break;
-  }
-
-  return sortedFilms;
-};
-
 // отрисовываем звание пользователя
 render(siteHeaderElement, new RatingComponent());
 
@@ -46,26 +27,11 @@ const navigationComponent = new NavigationComponent();
 render(siteMainElement, navigationComponent);
 render(navigationComponent.getElement(), new FilterComponent(filters), RenderPosition.AFTERBEGIN);
 
-// отрисовываем сортировку
-const sortComponent = new SortComponent();
+// отрисовываем фильмы
 const filmsContainerComponent = new AllFilmsComponent();
 const pageController = new PageController(filmsContainerComponent);
-
-render(siteMainElement, sortComponent);
-sortComponent.setSortTypeChangeHandler((sortType) => {
-  const sortedFilms = sortFilms(films, sortType);
-  pageController.clearFilmList();
-  pageController.renderFilms(sortedFilms, comments);
-});
-
-//отрисовываем фильмы
-render(siteMainElement, filmsContainerComponent);
-
 pageController.renderFilms(films, comments);
-
-
-// отрисовываем секции с экстра - фильмами
-pageController.renderExtraFilms(films, comments);
+pageController.renderExtraFilms();
 
 //отрисовываем страницу со статистикой
-render(siteMainElement, new StatisticsComponent());
+//render(siteMainElement, new StatisticsComponent());

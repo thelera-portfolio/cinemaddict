@@ -26,3 +26,7 @@ export const formatDate = (date) => {
 
   return {day, month, year, hours, minutes};
 };
+
+export const getError = (method) => {
+  return `Abstract method is not implemented: ${method}`;
+};

@@ -1,10 +1,5 @@
 import AbstractComponent from "./abstract-component.js";
-
-export const SortType = {
-  BY_DATE: `by-date`,
-  BY_RATING: `by-rating`,
-  DEFAULT: `default`
-};
+import {SortType} from "../utils/consts.js";
 
 const createSortingTemplate = () =>
   `<ul class="sort">
@@ -18,6 +13,7 @@ export default class Sorting extends AbstractComponent {
     super();
     this._currentSortType = SortType.DEFAULT;
   }
+
   getTemplate() {
     return createSortingTemplate();
   }
@@ -36,6 +32,8 @@ export default class Sorting extends AbstractComponent {
 
       const sortType = evt.target.dataset.sortType;
 
+      this.setActiveElement(sortType);
+
       if (this._currentSortType === sortType) {
         return;
       }
@@ -44,5 +42,12 @@ export default class Sorting extends AbstractComponent {
 
       handler(this._currentSortType);
     });
+  }
+
+  setActiveElement(sortType) {
+    const currentElement = this.getElement().querySelector(`[data-sort-type=${this._currentSortType}]`);
+    const activeElement = this.getElement().querySelector(`[data-sort-type=${sortType}]`);
+    currentElement.classList.remove(`sort__button--active`);
+    activeElement.classList.add(`sort__button--active`);
   }
 }
