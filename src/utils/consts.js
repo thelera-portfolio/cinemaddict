@@ -55,6 +55,7 @@ export const extraFilms = [
 
 export const ClassError = {
   CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
+  NOT_IMPLEMENTED: (method) => `Abstract method is not implemented: ${method}`,
 };
 
 export const Emotions = [

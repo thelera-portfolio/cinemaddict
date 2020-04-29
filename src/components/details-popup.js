@@ -49,9 +49,9 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
   });
   const formattedDate = `${day} ${formatter.format(releaseDate)} ${year}`;
 
-  const watchlistButton = createButtonMarkup(PopupButtons.WATCHLIST.name, PopupButtons.WATCHLIST.label, card.controls.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(PopupButtons.WATCHED.name, PopupButtons.WATCHED.label, card.controls.isWatched);
-  const favouritesButton = createButtonMarkup(PopupButtons.FAVOURITE.name, PopupButtons.FAVOURITE.label, card.controls.isFavourite);
+  const watchlistButton = createButtonMarkup(PopupButtons.WATCHLIST.name, PopupButtons.WATCHLIST.label, card.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(PopupButtons.WATCHED.name, PopupButtons.WATCHED.label, card.isWatched);
+  const favouritesButton = createButtonMarkup(PopupButtons.FAVOURITE.name, PopupButtons.FAVOURITE.label, card.isFavourite);
 
   return (
     `<section class="film-details">
@@ -157,6 +157,11 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._card = card;
     this._comments = comments;
     this._emotion = null;
+    this._closeButtonHandler = null;
+    this._addToWatchlistClickHandler = null;
+    this._markAsWatchedClickHandler = null;
+    this._addToFavouritesClickHandler = null;
+
     this.subscribeOnEvents();
   }
 
@@ -167,21 +172,29 @@ export default class DetailsPopup extends AbstractSmartComponent {
   setCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
+
+    this._closeButtonHandler = handler;
   }
 
   setAddToWatchlistClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, handler);
+
+    this._addToWatchlistClickHandler = handler;
   }
 
   setMarkAsWatchedClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watched`)
       .addEventListener(`click`, handler);
+
+    this._markAsWatchedClickHandler = handler;
   }
 
   setAddToFavouritesClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, handler);
+
+    this._addToFavouritesClickHandler = handler;
   }
 
   rerender() {
@@ -189,17 +202,25 @@ export default class DetailsPopup extends AbstractSmartComponent {
   }
 
   subscribeOnEvents() {
-    Emotions.forEach((it) => {
-      this.getElement().querySelector(`[for=emoji-${it}]`)
-        .addEventListener(`click`, () => {
-          createEmojiImageMarkup(it);
-          this._emotion = it;
+      Array.from(this.getElement()
+      .querySelectorAll(`.film-details__emoji-label`))
+      .forEach((emojiLabel) => {
+        emojiLabel.addEventListener(`click`, (evt) => {
+          evt.preventDefault();
+          const emotion = emojiLabel.getAttribute(`for`).substring(`emoji-`.length);
+          createEmojiImageMarkup(emotion);
+          this._emotion = emotion;
           this.rerender();
         });
-    });
+      })
   }
 
   recoveryListeners() {
     this.subscribeOnEvents();
+
+    this.setCloseButtonClickHandler(this._closeButtonHandler);
+    this.setAddToWatchlistClickHandler(this._addToWatchlistClickHandler);
+    this.setMarkAsWatchedClickHandler(this._markAsWatchedClickHandler);
+    this.setAddToFavouritesClickHandler(this._addToFavouritesClickHandler);
   }
 }

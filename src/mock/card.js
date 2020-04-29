@@ -197,11 +197,6 @@ export const generateCard = () => {
   return {
     actors: getSeveralRandomArrayItems(filmsData.actors.quantity, filmsData.actors.names),
     age: getRandomIntegerNumber(0, 18),
-    controls: {
-      isAddedToWatchlist: Math.random() > 0.5,
-      isWatched: Math.random() > 0.5,
-      isFavourite: Math.random() > 0.5,
-    },
     country: getRandomArrayItem(filmsData.countries),
     description: getFilmDescriptionFromString(filmsData.description.string, filmsData.description.sentencesCount),
     director: getRandomArrayItem(filmsData.directors),
@@ -212,6 +207,9 @@ export const generateCard = () => {
     rating: getRandomFloatNumber(filmsData.maxFilmRating),
     releaseDate: getRandomDate(),
     writers: getSeveralRandomArrayItems(filmsData.writers.quantity, filmsData.writers.names),
+    isAddedToWatchlist: Math.random() > 0.5,
+    isWatched: Math.random() > 0.5,
+    isFavourite: Math.random() > 0.5,
   };
 };
 
