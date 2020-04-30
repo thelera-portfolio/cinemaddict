@@ -11,6 +11,8 @@ export default class MovieController {
     this._cardComponent = null;
     this._popupComponent = null;
     this.card = null;
+
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
   }
 
   render(card, comments) {
@@ -25,7 +27,7 @@ export default class MovieController {
 
     const closeButtonClickHandler = () => {
       remove(this._popupComponent);
-      document.removeEventListener(`keydown`, escKeyDownHandler);
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
     };
 
     // отрисуем карточку фильма
@@ -39,14 +41,6 @@ export default class MovieController {
       render(this._container, this._cardComponent);
     }
 
-    // обработчики
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === ESC_BUTTON) {
-        remove(this._popupComponent);
-        document.removeEventListener(`keydown`, escKeyDownHandler);
-      }
-    };
-
     const cardClickHandler = () => {
       this._onViewChange();
       render(siteBodyElement, this._popupComponent);
@@ -54,7 +48,7 @@ export default class MovieController {
       this._subscribePopupOnEvents();
       this._popupComponent.subscribeOnEvents();
       this._popupComponent.setCloseButtonClickHandler(closeButtonClickHandler);
-      document.addEventListener(`keydown`, escKeyDownHandler);
+      document.addEventListener(`keydown`, this._escKeyDownHandler);
     };
 
     // показ попапа с подробной информацией о фильме
@@ -67,6 +61,19 @@ export default class MovieController {
   setDefaultView() {
     remove(this._popupComponent);
   }
+
+  destroy() {
+    remove(this._cardComponent);
+    remove(this._popupComponent);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  _escKeyDownHandler(evt) {
+    if (evt.key === ESC_BUTTON) {
+      remove(this._popupComponent);
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    }
+  };
 
   _subscribePopupOnEvents() {
     this._popupComponent.setAddToWatchlistClickHandler((evt) => {

@@ -102,3 +102,10 @@ export const PopupButtons = {
   },
 };
 
+export const FilterType = {
+  ALL: `All movies`,
+  WATCHLIST: `Watchlist`,
+  HISTORY: `History`,
+  FAVOURITES: `Favorites`,
+};
+
