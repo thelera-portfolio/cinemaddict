@@ -9,11 +9,11 @@ import SortComponent from "../components/sort.js";
 import FilmListContainerComponent from "../components/film-list-container.js";
 
 export default class PageController {
-  constructor(container, filmsModel, comments) {
+  constructor(container, filmsModel, commentsModel) {
     this._container = container;
     this._filmsModel = filmsModel;
+    this._commentsModel = commentsModel;
 
-    this._comments = comments;
     this._showedFilmsControllers = [];
     this._showedExtraFilmsControllers = [];
 
@@ -26,6 +26,7 @@ export default class PageController {
     this._sortComponent = new SortComponent();
 
     this._onDataChange = this._onDataChange.bind(this);
+    this._onCommentChange = this._onCommentChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
@@ -39,7 +40,7 @@ export default class PageController {
     const films = this._filmsModel.getFilms();
 
     films.forEach((it, index) => (it.id = index));
-    this._comments.forEach((it, index) => (it.id = index));
+    this._commentsModel.getComments().forEach((it, index) => (it.id = index));
 
     // отрисуем сортировку
     const siteMainElement = document.querySelector(`.main`);
@@ -67,7 +68,7 @@ export default class PageController {
       render(extraFilmsListComponent.getElement(), filmListContainerComponent);
 
       const filmsToRender = this._getSortedFilms(this._filmsModel.getFilms(), it.sortType, 0, FilmsCount.EXTRA_FILMS_COUNT);
-      
+
       this._renderFilms(filmListContainerComponent, filmsToRender);
     });
   }
@@ -82,7 +83,7 @@ export default class PageController {
     this._showedFilmsControllers = [];
   }
 
-  _updateFilms (count) {
+  _updateFilms(count) {
     this._removeFilms();
 
     this._renderFilms(this._filmsListContainerComponent, this._filmsModel.getFilms().slice(0, count));
@@ -133,9 +134,9 @@ export default class PageController {
 
   _renderCards(container, films) {
     return films.map((film) => {
-      const filmController = new MovieController(container, this._onDataChange, this._onViewChange);
-      const commentsOfFilm = this._comments.find((comment) => film.id === comment.id);
-      filmController.render(film, commentsOfFilm);
+      const filmController = new MovieController(container, this._onDataChange, this._onViewChange, this._onCommentChange);
+
+      this._renderCard(filmController, film);
 
       return filmController;
     });
@@ -148,16 +149,33 @@ export default class PageController {
       const oldFilmController = this._showedFilmsControllers.find((it) => it.card === oldCard);
       const oldExtraFilmController = this._showedExtraFilmsControllers.find((it) => it.card === oldCard);
 
-      const commentsOfFilm = this._comments.find((comment) => newCard.id === comment.id);
+      this._renderCard(oldFilmController, newCard);
 
       if (oldFilmController) {
-        oldFilmController.render(newCard, commentsOfFilm);
+        this._renderCard(oldFilmController, newCard);
       }
 
       if (oldExtraFilmController) {
-        oldExtraFilmController.render(newCard, commentsOfFilm);
+        this._renderCard(oldExtraFilmController, newCard);
       }
     }
+  }
+
+  _onCommentChange(card, oldComment, newComment) {
+    if (newComment === null) { // удалить
+      this._commentsModel.removeComment(card.id, oldComment.id);
+    } else if (oldComment === null) { // добавить
+      this._commentsModel.addComment(card.id, newComment);
+    }
+
+    const cardController = this._showedFilmsControllers.find((controller) => controller.card === card);
+
+    this._renderCard(cardController, card);
+  }
+
+  _renderCard(cardController, card) {
+    const commentsOfFilm = this._commentsModel.getComments().find((comment) => card.id === comment.id);
+    cardController.render(card, commentsOfFilm);
   }
 
   _onViewChange() {
@@ -177,7 +195,7 @@ export default class PageController {
         sortedFilms = filmsToSort.sort((a, b) => b.rating - a.rating);
         break;
       case SortType.BY_COMMENTS:
-        const commentsToSort = [...this._comments];
+        const commentsToSort = [...this._commentsModel.getComments()];
         const sortedComments = commentsToSort.sort((a, b) => b.length - a.length);
         sortedFilms = sortedComments.map((comment) => {
           return filmsToSort.find((film) => film.id === comment.id);

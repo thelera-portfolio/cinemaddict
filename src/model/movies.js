@@ -17,7 +17,7 @@ export default class Films {
   getAllFilms() {
     return this._films;
   }
-  
+
   setFilms(films) {
     this._films = films;
 
@@ -42,7 +42,7 @@ export default class Films {
   }
 
   updateFilm(id, film) {
-    const index = this._films.findIndex((film) => film.id === id);
+    const index = this._films.findIndex((it) => it.id === id);
 
     if (index === -1) {
       return false;

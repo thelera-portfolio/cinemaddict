@@ -2,7 +2,7 @@ import {formatDate} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 
 const createCommentsTemplate = (comment) => {
-  const {author, date, emotion, message} = comment;
+  const {author, date, emotion, id, message} = comment;
   const {day, month, year, hours, minutes} = formatDate(date);
   const formattedDate = `${year}/${month}/${day} ${hours}:${minutes}`;
 
@@ -16,7 +16,7 @@ const createCommentsTemplate = (comment) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${formattedDate}</span>
-          <button class="film-details__comment-delete">Delete</button>
+          <button data-id="${id}" class="film-details__comment-delete">Delete</button>
         </p>
       </div>
     </li>`

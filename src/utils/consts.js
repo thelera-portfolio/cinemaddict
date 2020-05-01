@@ -14,10 +14,8 @@ export const MONTH_NAMES = [
 ];
 
 export const RANKS = [
-  `Sci-Fighter`,
-  `King Of Drama`,
-  `Comic`,
-  `Cartoon lover`,
+  `Novice`,
+  `Fan`,
   `Movie Buff`
 ];
 
@@ -32,7 +30,6 @@ export const RenderPosition = {
   BEFORE: `before`,
 };
 
-export const COMMENTS_TO_SHOW = 5;
 export const ESC_BUTTON = `Escape`;
 
 export const FilmsCount = {

@@ -34,7 +34,7 @@ export default class Filter extends AbstractComponent {
       evt.preventDefault();
 
       this._currentFilterType = evt.target.textContent;
-      handler(this._currentFilterType.split(' ')[0]);
-    })
+      handler(this._currentFilterType.split(` `)[0]);
+    });
   }
 }

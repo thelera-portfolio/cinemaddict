@@ -1,13 +1,13 @@
 // подробная информация о фильме (поп-ап)
-import {formatDate} from "../utils/common.js";
+import {getRandomArrayItem, formatDate} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {COMMENTS_TO_SHOW, Emotions, PopupButtons} from "../utils/consts.js";
+import {Emotions, PopupButtons} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
+import {commentsData} from "../mock/comment.js";
 
 const createCommentsMarkup = (comments) => {
   let markUp = ``;
-  const commentsToShow = COMMENTS_TO_SHOW <= comments.length ? COMMENTS_TO_SHOW : comments.length;
-  for (let i = 0; i < commentsToShow; i++) {
+  for (let i = 0; i < comments.length; i++) {
     markUp = markUp.concat(new CommentsComponent(comments[i]).getTemplate());
   }
   return markUp;
@@ -157,12 +157,15 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._card = card;
     this._comments = comments;
     this._emotion = null;
+
     this._closeButtonHandler = null;
     this._addToWatchlistClickHandler = null;
     this._markAsWatchedClickHandler = null;
     this._addToFavouritesClickHandler = null;
+    this._setDeleteCommentClickHandler = null;
+    this._setNewCommentSubmitHandler = null;
 
-    this.subscribeOnEvents();
+    this.setEmotionClickHandler();
   }
 
   getTemplate() {
@@ -197,30 +200,68 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._addToFavouritesClickHandler = handler;
   }
 
+  setDeleteCommentClickHandler(handler) {
+    Array.from(this.getElement()
+    .querySelectorAll(`.film-details__comment-delete`))
+    .forEach((comment) => {
+      comment.addEventListener(`click`, handler);
+    });
+
+    this._setDeleteCommentClickHandler = handler;
+  }
+
+  setNewCommentSubmitHandler(handler) {
+    this.getElement()
+    .querySelector(`.film-details__comment-input`)
+    .addEventListener(`keydown`, (evt) => {
+      if (evt.key === `Enter`) {
+        const commentMessage = evt.target.value;
+        if (this._emotion) {
+          const newComment = this._createNewComment(commentMessage, this._emotion);
+          handler(newComment);
+        }
+      }
+    });
+
+    this._setNewCommentSubmitHandler = handler;
+  }
+
   rerender() {
     super.rerender();
   }
 
-  subscribeOnEvents() {
-      Array.from(this.getElement()
-      .querySelectorAll(`.film-details__emoji-label`))
-      .forEach((emojiLabel) => {
-        emojiLabel.addEventListener(`click`, (evt) => {
-          evt.preventDefault();
-          const emotion = emojiLabel.getAttribute(`for`).substring(`emoji-`.length);
-          createEmojiImageMarkup(emotion);
-          this._emotion = emotion;
-          this.rerender();
-        });
-      })
+  setEmotionClickHandler() {
+    Array.from(this.getElement()
+    .querySelectorAll(`.film-details__emoji-label`))
+    .forEach((emojiLabel) => {
+      emojiLabel.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const emotion = emojiLabel.getAttribute(`for`).substring(`emoji-`.length);
+        createEmojiImageMarkup(emotion);
+        this._emotion = emotion;
+
+        this.rerender();
+      });
+    });
   }
 
   recoveryListeners() {
-    this.subscribeOnEvents();
-
+    this.setEmotionClickHandler();
     this.setCloseButtonClickHandler(this._closeButtonHandler);
     this.setAddToWatchlistClickHandler(this._addToWatchlistClickHandler);
     this.setMarkAsWatchedClickHandler(this._markAsWatchedClickHandler);
     this.setAddToFavouritesClickHandler(this._addToFavouritesClickHandler);
+    this.setDeleteCommentClickHandler(this._setDeleteCommentClickHandler);
+    this.setNewCommentSubmitHandler(this._setNewCommentSubmitHandler);
+  }
+
+  _createNewComment(message, emotion) {
+    return {
+      id: String(new Date() + Math.random()),
+      author: getRandomArrayItem(commentsData.authors),
+      date: new Date(),
+      emotion,
+      message,
+    };
   }
 }
