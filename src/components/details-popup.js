@@ -1,13 +1,14 @@
-// подробная информация о фильме (поп-ап)
-import {formatDate} from "../utils/common.js";
+import {fromMinutesToHours, getRandomArrayItem} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {COMMENTS_TO_SHOW, Emotions, PopupButtons} from "../utils/consts.js";
+import {Emotions, PopupButtons} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
+import {commentsData} from "../mock/comment.js";
+import {encode} from "he";
+import moment from "moment";
 
 const createCommentsMarkup = (comments) => {
   let markUp = ``;
-  const commentsToShow = COMMENTS_TO_SHOW <= comments.length ? COMMENTS_TO_SHOW : comments.length;
-  for (let i = 0; i < commentsToShow; i++) {
+  for (let i = 0; i < comments.length; i++) {
     markUp = markUp.concat(new CommentsComponent(comments[i]).getTemplate());
   }
   return markUp;
@@ -41,17 +42,16 @@ const createEmojiTemplate = (emotions, checkedEmotion) => {
 };
 
 const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
-  const {actors, age, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
-  const {day, year} = formatDate(releaseDate);
-  const commentsCount = comments.length;
-  const formatter = new Intl.DateTimeFormat(`en-US`, {
-    month: `long`
-  });
-  const formattedDate = `${day} ${formatter.format(releaseDate)} ${year}`;
+  const {actors, age, country, description, director, duration: durationInMinutes, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
 
-  const watchlistButton = createButtonMarkup(PopupButtons.WATCHLIST.name, PopupButtons.WATCHLIST.label, card.controls.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(PopupButtons.WATCHED.name, PopupButtons.WATCHED.label, card.controls.isWatched);
-  const favouritesButton = createButtonMarkup(PopupButtons.FAVOURITE.name, PopupButtons.FAVOURITE.label, card.controls.isFavourite);
+  const commentsCount = comments.length;
+
+  const filmReleaseDate = moment(releaseDate).format(`DD MMMM YYYY`);
+  const duration = fromMinutesToHours(durationInMinutes);
+
+  const watchlistButton = createButtonMarkup(PopupButtons.WATCHLIST.name, PopupButtons.WATCHLIST.label, card.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(PopupButtons.WATCHED.name, PopupButtons.WATCHED.label, card.isWatched);
+  const favouritesButton = createButtonMarkup(PopupButtons.FAVOURITE.name, PopupButtons.FAVOURITE.label, card.isFavourite);
 
   return (
     `<section class="film-details">
@@ -94,7 +94,7 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${formattedDate}</td>
+                  <td class="film-details__cell">${filmReleaseDate}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
@@ -157,7 +157,15 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._card = card;
     this._comments = comments;
     this._emotion = null;
-    this.subscribeOnEvents();
+
+    this._closeButtonHandler = null;
+    this._addToWatchlistClickHandler = null;
+    this._markAsWatchedClickHandler = null;
+    this._addToFavouritesClickHandler = null;
+    this._setDeleteCommentClickHandler = null;
+    this._setNewCommentSubmitHandler = null;
+
+    this.setEmotionClickHandler();
   }
 
   getTemplate() {
@@ -167,39 +175,93 @@ export default class DetailsPopup extends AbstractSmartComponent {
   setCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
+
+    this._closeButtonHandler = handler;
   }
 
   setAddToWatchlistClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watchlist`)
       .addEventListener(`click`, handler);
+
+    this._addToWatchlistClickHandler = handler;
   }
 
   setMarkAsWatchedClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--watched`)
       .addEventListener(`click`, handler);
+
+    this._markAsWatchedClickHandler = handler;
   }
 
   setAddToFavouritesClickHandler(handler) {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, handler);
+
+    this._addToFavouritesClickHandler = handler;
+  }
+
+  setDeleteCommentClickHandler(handler) {
+    Array.from(this.getElement()
+    .querySelectorAll(`.film-details__comment-delete`))
+    .forEach((comment) => {
+      comment.addEventListener(`click`, handler);
+    });
+
+    this._setDeleteCommentClickHandler = handler;
+  }
+
+  setNewCommentSubmitHandler(handler) {
+    this.getElement()
+    .querySelector(`.film-details__comment-input`)
+    .addEventListener(`keydown`, (evt) => {
+      if (evt.key === `Enter`) {
+        const commentMessage = encode(evt.target.value);
+        if (this._emotion) {
+          const newComment = this._createNewComment(commentMessage, this._emotion);
+          handler(newComment);
+        }
+      }
+    });
+
+    this._setNewCommentSubmitHandler = handler;
   }
 
   rerender() {
     super.rerender();
   }
 
-  subscribeOnEvents() {
-    Emotions.forEach((it) => {
-      this.getElement().querySelector(`[for=emoji-${it}]`)
-        .addEventListener(`click`, () => {
-          createEmojiImageMarkup(it);
-          this._emotion = it;
-          this.rerender();
-        });
+  setEmotionClickHandler() {
+    Array.from(this.getElement()
+    .querySelectorAll(`.film-details__emoji-label`))
+    .forEach((emojiLabel) => {
+      emojiLabel.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        const emotion = emojiLabel.getAttribute(`for`).substring(`emoji-`.length);
+        createEmojiImageMarkup(emotion);
+        this._emotion = emotion;
+
+        this.rerender();
+      });
     });
   }
 
   recoveryListeners() {
-    this.subscribeOnEvents();
+    this.setEmotionClickHandler();
+    this.setCloseButtonClickHandler(this._closeButtonHandler);
+    this.setAddToWatchlistClickHandler(this._addToWatchlistClickHandler);
+    this.setMarkAsWatchedClickHandler(this._markAsWatchedClickHandler);
+    this.setAddToFavouritesClickHandler(this._addToFavouritesClickHandler);
+    this.setDeleteCommentClickHandler(this._setDeleteCommentClickHandler);
+    this.setNewCommentSubmitHandler(this._setNewCommentSubmitHandler);
+  }
+
+  _createNewComment(message, emotion) {
+    return {
+      id: String(new Date() + Math.random()),
+      author: getRandomArrayItem(commentsData.authors),
+      date: new Date(),
+      emotion,
+      message,
+    };
   }
 }

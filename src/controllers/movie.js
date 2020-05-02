@@ -4,95 +4,129 @@ import {ESC_BUTTON} from "../utils/consts.js";
 import {render, remove, replace} from "../utils/render.js";
 
 export default class MovieController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, onDataChange, onViewChange, onCommentDataChange) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
+    this._onCommentDataChange = onCommentDataChange;
+
     this._cardComponent = null;
     this._popupComponent = null;
-    this.card = null;
+    this._card = null;
+    this._comments = null;
+
+    this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+    this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
   }
 
   render(card, comments) {
-    this.card = card;
+    this._card = card;
+    this._comments = comments;
+
     const oldCardComponent = this._cardComponent;
     const oldPopupComponent = this._popupComponent;
 
-    this._cardComponent = new FilmCardComponent(this.card, comments);
-    this._popupComponent = new DetailsPopupComponent(this.card, comments);
+    this._cardComponent = new FilmCardComponent(this._card, comments);
+    this._popupComponent = new DetailsPopupComponent(this._card, comments);
 
     const siteBodyElement = document.querySelector(`body`);
-
-    const closeButtonClickHandler = () => {
-      remove(this._popupComponent);
-      document.removeEventListener(`keydown`, escKeyDownHandler);
-    };
 
     // отрисуем карточку фильма
     if (oldCardComponent && oldPopupComponent) {
       replace(this._cardComponent, oldCardComponent);
       replace(this._popupComponent, oldPopupComponent);
 
-      this._popupComponent.setCloseButtonClickHandler(closeButtonClickHandler);
       this._subscribePopupOnEvents();
     } else {
       render(this._container, this._cardComponent);
     }
-
-    // обработчики
-    const escKeyDownHandler = (evt) => {
-      if (evt.key === ESC_BUTTON) {
-        remove(this._popupComponent);
-        document.removeEventListener(`keydown`, escKeyDownHandler);
-      }
-    };
 
     const cardClickHandler = () => {
       this._onViewChange();
       render(siteBodyElement, this._popupComponent);
 
       this._subscribePopupOnEvents();
-      this._popupComponent.subscribeOnEvents();
-      this._popupComponent.setCloseButtonClickHandler(closeButtonClickHandler);
-      document.addEventListener(`keydown`, escKeyDownHandler);
     };
 
     // показ попапа с подробной информацией о фильме
     this._cardComponent.setClickHandler(cardClickHandler);
 
     // кнопки watchlist, watched, favourite
-    this._cardComponent.setAddToWatchlistClickHandler(() => {
-      const changedControls = Object.assign(this.card.controls, {isAddedToWatchlist: !this.card.controls.isAddedToWatchlist});
-      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
-    });
+    this._subscribeCardControlsOnEvents();
+  }
 
-    this._cardComponent.setMarkAsWatchedClickHandler(() => {
-      const changedControls = Object.assign(this.card.controls, {isWatched: !this.card.controls.isWatched});
-      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
-    });
-
-    this._cardComponent.setAddToFavouritesClickHandler(() => {
-      const changedControls = Object.assign(this.card.controls, {isFavourite: !this.card.controls.isFavourite});
-      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
-    });
+  get card() {
+    return this._card;
   }
 
   setDefaultView() {
     remove(this._popupComponent);
   }
 
+  destroy() {
+    remove(this._cardComponent);
+    remove(this._popupComponent);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  _onCloseButtonClick() {
+    remove(this._popupComponent);
+    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  _escKeyDownHandler(evt) {
+    if (evt.key === ESC_BUTTON) {
+      remove(this._popupComponent);
+      document.removeEventListener(`keydown`, this._escKeyDownHandler);
+    }
+  }
+
   _subscribePopupOnEvents() {
-    this._popupComponent.setAddToWatchlistClickHandler(() => {
-      const changedControls = Object.assign(this.card.controls, {isAddedToWatchlist: !this.card.controls.isAddedToWatchlist});
-      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
+    this._popupComponent.setAddToWatchlistClickHandler((evt) => {
+      evt.preventDefault();
+
+      this._onDataChange(this._card, Object.assign({}, this._card, {isAddedToWatchlist: !this._card.isAddedToWatchlist}));
     });
-    this._popupComponent.setMarkAsWatchedClickHandler(() => {
-      const changedControls = Object.assign(this.card.controls, {isWatched: !this.card.controls.isWatched});
-      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
+
+    this._popupComponent.setMarkAsWatchedClickHandler((evt) => {
+      evt.preventDefault();
+
+      this._onDataChange(this._card, Object.assign({}, this._card, {isWatched: !this._card.isWatched}));
     });
-    this._popupComponent.setAddToFavouritesClickHandler(() => {
-      const changedControls = Object.assign(this.card.controls, {isFavourite: !this.card.controls.isFavourite});
-      this._onDataChange(this.card, Object.assign({}, this.card, changedControls));
+
+    this._popupComponent.setAddToFavouritesClickHandler((evt) => {
+      evt.preventDefault();
+
+      this._onDataChange(this._card, Object.assign({}, this._card, {isFavourite: !this._card.isFavourite}));
+    });
+
+    this._popupComponent.setDeleteCommentClickHandler((evt) => {
+      evt.preventDefault();
+
+      const comment = evt.target.dataset;
+      this._onCommentDataChange(this._card, comment, null);
+    });
+
+    this._popupComponent.setNewCommentSubmitHandler((newComment) => {
+      this._onCommentDataChange(this._card, null, newComment);
+    });
+
+    this._popupComponent.setEmotionClickHandler();
+    this._popupComponent.setCloseButtonClickHandler(this._onCloseButtonClick);
+    document.addEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  _subscribeCardControlsOnEvents() {
+    this._cardComponent.setAddToWatchlistClickHandler(() => {
+      this._onDataChange(this._card, Object.assign({}, this._card, {isAddedToWatchlist: !this._card.isAddedToWatchlist}));
+    });
+
+    this._cardComponent.setMarkAsWatchedClickHandler(() => {
+      this._onDataChange(this._card, Object.assign({}, this._card, {isWatched: !this._card.isWatched}));
+    });
+
+    this._cardComponent.setAddToFavouritesClickHandler(() => {
+      this._onDataChange(this._card, Object.assign({}, this._card, {isFavourite: !this._card.isFavourite}));
     });
   }
 }

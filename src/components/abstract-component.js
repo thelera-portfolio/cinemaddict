@@ -1,6 +1,5 @@
 import {createElement} from "../utils/render.js";
 import {ClassError} from "../utils/consts.js";
-import {getError} from "../utils/common.js";
 
 export default class AbstractComponent {
   constructor() {
@@ -11,7 +10,7 @@ export default class AbstractComponent {
   }
 
   getTemplate() {
-    throw new Error(getError(`getTemplate`));
+    throw new ClassError.NOT_IMPLEMENTED(`getTemplate`);
   }
 
   getElement() {

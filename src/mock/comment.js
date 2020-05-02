@@ -1,6 +1,6 @@
 import {getRandomIntegerNumber, getRandomDate, getRandomArrayItem} from "../utils/common.js";
 
-const commentsData = {
+export const commentsData = {
   authors: [`Tim Macoveev`, `John Doe`, `Olly Olsen`, `Rusty James`, `Olivia`],
   date: new Date(),
   emotions: [
@@ -10,11 +10,12 @@ const commentsData = {
     `angry`
   ],
   messages: [`Interesting setting and a good cast`, `Booooooooooring`, `Very very old. Meh`, `Almost two hours? Seriously?`, `I like that`],
-  maxCommentCount: 100,
+  maxCommentCount: 10,
 };
 
 const generateComment = () => {
   return {
+    id: String(new Date() + Math.random()),
     author: getRandomArrayItem(commentsData.authors),
     date: getRandomDate(new Date(2020, 0, 1)),
     emotion: getRandomArrayItem(commentsData.emotions),
