@@ -1,9 +1,10 @@
-// подробная информация о фильме (поп-ап)
-import {getRandomArrayItem, formatDate} from "../utils/common.js";
+import {fromMinutesToHours, getRandomArrayItem} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {Emotions, PopupButtons} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
 import {commentsData} from "../mock/comment.js";
+import {encode} from "he";
+import moment from "moment";
 
 const createCommentsMarkup = (comments) => {
   let markUp = ``;
@@ -41,13 +42,12 @@ const createEmojiTemplate = (emotions, checkedEmotion) => {
 };
 
 const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
-  const {actors, age, country, description, director, duration, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
-  const {day, year} = formatDate(releaseDate);
+  const {actors, age, country, description, director, duration: durationInMinutes, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
+
   const commentsCount = comments.length;
-  const formatter = new Intl.DateTimeFormat(`en-US`, {
-    month: `long`
-  });
-  const formattedDate = `${day} ${formatter.format(releaseDate)} ${year}`;
+
+  const filmReleaseDate = moment(releaseDate).format(`DD MMMM YYYY`);
+  const duration = fromMinutesToHours(durationInMinutes);
 
   const watchlistButton = createButtonMarkup(PopupButtons.WATCHLIST.name, PopupButtons.WATCHLIST.label, card.isAddedToWatchlist);
   const watchedButton = createButtonMarkup(PopupButtons.WATCHED.name, PopupButtons.WATCHED.label, card.isWatched);
@@ -94,7 +94,7 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Release Date</td>
-                  <td class="film-details__cell">${formattedDate}</td>
+                  <td class="film-details__cell">${filmReleaseDate}</td>
                 </tr>
                 <tr class="film-details__row">
                   <td class="film-details__term">Runtime</td>
@@ -215,7 +215,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     .querySelector(`.film-details__comment-input`)
     .addEventListener(`keydown`, (evt) => {
       if (evt.key === `Enter`) {
-        const commentMessage = evt.target.value;
+        const commentMessage = encode(evt.target.value);
         if (this._emotion) {
           const newComment = this._createNewComment(commentMessage, this._emotion);
           handler(newComment);

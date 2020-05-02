@@ -167,21 +167,6 @@ const filmsData = {
 export const GENRES = filmsData.genres.list;
 export const MAX_DESCRIPTION_LENGTH = FilmDataConstant.Description.MAX_LENGTH;
 
-const fromMinutesToHours = (timeInMinutes) => {
-  const hours = Math.floor(timeInMinutes / 60);
-  const minutes = timeInMinutes % 60;
-
-  let time = `${hours}h ${minutes}m`;
-  if (hours === 0) {
-    time = `${minutes}m`;
-  }
-  if (minutes === 0) {
-    time = `${hours * 60}m`;
-  }
-
-  return time;
-};
-
 const getFilmDescriptionFromString = (string, sentencesCount) => {
   const arrayOfStrings = string.split(`. `).map((it) => it.concat(`.`));
   let description = ``;
@@ -200,7 +185,7 @@ export const generateCard = () => {
     country: getRandomArrayItem(filmsData.countries),
     description: getFilmDescriptionFromString(filmsData.description.string, filmsData.description.sentencesCount),
     director: getRandomArrayItem(filmsData.directors),
-    duration: fromMinutesToHours(getRandomIntegerNumber(filmsData.duration.MIN, filmsData.duration.MAX)),
+    duration: getRandomIntegerNumber(filmsData.duration.MIN, filmsData.duration.MAX),
     genres: getSeveralRandomArrayItems(filmsData.genres.quantity, filmsData.genres.list),
     image: getRandomArrayItem(filmsData.posters),
     title: getRandomArrayItem(filmsData.names),

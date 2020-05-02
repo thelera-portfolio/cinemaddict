@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const getRandomDate = (start = new Date(1920, 0, 1), end = new Date()) => (new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())));
 
 export const getRandomArrayItem = (array) => {
@@ -13,12 +15,11 @@ export const getRandomIntegerNumber = (min, max) => (min + Math.floor(Math.rando
 // [0, max]
 export const getRandomFloatNumber = (max) => ((Math.random() * (max)).toFixed(1));
 
-export const formatDate = (date) => {
-  const day = String(date.getDate()).padStart(2, `0`);
-  const month = String((date.getMonth() + 1)).padStart(2, `0`);
-  const year = date.getFullYear();
-  const hours = String((date.getHours() + 1)).padStart(2, `0`);
-  const minutes = String((date.getMinutes() + 1)).padStart(2, `0`);
+export const humanizeDate = (date) => {
+  return moment(date).startOf(`day`).fromNow();
+  // return moment(date).format(`YYYY/MM/DD hh:mm`);
+};
 
-  return {day, month, year, hours, minutes};
+export const fromMinutesToHours = (minutes) => {
+  return moment(moment.duration(minutes, `minutes`).asMilliseconds()).format(`h[h] mm[m]`);
 };

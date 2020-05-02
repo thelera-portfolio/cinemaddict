@@ -1,10 +1,12 @@
-import {formatDate} from "../utils/common.js";
+import {humanizeDate} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
+import {encode} from "he";
 
 const createCommentsTemplate = (comment) => {
-  const {author, date, emotion, id, message} = comment;
-  const {day, month, year, hours, minutes} = formatDate(date);
-  const formattedDate = `${year}/${month}/${day} ${hours}:${minutes}`;
+  const {author, date, emotion, id, message: currentMessage} = comment;
+  const formattedDate = humanizeDate(date);
+
+  const message = encode(currentMessage);
 
   return (
     `<li class="film-details__comment">

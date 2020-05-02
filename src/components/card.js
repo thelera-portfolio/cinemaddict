@@ -1,19 +1,20 @@
-// карточка фильма
 import {MAX_DESCRIPTION_LENGTH} from "../mock/card.js";
+import {fromMinutesToHours} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 import {Buttons} from "../utils/consts.js";
+import moment from "moment";
 
-const createButtonMarkup = (name, label, isActive = true) => {
-  return (
-    `<button class="film-card__controls-item button film-card__controls-item--${name} ${isActive ? `film-card__controls-item--active` : ``}">${label}</button>`
-  );
-};
+const createButtonMarkup = (name, label, isActive = true) =>
+  `<button class="film-card__controls-item button film-card__controls-item--${name} ${isActive ? `film-card__controls-item--active` : ``}">${label}</button>`;
+
 
 const createFilmCardTemplate = (card, comments) => {
-  const {description, duration, genres, image, rating, releaseDate, title} = card;
-  const shortDescription = description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
+  const {description, duration: durationInMinutes, genres, image, rating, releaseDate, title} = card;
 
+  const shortDescription = description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
   const commentsCount = comments.length;
+  const duration = fromMinutesToHours(durationInMinutes);
+  const filmReleaseDate = moment(releaseDate).format(`YYYY`);
 
   const watchlistButton = createButtonMarkup(Buttons.WATCHLIST.name, Buttons.WATCHLIST.label, card.isAddedToWatchlist);
   const watchedButton = createButtonMarkup(Buttons.WATCHED.name, Buttons.WATCHED.label, card.isWatched);
@@ -24,7 +25,7 @@ const createFilmCardTemplate = (card, comments) => {
       <h3 class="film-card__title">${title}</h3>
       <p class="film-card__rating">${rating}</p>
       <p class="film-card__info">
-        <span class="film-card__year">${releaseDate.getFullYear()}</span>
+        <span class="film-card__year">${filmReleaseDate}</span>
         <span class="film-card__duration">${duration}</span>
         <span class="film-card__genre">${genres[0]}</span>
       </p>
