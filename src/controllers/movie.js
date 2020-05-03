@@ -81,29 +81,34 @@ export default class MovieController {
     }
   }
 
+  _setFilmState(key, value) {
+    this._onDataChange(this._card, Object.assign({}, this._card, {[key]: value}));
+  }
+
   _subscribePopupOnEvents() {
     this._popupComponent.setAddToWatchlistClickHandler((evt) => {
       evt.preventDefault();
 
-      this._onDataChange(this._card, Object.assign({}, this._card, {isAddedToWatchlist: !this._card.isAddedToWatchlist}));
+      this._setFilmState(`isAddedToWatchlist`, !this._card.isAddedToWatchlist);
     });
 
     this._popupComponent.setMarkAsWatchedClickHandler((evt) => {
       evt.preventDefault();
 
-      this._onDataChange(this._card, Object.assign({}, this._card, {isWatched: !this._card.isWatched}));
+      this._setFilmState(`isWatched`, !this._card.isWatched);
     });
 
     this._popupComponent.setAddToFavouritesClickHandler((evt) => {
       evt.preventDefault();
 
-      this._onDataChange(this._card, Object.assign({}, this._card, {isFavourite: !this._card.isFavourite}));
+      this._setFilmState(`isFavourite`, !this._card.isFavourite);
     });
 
     this._popupComponent.setDeleteCommentClickHandler((evt) => {
       evt.preventDefault();
 
       const comment = evt.target.dataset;
+
       this._onCommentDataChange(this._card, comment, null);
     });
 
@@ -117,16 +122,10 @@ export default class MovieController {
   }
 
   _subscribeCardControlsOnEvents() {
-    this._cardComponent.setAddToWatchlistClickHandler(() => {
-      this._onDataChange(this._card, Object.assign({}, this._card, {isAddedToWatchlist: !this._card.isAddedToWatchlist}));
-    });
+    this._cardComponent.setAddToWatchlistClickHandler(() => this._setFilmState(`isAddedToWatchlist`, !this._card.isAddedToWatchlist));
 
-    this._cardComponent.setMarkAsWatchedClickHandler(() => {
-      this._onDataChange(this._card, Object.assign({}, this._card, {isWatched: !this._card.isWatched}));
-    });
+    this._cardComponent.setMarkAsWatchedClickHandler(() => this._setFilmState(`isWatched`, !this._card.isWatched));
 
-    this._cardComponent.setAddToFavouritesClickHandler(() => {
-      this._onDataChange(this._card, Object.assign({}, this._card, {isFavourite: !this._card.isFavourite}));
-    });
+    this._cardComponent.setAddToFavouritesClickHandler(() => this._setFilmState(`isFavourite`, !this._card.isFavourite));
   }
 }

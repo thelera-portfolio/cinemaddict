@@ -32,7 +32,7 @@ export default class Sorting extends AbstractComponent {
 
       const sortType = evt.target.dataset.sortType;
 
-      this.setActiveElement(sortType);
+      this._setActiveElement(sortType);
 
       if (this._currentSortType === sortType) {
         return;
@@ -44,7 +44,7 @@ export default class Sorting extends AbstractComponent {
     });
   }
 
-  setActiveElement(sortType) {
+  _setActiveElement(sortType) {
     const currentElement = this.getElement().querySelector(`[data-sort-type=${this._currentSortType}]`);
     const activeElement = this.getElement().querySelector(`[data-sort-type=${sortType}]`);
     currentElement.classList.remove(`sort__button--active`);

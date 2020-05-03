@@ -187,6 +187,7 @@ export const generateCard = () => {
     director: getRandomArrayItem(filmsData.directors),
     duration: getRandomIntegerNumber(filmsData.duration.MIN, filmsData.duration.MAX),
     genres: getSeveralRandomArrayItems(filmsData.genres.quantity, filmsData.genres.list),
+    id: Math.random().toString(36).substr(2, 9),
     image: getRandomArrayItem(filmsData.posters),
     title: getRandomArrayItem(filmsData.names),
     rating: getRandomFloatNumber(filmsData.maxFilmRating),

@@ -1,6 +1,8 @@
 import moment from "moment";
 
-export const getRandomDate = (start = new Date(1920, 0, 1), end = new Date()) => (new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())));
+export const getRandomDate = (start = new Date(1920, 0, 1), end = new Date()) => {
+  return (new Date(start.getTime() + Math.random() * (end.getTime() - start.getTime())));
+};
 
 export const getRandomArrayItem = (array) => {
   const arrayIndex = Math.floor(Math.random() * array.length);

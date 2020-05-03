@@ -3,7 +3,7 @@ import {ClassError} from "../utils/consts.js";
 
 export default class AbstractSmartComponent extends AbstractComponent {
   recoveryListeners() {
-    throw new ClassError.NOT_IMPLEMENTED(`recoveryListeners`);
+    throw new Error(ClassError.notImplemented(`recoveryListeners`));
   }
 
   rerender() {

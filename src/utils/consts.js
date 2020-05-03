@@ -32,11 +32,11 @@ export const RenderPosition = {
 
 export const ESC_BUTTON = `Escape`;
 
-export const FilmsCount = {
-  FILMS_COUNT: 20,
-  EXTRA_FILMS_COUNT: 2,
-  SHOWING_FILMS_COUNT_ON_START: 5,
-  SHOWING_FILMS_COUNT_BY_BUTTON: 5,
+export const PAGE_VIEW_SETTINGS = {
+  filmsCount: 20,
+  extraFilmsCount: 2,
+  showingFilmsCountOnStart: 5,
+  showingFilmsCountByButton: 5,
 };
 
 export const extraFilms = [
@@ -52,7 +52,7 @@ export const extraFilms = [
 
 export const ClassError = {
   CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
-  NOT_IMPLEMENTED: (method) => `Abstract method is not implemented: ${method}`,
+  notImplemented: (method) => `Abstract method is not implemented: ${method}`,
 };
 
 export const Emotions = [

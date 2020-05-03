@@ -10,7 +10,7 @@ export default class AbstractComponent {
   }
 
   getTemplate() {
-    throw new ClassError.NOT_IMPLEMENTED(`getTemplate`);
+    throw new Error(ClassError.notImplemented(`getTemplate`));
   }
 
   getElement() {

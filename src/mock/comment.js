@@ -1,4 +1,5 @@
 import {getRandomIntegerNumber, getRandomDate, getRandomArrayItem} from "../utils/common.js";
+import {films} from "../main.js";
 
 export const commentsData = {
   authors: [`Tim Macoveev`, `John Doe`, `Olly Olsen`, `Rusty James`, `Olivia`],
@@ -15,7 +16,7 @@ export const commentsData = {
 
 const generateComment = () => {
   return {
-    id: String(new Date() + Math.random()),
+    id: Math.random().toString(36).substr(2, 9),
     author: getRandomArrayItem(commentsData.authors),
     date: getRandomDate(new Date(2020, 0, 1)),
     emotion: getRandomArrayItem(commentsData.emotions),
@@ -23,11 +24,14 @@ const generateComment = () => {
   };
 };
 
-const generateOneFilmComments = () => {
+const generateOneFilmComments = (filmIndex) => {
   const commentsCount = getRandomIntegerNumber(0, commentsData.maxCommentCount);
-  return new Array(commentsCount).fill(``).map(() => generateComment());
+  return {
+    filmId: films[filmIndex].id,
+    comments: new Array(commentsCount).fill(``).map(() => generateComment()),
+  };
 };
 
 export const generateComments = (filmsCount) => {
-  return new Array(filmsCount).fill(``).map(() => generateOneFilmComments());
+  return new Array(filmsCount).fill(``).map((film, index) => generateOneFilmComments(index));
 };

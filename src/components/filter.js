@@ -35,6 +35,18 @@ export default class Filter extends AbstractComponent {
 
       this._currentFilterType = evt.target.textContent;
       handler(this._currentFilterType.split(` `)[0]);
+
+      this._setActiveElement(this._currentFilterType);
     });
+  }
+
+  _setActiveElement(filterType) {
+    const elements = this.getElement().querySelectorAll(`.main-navigation__item`);
+    const activeElement = Array.from(elements).find((element) => element.textContent === filterType);
+
+    const currentElement = this.getElement().querySelector(`.main-navigation__item--active`);
+
+    currentElement.classList.remove(`main-navigation__item--active`);
+    activeElement.classList.add(`main-navigation__item--active`);
   }
 }

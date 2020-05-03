@@ -1,4 +1,4 @@
-import {FilmsCount, RenderPosition} from "./utils/consts.js";
+import {PAGE_VIEW_SETTINGS, RenderPosition} from "./utils/consts.js";
 import {render} from "./utils/render.js";
 import {generateCards} from "./mock/card.js";
 import {generateComments} from "./mock/comment.js";
@@ -15,11 +15,11 @@ import FilterController from "./controllers/filter.js";
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = document.querySelector(`.header`);
 
-const films = generateCards(FilmsCount.FILMS_COUNT);
+export const films = generateCards(PAGE_VIEW_SETTINGS.filmsCount);
 const filmsModel = new FilmsModel();
 filmsModel.setFilms(films);
 
-const comments = generateComments(FilmsCount.FILMS_COUNT);
+const comments = generateComments(PAGE_VIEW_SETTINGS.filmsCount);
 const commentsModel = new CommentsModel();
 commentsModel.setComments(comments);
 
