@@ -1,6 +1,7 @@
 import DetailsPopupComponent from "../components/details-popup.js";
 import FilmCardComponent from "../components/card.js";
-import {ESC_BUTTON} from "../utils/consts.js";
+import FilmModel from "../models/movie.js";
+import {ESC_BUTTON, FilmControl} from "../utils/consts.js";
 import {render, remove, replace} from "../utils/render.js";
 
 export default class MovieController {
@@ -82,26 +83,25 @@ export default class MovieController {
   }
 
   _setFilmState(key, value) {
-    this._onDataChange(this._card, Object.assign({}, this._card, {[key]: value}));
-  }
+      }
 
   _subscribePopupOnEvents() {
     this._popupComponent.setAddToWatchlistClickHandler((evt) => {
       evt.preventDefault();
 
-      this._setFilmState(`isAddedToWatchlist`, !this._card.isAddedToWatchlist);
+      this._changeControlsData(FilmControl.WATCHLIST);
     });
 
     this._popupComponent.setMarkAsWatchedClickHandler((evt) => {
       evt.preventDefault();
 
-      this._setFilmState(`isWatched`, !this._card.isWatched);
+      this._changeControlsData(FilmControl.WATCH);
     });
 
     this._popupComponent.setAddToFavouritesClickHandler((evt) => {
       evt.preventDefault();
 
-      this._setFilmState(`isFavourite`, !this._card.isFavourite);
+      this._changeControlsData(FilmControl.FAVOURITE);
     });
 
     this._popupComponent.setDeleteCommentClickHandler((evt) => {
@@ -122,10 +122,29 @@ export default class MovieController {
   }
 
   _subscribeCardControlsOnEvents() {
-    this._cardComponent.setAddToWatchlistClickHandler(() => this._setFilmState(`isAddedToWatchlist`, !this._card.isAddedToWatchlist));
+    this._cardComponent.setAddToWatchlistClickHandler((evt) => {
+      evt.preventDefault();
 
-    this._cardComponent.setMarkAsWatchedClickHandler(() => this._setFilmState(`isWatched`, !this._card.isWatched));
+      this._changeControlsData(FilmControl.WATCHLIST);
+    });
 
-    this._cardComponent.setAddToFavouritesClickHandler(() => this._setFilmState(`isFavourite`, !this._card.isFavourite));
+    this._cardComponent.setMarkAsWatchedClickHandler((evt) => {
+      evt.preventDefault();
+
+      this._changeControlsData(FilmControl.WATCH);
+    });
+
+    this._cardComponent.setAddToFavouritesClickHandler((evt) => {
+      evt.preventDefault();
+
+      this._changeControlsData(FilmControl.FAVOURITE);
+    });
+  }
+
+  _changeControlsData(control) {
+    const newCard = FilmModel.clone(this._card);
+    newCard[control] = !newCard[control];
+
+    this._onDataChange(this._card, newCard);
   }
 }

@@ -11,6 +11,7 @@ export default class Comments {
 
   setComments(comments) {
     this._comments = comments;
+    console.log(this._comments);
 
     // уведомляем подписавшихся на обновления, что модель изменилась
     this._callHandlers(this._dataChangeHandlers);

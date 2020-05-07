@@ -1,46 +1,47 @@
-import {PAGE_VIEW_SETTINGS, RenderPosition} from "./utils/consts.js";
-import {render} from "./utils/render.js";
-import {generateCards} from "./mock/card.js";
-import {generateComments} from "./mock/comment.js";
 import AllFilmsComponent from "./components/films.js";
+import API from "./api.js";
+import CommentsModel from "./models/comments.js";
+import FilmsModel from "./models/movies.js";
+import FilterController from "./controllers/filter.js";
 import NavigationComponent from "./components/navigation.js";
+import PageController from "./controllers/page.js";
 import RatingComponent from "./components/rating.js";
 import StatisticsComponent from "./components/statistics.js";
-import SortComponent, { SortType } from "./components/sort.js";
-import PageController from "./controllers/page.js";
-import FilmsModel from "./model/movies.js";
-import CommentsModel from "./model/comments.js";
-import FilterController from "./controllers/filter.js";
+import {render} from "./utils/render.js";
+
+const AUTHORIZATION = `Basic dXNlchjuhuyi===kBwYXNzd29yZAo=`;
+const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = document.querySelector(`.header`);
 
-export const films = generateCards(PAGE_VIEW_SETTINGS.filmsCount);
+const api = new API(AUTHORIZATION, END_POINT);
 const filmsModel = new FilmsModel();
-filmsModel.setFilms(films);
-
-const comments = generateComments(PAGE_VIEW_SETTINGS.filmsCount);
 const commentsModel = new CommentsModel();
-commentsModel.setComments(comments);
 
-// отрисовываем звание пользователя
-render(siteHeaderElement, new RatingComponent());
-
+const ratingComponent = new RatingComponent();
 const navigationComponent = new NavigationComponent();
-
-// отрисовываем статистику
-render(siteMainElement, navigationComponent);
-
-// отрисовываем фильтры
-const filtersController = new FilterController(navigationComponent, filmsModel);
-filtersController.render();
-
-// отрисовываем фильмы
 const filmsContainerComponent = new AllFilmsComponent();
 
-const pageController = new PageController(filmsContainerComponent, filmsModel, commentsModel);
-pageController.render();
-pageController.renderExtraFilms();
+const filtersController = new FilterController(navigationComponent, filmsModel);
+const pageController = new PageController(filmsContainerComponent, filmsModel, commentsModel, api);
 
-//отрисовываем страницу со статистикой
+render(siteHeaderElement, ratingComponent);
+render(siteMainElement, navigationComponent);
 //render(siteMainElement, new StatisticsComponent());
+
+
+
+api.getFilms()
+  .then((films) => {
+    filmsModel.setFilms(films);
+    return films.map((film) => api.getComments(film.id));
+  })
+  .then((allComments) => Promise.all(allComments))
+  .then((comments) => {
+    commentsModel.setComments(comments);
+
+    pageController.render();
+    pageController.renderExtraFilms();
+    filtersController.render();
+  });

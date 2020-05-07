@@ -1,7 +1,7 @@
-import {MAX_DESCRIPTION_LENGTH} from "../mock/card.js";
+import {MAX_DESCRIPTION_LENGTH} from "../utils/consts.js";
 import {fromMinutesToHours} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
-import {Buttons} from "../utils/consts.js";
+import {Button} from "../utils/consts.js";
 import moment from "moment";
 
 const createButtonMarkup = (name, label, isActive = true) =>
@@ -16,9 +16,9 @@ const createFilmCardTemplate = (card, comments) => {
   const duration = fromMinutesToHours(durationInMinutes);
   const filmReleaseDate = moment(releaseDate).format(`YYYY`);
 
-  const watchlistButton = createButtonMarkup(Buttons.WATCHLIST.name, Buttons.WATCHLIST.label, card.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(Buttons.WATCHED.name, Buttons.WATCHED.label, card.isWatched);
-  const favouritesButton = createButtonMarkup(Buttons.FAVOURITE.name, Buttons.FAVOURITE.label, card.isFavourite);
+  const watchlistButton = createButtonMarkup(Button.WATCHLIST.name, Button.WATCHLIST.label, card.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(Button.WATCHED.name, Button.WATCHED.label, card.isWatched);
+  const favouritesButton = createButtonMarkup(Button.FAVOURITE.name, Button.FAVOURITE.label, card.isFavourite);
 
   return (
     `<article class="film-card">

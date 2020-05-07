@@ -1,3 +1,6 @@
+export const MAX_DESCRIPTION_LENGTH = 139;
+export const ESC_BUTTON = `Escape`;
+
 export const MONTH_NAMES = [
   `January`,
   `February`,
@@ -11,6 +14,13 @@ export const MONTH_NAMES = [
   `October`,
   `November`,
   `December`
+];
+
+export const EMOTIONS = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
 ];
 
 export const RANKS = [
@@ -30,9 +40,7 @@ export const RenderPosition = {
   BEFORE: `before`,
 };
 
-export const ESC_BUTTON = `Escape`;
-
-export const PAGE_VIEW_SETTINGS = {
+export const pageViewSettings = {
   filmsCount: 20,
   extraFilmsCount: 2,
   showingFilmsCountOnStart: 5,
@@ -55,13 +63,6 @@ export const ClassError = {
   notImplemented: (method) => `Abstract method is not implemented: ${method}`,
 };
 
-export const Emotions = [
-  `smile`,
-  `sleeping`,
-  `puke`,
-  `angry`,
-];
-
 export const SortType = {
   DEFAULT: `default`,
   BY_DATE: `date`,
@@ -69,7 +70,7 @@ export const SortType = {
   BY_COMMENTS: `comments`,
 };
 
-export const Buttons = {
+export const Button = {
   WATCHLIST: {
     name: `add-to-watchlist`,
     label: `Add to watchlist`,
@@ -84,7 +85,7 @@ export const Buttons = {
   },
 };
 
-export const PopupButtons = {
+export const PopupButton = {
   WATCHLIST: {
     name: `watchlist`,
     label: `Add to watchlist`,
@@ -97,6 +98,12 @@ export const PopupButtons = {
     name: `favorite`,
     label: `Add to favourites`,
   },
+};
+
+export const FilmControl = {
+  WATCHLIST: `isAddedToWatchlist`,
+  WATCH: `isWatched`,
+  FAVOURITE: `isFavourite`,
 };
 
 export const FilterType = {

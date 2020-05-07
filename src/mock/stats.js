@@ -1,5 +1,4 @@
 import {getRandomIntegerNumber, getRandomArrayItem} from "../utils/common";
-import {GENRES} from "./card.js";
 import {RANKS, StatsData} from "../utils/consts.js";
 
 export const createStats = () => ({
@@ -9,5 +8,5 @@ export const createStats = () => ({
     hours: getRandomIntegerNumber(0, StatsData.MAX_HOURS_DURATION),
     minutes: getRandomIntegerNumber(0, 59)
   },
-  topGenre: getRandomArrayItem(GENRES),
+  //topGenre: getRandomArrayItem(GENRES),
 });
