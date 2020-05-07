@@ -1,9 +1,7 @@
 // страница со статистикой
-import {createStats} from "../mock/stats.js";
 import AbstractComponent from "./abstract-component.js";
 
-const statisticData = createStats();
-const {rank, watchedCount, duration, topGenre} = statisticData;
+const {rank, watchedCount, duration, topGenre} = [0, 0, 0, 0];
 
 const createStatisticsTemplate = () =>
   `<section class="statistic">
@@ -39,7 +37,7 @@ const createStatisticsTemplate = () =>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${duration.hours} <span class="statistic__item-description">h</span> ${duration.minutes} <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${duration} <span class="statistic__item-description">h</span> ${duration} <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>

@@ -1,3 +1,12 @@
+export const MAX_DESCRIPTION_LENGTH = 139;
+export const ESC_BUTTON = `Escape`;
+export const HIDDEN_CLASS = `visually-hidden`;
+
+export const MenuItem = {
+  FILTERS: `control__filters`,
+  STATISTICS: `control__statistics`,
+};
+
 export const MONTH_NAMES = [
   `January`,
   `February`,
@@ -11,6 +20,13 @@ export const MONTH_NAMES = [
   `October`,
   `November`,
   `December`
+];
+
+export const EMOTIONS = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
 ];
 
 export const RANKS = [
@@ -30,13 +46,11 @@ export const RenderPosition = {
   BEFORE: `before`,
 };
 
-export const ESC_BUTTON = `Escape`;
-
-export const FilmsCount = {
-  FILMS_COUNT: 20,
-  EXTRA_FILMS_COUNT: 2,
-  SHOWING_FILMS_COUNT_ON_START: 5,
-  SHOWING_FILMS_COUNT_BY_BUTTON: 5,
+export const pageViewSettings = {
+  filmsCount: 20,
+  extraFilmsCount: 2,
+  showingFilmsCountOnStart: 5,
+  showingFilmsCountByButton: 5,
 };
 
 export const extraFilms = [
@@ -52,15 +66,8 @@ export const extraFilms = [
 
 export const ClassError = {
   CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
-  NOT_IMPLEMENTED: (method) => `Abstract method is not implemented: ${method}`,
+  notImplemented: (method) => `Abstract method is not implemented: ${method}`,
 };
-
-export const Emotions = [
-  `smile`,
-  `sleeping`,
-  `puke`,
-  `angry`,
-];
 
 export const SortType = {
   DEFAULT: `default`,
@@ -69,7 +76,7 @@ export const SortType = {
   BY_COMMENTS: `comments`,
 };
 
-export const Buttons = {
+export const Button = {
   WATCHLIST: {
     name: `add-to-watchlist`,
     label: `Add to watchlist`,
@@ -84,7 +91,7 @@ export const Buttons = {
   },
 };
 
-export const PopupButtons = {
+export const PopupButton = {
   WATCHLIST: {
     name: `watchlist`,
     label: `Add to watchlist`,
@@ -97,6 +104,12 @@ export const PopupButtons = {
     name: `favorite`,
     label: `Add to favourites`,
   },
+};
+
+export const FilmControl = {
+  WATCHLIST: `isAddedToWatchlist`,
+  WATCH: `isWatched`,
+  FAVOURITE: `isFavourite`,
 };
 
 export const FilterType = {

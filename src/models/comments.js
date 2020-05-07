@@ -21,26 +21,25 @@ export default class Comments {
     this._dataChangeHandlers.push(handler);
   }
 
-  removeComment(cardId, commentId) {
-    const cardIndex = this._comments.findIndex((cardComments) => cardComments.id === cardId);
-    const index = this._comments[cardIndex].findIndex((comment) => comment.id === commentId);
+  removeComment(film, comment) {
+    const commentsOfFilm = this._comments.find((currentComment) => currentComment.filmId === film.id);
 
-    if (index === -1 || cardIndex === -1) {
+    const index = commentsOfFilm.comments.findIndex((currentComment) => currentComment.id === comment.id);
+
+    if (index === -1) {
       return false;
     }
 
-    this._comments[cardIndex] = [].concat(this._comments[cardIndex].slice(0, index), this._comments[cardIndex].slice(index + 1));
-    this._comments[cardIndex].id = cardId;
+    commentsOfFilm.comments = [].concat(commentsOfFilm.comments.slice(0, index), commentsOfFilm.comments.slice(index + 1));
 
     this._callHandlers(this._dataChangeHandlers);
 
     return true;
   }
 
-  addComment(cardId, comment) {
-    const cardIndex = this._comments.findIndex((cardComments) => cardComments.id === cardId);
-
-    this._comments[cardIndex].push(comment);
+  addComment(film, comment) {
+    const commentsOfFilm = this._comments.find((currentComment) => currentComment.filmId === film.id);
+    commentsOfFilm.comments.push(comment);
 
     this._callHandlers(this._dataChangeHandlers);
   }

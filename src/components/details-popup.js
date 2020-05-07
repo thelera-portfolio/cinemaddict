@@ -1,8 +1,7 @@
-import {fromMinutesToHours, getRandomArrayItem} from "../utils/common.js";
+import {fromMinutesToHours} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {Emotions, PopupButtons} from "../utils/consts.js";
+import {EMOTIONS, PopupButton} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
-import {commentsData} from "../mock/comment.js";
 import {encode} from "he";
 import moment from "moment";
 
@@ -42,16 +41,16 @@ const createEmojiTemplate = (emotions, checkedEmotion) => {
 };
 
 const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
-  const {actors, age, country, description, director, duration: durationInMinutes, genres, image, rating, releaseDate, title, originalTitle = title, writers} = card;
+  const {actors, age, country, description, director, duration: durationInMinutes, genres, image, rating, releaseDate, title, originalTitle, writers} = card;
 
   const commentsCount = comments.length;
 
   const filmReleaseDate = moment(releaseDate).format(`DD MMMM YYYY`);
   const duration = fromMinutesToHours(durationInMinutes);
 
-  const watchlistButton = createButtonMarkup(PopupButtons.WATCHLIST.name, PopupButtons.WATCHLIST.label, card.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(PopupButtons.WATCHED.name, PopupButtons.WATCHED.label, card.isWatched);
-  const favouritesButton = createButtonMarkup(PopupButtons.FAVOURITE.name, PopupButtons.FAVOURITE.label, card.isFavourite);
+  const watchlistButton = createButtonMarkup(PopupButton.WATCHLIST.name, PopupButton.WATCHLIST.label, card.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(PopupButton.WATCHED.name, PopupButton.WATCHED.label, card.isWatched);
+  const favouritesButton = createButtonMarkup(PopupButton.FAVOURITE.name, PopupButton.FAVOURITE.label, card.isFavourite);
 
   return (
     `<section class="film-details">
@@ -141,7 +140,7 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
               </label>
 
               <div class="film-details__emoji-list">
-                ${createEmojiTemplate(Emotions, emotion)}
+                ${createEmojiTemplate(EMOTIONS, emotion)}
               </div>
             </div>
           </section>
@@ -258,7 +257,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
   _createNewComment(message, emotion) {
     return {
       id: String(new Date() + Math.random()),
-      author: getRandomArrayItem(commentsData.authors),
+      author: `Alice`,
       date: new Date(),
       emotion,
       message,

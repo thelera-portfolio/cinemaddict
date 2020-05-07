@@ -1,27 +1,17 @@
 import {FilterType} from "../utils/consts.js";
 
-export const getAddedToWatchlistFilms = (films) => {
-  return films.filter((film) => film.isAddedToWatchlist);
-};
-
-export const getWatchedFilms = (films) => {
-  return films.filter((film) => film.isWatched);
-};
-
-export const getFavouriteFilms = (films) => {
-  return films.filter((film) => film.isFavourite);
-};
+export const getFilterByProperty = (array, property) => array.filter((item) => item[property]);
 
 export const getFilmsByFilter = (films, filterType) => {
   switch (filterType) {
     case FilterType.ALL:
       return films;
     case FilterType.WATCHLIST:
-      return getAddedToWatchlistFilms(films);
+      return getFilterByProperty(films, `isAddedToWatchlist`);
     case FilterType.HISTORY:
-      return getWatchedFilms(films);
+      return getFilterByProperty(films, `isWatched`);
     case FilterType.FAVOURITES:
-      return getFavouriteFilms(films);
+      return getFilterByProperty(films, `isFavourite`);
   }
 
   return films;
