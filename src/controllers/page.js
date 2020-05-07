@@ -1,4 +1,4 @@
-import { extraFilms, pageViewSettings, RenderPosition, SortType} from "../utils/consts.js";
+import {extraFilms, pageViewSettings, RenderPosition, SortType} from "../utils/consts.js";
 import {remove, render} from "../utils/render.js";
 import ExtraFilmComponent from "../components/extra-films.js";
 import FilmListComponent from "../components/films-list.js";
@@ -154,19 +154,19 @@ export default class PageController {
 
   _onDataChange(oldCard, newCard) {
     this._api.updateFilm(oldCard.id, newCard)
-      .then((newCard) => {
-        const isSuccess = this._filmsModel.updateFilm(oldCard.id, newCard);
+      .then((newFilmCard) => {
+        const isSuccess = this._filmsModel.updateFilm(oldCard.id, newFilmCard);
 
         if (isSuccess) {
           const oldFilmController = this._showedFilmsControllers.find((it) => it.card === oldCard);
           const oldExtraFilmController = this._showedExtraFilmsControllers.find((it) => it.card === oldCard);
 
           if (oldFilmController) {
-            this._renderCard(oldFilmController, newCard);
+            this._renderCard(oldFilmController, newFilmCard);
           }
 
           if (oldExtraFilmController) {
-            this._renderCard(oldExtraFilmController, newCard);
+            this._renderCard(oldExtraFilmController, newFilmCard);
           }
         }
       })
@@ -217,7 +217,6 @@ export default class PageController {
         });
         break;
       case SortType.BY_DATE:
-        console.log(films[0].releaseDate);
         sortedFilms = filmsToSort.sort((a, b) => moment(b.releaseDate).format(`x`) - moment(a.releaseDate).format(`x`));
         break;
     }

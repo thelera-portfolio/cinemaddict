@@ -8,7 +8,7 @@ const createUserProfileRatingTemplate = (rank) =>
   </section>`;
 
 export default class Rating extends AbstractComponent {
-  constructor (count) {
+  constructor(count) {
     super();
 
     this._count = count;

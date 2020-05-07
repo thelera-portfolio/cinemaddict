@@ -44,7 +44,7 @@ export default class Movie {
       "user_details": {
         "watchlist": this.isAddedToWatchlist,
         "already_watched": this.isWatched,
-        watching_date: "2020-01-23T05:42:07.131Z",
+        "watching_date": this.watchingDate,
         "favorite": this.isFavourite,
       },
       "comments": this.commentsIds,

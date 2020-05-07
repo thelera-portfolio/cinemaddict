@@ -5,7 +5,7 @@ export const HIDDEN_CLASS = `visually-hidden`;
 export const MenuItem = {
   FILTERS: `control__filters`,
   STATISTICS: `control__statistics`,
-}
+};
 
 export const MONTH_NAMES = [
   `January`,

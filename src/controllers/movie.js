@@ -82,9 +82,6 @@ export default class MovieController {
     }
   }
 
-  _setFilmState(key, value) {
-      }
-
   _subscribePopupOnEvents() {
     this._popupComponent.setAddToWatchlistClickHandler((evt) => {
       evt.preventDefault();
