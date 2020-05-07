@@ -7,6 +7,7 @@ import NoFilmsComponent from "../components/no-films.js";
 import ShowMoreButtonComponent from "../components/show-more-button.js";
 import SortComponent from "../components/sort.js";
 import FilmListContainerComponent from "../components/film-list-container.js";
+import moment from "moment";
 
 export default class PageController {
   constructor(container, filmsModel, commentsModel, api) {
@@ -73,6 +74,14 @@ export default class PageController {
     });
   }
 
+  show() {
+    this._container.show();
+  }
+
+  hide() {
+    this._container.hide();
+  }
+
   _renderFilms(films) {
     const newFilms = this._renderCards(this._filmsListContainerComponent.getElement(), films);
     this._showedFilmsControllers = this._showedFilmsControllers.concat(newFilms);
@@ -102,6 +111,7 @@ export default class PageController {
 
   _onFilterChange() {
     this._updateFilms(pageViewSettings.showingFilmsCountOnStart);
+    this._sortComponent.setActiveElement(SortType.DEFAULT);
   }
 
   _renderShowMoreButton() {
@@ -207,7 +217,8 @@ export default class PageController {
         });
         break;
       case SortType.BY_DATE:
-        sortedFilms = filmsToSort.sort((a, b) => b.releaseDate - a.releaseDate);
+        console.log(films[0].releaseDate);
+        sortedFilms = filmsToSort.sort((a, b) => moment(b.releaseDate).format(`x`) - moment(a.releaseDate).format(`x`));
         break;
     }
 

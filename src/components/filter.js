@@ -4,7 +4,7 @@ import {FilterType} from "../utils/consts.js";
 const createFilterMarkup = (filter) => {
   const {name, count, isChecked} = filter;
   return (
-    `<a href="#${name}" class="main-navigation__item ${isChecked ? `main-navigation__item--active` : ``}">${name} ${isChecked ? `` : `<span class="main-navigation__item-count">${count}</span>`}</a>`
+    `<a href="#${name}" class="main-navigation__item ${isChecked ? `main-navigation__item--active` : ``}" id="control__filters">${name} ${isChecked ? `` : `<span class="main-navigation__item-count">${count}</span>`}</a>`
   );
 };
 

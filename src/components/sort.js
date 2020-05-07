@@ -32,22 +32,23 @@ export default class Sorting extends AbstractComponent {
 
       const sortType = evt.target.dataset.sortType;
 
-      this._setActiveElement(sortType);
-
+      console.log(`${this._currentSortType}`);
       if (this._currentSortType === sortType) {
         return;
       }
 
-      this._currentSortType = sortType;
+      this.setActiveElement(sortType);
 
       handler(this._currentSortType);
     });
   }
 
-  _setActiveElement(sortType) {
+  setActiveElement(sortType) {
     const currentElement = this.getElement().querySelector(`[data-sort-type=${this._currentSortType}]`);
     const activeElement = this.getElement().querySelector(`[data-sort-type=${sortType}]`);
     currentElement.classList.remove(`sort__button--active`);
     activeElement.classList.add(`sort__button--active`);
+
+    this._currentSortType = sortType;
   }
 }

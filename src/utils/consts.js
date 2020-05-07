@@ -1,5 +1,11 @@
 export const MAX_DESCRIPTION_LENGTH = 139;
 export const ESC_BUTTON = `Escape`;
+export const HIDDEN_CLASS = `visually-hidden`;
+
+export const MenuItem = {
+  FILTERS: `control__filters`,
+  STATISTICS: `control__statistics`,
+}
 
 export const MONTH_NAMES = [
   `January`,
