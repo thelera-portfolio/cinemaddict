@@ -1,15 +1,9 @@
 import Movie from "./models/movie.js";
 import Comment from "./models/comment.js";
-
-const Method = {
-  GET: `GET`,
-  POST: `POST`,
-  PUT: `PUT`,
-  DELETE: `DELETE`
-};
+import {Method, StatusCode, Url} from "./utils/consts.js";
 
 const checkStatus = (response) => {
-  if (response.status >= 200 && response.status < 300) {
+  if (response.status >= StatusCode.SUCCESS && response.status < StatusCode.REDIRECTION) {
     return response;
   } else {
     throw new Error(`${response.status}: ${response.statusText}`);
@@ -23,13 +17,13 @@ export default class API {
   }
 
   getFilms() {
-    return this._load({url: `movies`})
+    return this._load({url: Url.MOVIES})
       .then((response) => response.json())
     .then(Movie.parseMovies);
   }
 
   getComments(id) {
-    return this._load({url: `comments/${id}`})
+    return this._load({url: `${Url.COMMENTS}/${id}`})
       .then((response) => response.json())
       .then(Comment.parseComments)
       .then((comments) => Object.defineProperty(comments, `filmId`, {value: id}))

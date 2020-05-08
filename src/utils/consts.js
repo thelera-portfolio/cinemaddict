@@ -22,6 +22,18 @@ export const MONTH_NAMES = [
   `December`
 ];
 
+export const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
+export const StatusCode = {
+  SUCCESS: 200,
+  REDIRECTION: 300,
+};
+
 export const EMOTIONS = [
   `smile`,
   `sleeping`,
@@ -119,3 +131,7 @@ export const FilterType = {
   FAVOURITES: `Favorites`,
 };
 
+export const Url = {
+  MOVIES: `movies`,
+  COMMENTS: `comments`,
+};

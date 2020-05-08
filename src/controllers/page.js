@@ -50,7 +50,7 @@ export default class PageController {
     render(this._container.getElement(), this._filmsListComponent, RenderPosition.AFTERBEGIN);
     render(this._filmsListComponent.getElement(), this._filmsListContainerComponent);
 
-    if (pageViewSettings.filmsCount === 0) {
+    if (this.filmsModel.getFilms().length === 0) {
       render(this._filmsListComponent.getElement(), this._noFilmsComponent);
       return;
     }
@@ -94,6 +94,11 @@ export default class PageController {
 
   _updateFilms(count) {
     this._removeFilms();
+
+    if (this._filmsModel.getFilms().length === 0) {
+      render(this._filmsListComponent.getElement(), this._noFilmsComponent);
+      return;
+    }
 
     this._renderFilms(this._filmsModel.getFilms().slice(0, count));
     this._renderShowMoreButton();

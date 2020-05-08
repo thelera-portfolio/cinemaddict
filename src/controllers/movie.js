@@ -18,6 +18,7 @@ export default class MovieController {
 
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
+    this._onCardClick = this._onCardClick.bind(this);
   }
 
   render(card, comments) {
@@ -27,30 +28,24 @@ export default class MovieController {
     const oldCardComponent = this._cardComponent;
     const oldPopupComponent = this._popupComponent;
 
-    this._cardComponent = new FilmCardComponent(this._card, comments);
-    this._popupComponent = new DetailsPopupComponent(this._card, comments);
-
-    const siteBodyElement = document.querySelector(`body`);
+    this._cardComponent = new FilmCardComponent(this._card, this._comments);
 
     // отрисуем карточку фильма
-    if (oldCardComponent && oldPopupComponent) {
+    if (oldCardComponent) {
       replace(this._cardComponent, oldCardComponent);
-      replace(this._popupComponent, oldPopupComponent);
-
-      this._subscribePopupOnEvents();
     } else {
       render(this._container, this._cardComponent);
     }
 
-    const cardClickHandler = () => {
-      this._onViewChange();
-      render(siteBodyElement, this._popupComponent);
+    if (oldPopupComponent) {
+      this._popupComponent = new DetailsPopupComponent(this._card, this._comments);
+      replace(this._popupComponent, oldPopupComponent);
 
       this._subscribePopupOnEvents();
-    };
+    }
 
     // показ попапа с подробной информацией о фильме
-    this._cardComponent.setClickHandler(cardClickHandler);
+    this._cardComponent.setClickHandler(this._onCardClick);
 
     // кнопки watchlist, watched, favourite
     this._subscribeCardControlsOnEvents();
@@ -61,13 +56,23 @@ export default class MovieController {
   }
 
   setDefaultView() {
-    remove(this._popupComponent);
+    if (this._popupComponent) {
+      remove(this._popupComponent);
+    }
   }
 
   destroy() {
     remove(this._cardComponent);
-    remove(this._popupComponent);
-    document.removeEventListener(`keydown`, this._escKeyDownHandler);
+  }
+
+  _onCardClick() {
+    this._onViewChange();
+
+    const siteBodyElement = document.querySelector(`body`);
+    this._popupComponent = new DetailsPopupComponent(this._card, this._comments);
+    render(siteBodyElement, this._popupComponent);
+
+    this._subscribePopupOnEvents();
   }
 
   _onCloseButtonClick() {
