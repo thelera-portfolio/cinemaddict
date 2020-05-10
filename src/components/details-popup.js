@@ -48,9 +48,9 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
   const filmReleaseDate = moment(releaseDate).format(`DD MMMM YYYY`);
   const duration = fromMinutesToHours(durationInMinutes);
 
-  const watchlistButton = createButtonMarkup(PopupButton.WATCHLIST.name, PopupButton.WATCHLIST.label, card.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(PopupButton.WATCHED.name, PopupButton.WATCHED.label, card.isWatched);
-  const favouritesButton = createButtonMarkup(PopupButton.FAVOURITE.name, PopupButton.FAVOURITE.label, card.isFavourite);
+  const watchlistButton = createButtonMarkup(PopupButton.WATCHLIST.name, PopupButton.WATCHLIST.label, card.controls.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(PopupButton.WATCHED.name, PopupButton.WATCHED.label, card.controls.isWatched);
+  const favouritesButton = createButtonMarkup(PopupButton.FAVOURITE.name, PopupButton.FAVOURITE.label, card.controls.isFavourite);
 
   return (
     `<section class="film-details">
@@ -158,17 +158,19 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._emotion = null;
 
     this._closeButtonHandler = null;
-    this._addToWatchlistClickHandler = null;
-    this._markAsWatchedClickHandler = null;
-    this._addToFavouritesClickHandler = null;
     this._setDeleteCommentClickHandler = null;
     this._setNewCommentSubmitHandler = null;
 
     this.setEmotionClickHandler();
+    this._subscribeOnEvents();
   }
 
   getTemplate() {
     return createFilmDetailsPopupTemplate(this._card, this._comments, this._emotion);
+  }
+
+  getData() {
+    return this._card.controls;
   }
 
   setCloseButtonClickHandler(handler) {
@@ -176,27 +178,6 @@ export default class DetailsPopup extends AbstractSmartComponent {
       .addEventListener(`click`, handler);
 
     this._closeButtonHandler = handler;
-  }
-
-  setAddToWatchlistClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, handler);
-
-    this._addToWatchlistClickHandler = handler;
-  }
-
-  setMarkAsWatchedClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, handler);
-
-    this._markAsWatchedClickHandler = handler;
-  }
-
-  setAddToFavouritesClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, handler);
-
-    this._addToFavouritesClickHandler = handler;
   }
 
   setDeleteCommentClickHandler(handler) {
@@ -247,11 +228,9 @@ export default class DetailsPopup extends AbstractSmartComponent {
   recoveryListeners() {
     this.setEmotionClickHandler();
     this.setCloseButtonClickHandler(this._closeButtonHandler);
-    this.setAddToWatchlistClickHandler(this._addToWatchlistClickHandler);
-    this.setMarkAsWatchedClickHandler(this._markAsWatchedClickHandler);
-    this.setAddToFavouritesClickHandler(this._addToFavouritesClickHandler);
     this.setDeleteCommentClickHandler(this._setDeleteCommentClickHandler);
     this.setNewCommentSubmitHandler(this._setNewCommentSubmitHandler);
+    this._subscribeOnEvents();
   }
 
   _createNewComment(message, emotion) {
@@ -262,5 +241,34 @@ export default class DetailsPopup extends AbstractSmartComponent {
       emotion,
       message,
     };
+  }
+
+  _subscribeOnEvents() {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        console.log(this._card.controls.isAddedToWatchlist);
+        this._card.controls.isAddedToWatchlist = !this._card.controls.isAddedToWatchlist;
+        console.log(this._card.controls.isAddedToWatchlist);
+
+        this.rerender();
+      });
+
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        this._card.controls.isWatched = !this._card.controls.isWatched;
+
+        this.rerender();
+      });
+
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, () => {
+
+        this._card.controls.isFavourite = !this._card.controls.isFavourite;
+        this.rerender();
+      });
   }
 }

@@ -52,7 +52,7 @@ export default class Films {
 
     // уведомляем подписавшихся на обновления
     this._callHandlers(this._dataChangeHandlers);
-    this._callHandlers(this._filterChangeHandlers);
+    //this._callHandlers(this._filterChangeHandlers);
 
     return true;
   }

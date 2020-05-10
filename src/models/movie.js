@@ -15,9 +15,11 @@ export default class Movie {
     this.releaseDate = data.film_info.release[`date`];
     this.writers = data.film_info[`writers`];
     this.watchingDate = data.user_details[`watching_date`];
-    this.isAddedToWatchlist = data.user_details[`watchlist`];
-    this.isWatched = data.user_details[`already_watched`];
-    this.isFavourite = data.user_details[`favorite`];
+    this.controls = {
+      isAddedToWatchlist: data.user_details[`watchlist`],
+      isWatched: data.user_details[`already_watched`],
+      isFavourite: data.user_details[`favorite`],
+    }
     this.commentsIds = data[`comments`];
   }
 
@@ -42,10 +44,10 @@ export default class Movie {
         "description": this.description,
       },
       "user_details": {
-        "watchlist": this.isAddedToWatchlist,
-        "already_watched": this.isWatched,
+        "watchlist": this.controls.isAddedToWatchlist,
+        "already_watched": this.controls.isWatched,
         "watching_date": this.watchingDate,
-        "favorite": this.isFavourite,
+        "favorite": this.controls.isFavourite,
       },
       "comments": this.commentsIds,
     };

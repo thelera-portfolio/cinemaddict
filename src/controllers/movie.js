@@ -68,6 +68,14 @@ export default class MovieController {
   _onCardClick() {
     this._onViewChange();
 
+    // api.getFilms()
+    //   .then((comments) => {
+    //     commentModel.setComments(comments);
+    //     const siteBodyElement = document.querySelector(`body`);
+    //     this._popupComponent = new DetailsPopupComponent(this._card, this._comments);
+    //     render(siteBodyElement, this._popupComponent);
+    //   })
+
     const siteBodyElement = document.querySelector(`body`);
     this._popupComponent = new DetailsPopupComponent(this._card, this._comments);
     render(siteBodyElement, this._popupComponent);
@@ -76,36 +84,30 @@ export default class MovieController {
   }
 
   _onCloseButtonClick() {
+    const newControls = this._popupComponent.getData();
+    const newCard = FilmModel.clone(this._card);
+    newCard.controls = newControls;
+
+    this._onDataChange(this._card, newCard);
+
     remove(this._popupComponent);
     document.removeEventListener(`keydown`, this._escKeyDownHandler);
   }
 
   _escKeyDownHandler(evt) {
     if (evt.key === ESC_BUTTON) {
+      const newControls = this._popupComponent.getData();
+      const newCard = FilmModel.clone(this._card);
+      newCard.controls = newControls;
+
+      this._onDataChange(this._card, newCard);
+
       remove(this._popupComponent);
       document.removeEventListener(`keydown`, this._escKeyDownHandler);
     }
   }
 
   _subscribePopupOnEvents() {
-    this._popupComponent.setAddToWatchlistClickHandler((evt) => {
-      evt.preventDefault();
-
-      this._changeControlsData(FilmControl.WATCHLIST);
-    });
-
-    this._popupComponent.setMarkAsWatchedClickHandler((evt) => {
-      evt.preventDefault();
-
-      this._changeControlsData(FilmControl.WATCH);
-    });
-
-    this._popupComponent.setAddToFavouritesClickHandler((evt) => {
-      evt.preventDefault();
-
-      this._changeControlsData(FilmControl.FAVOURITE);
-    });
-
     this._popupComponent.setDeleteCommentClickHandler((evt) => {
       evt.preventDefault();
 
@@ -143,9 +145,9 @@ export default class MovieController {
     });
   }
 
-  _changeControlsData(control) {
+  _changeControlsData(value) {
     const newCard = FilmModel.clone(this._card);
-    newCard[control] = !newCard[control];
+    newCard.controls[value] = !newCard.controls[value];
 
     this._onDataChange(this._card, newCard);
   }

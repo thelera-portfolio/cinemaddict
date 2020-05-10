@@ -16,9 +16,9 @@ const createFilmCardTemplate = (card, comments) => {
   const duration = fromMinutesToHours(durationInMinutes);
   const filmReleaseDate = moment(releaseDate).format(`YYYY`);
 
-  const watchlistButton = createButtonMarkup(Button.WATCHLIST.name, Button.WATCHLIST.label, card.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(Button.WATCHED.name, Button.WATCHED.label, card.isWatched);
-  const favouritesButton = createButtonMarkup(Button.FAVOURITE.name, Button.FAVOURITE.label, card.isFavourite);
+  const watchlistButton = createButtonMarkup(Button.WATCHLIST.name, Button.WATCHLIST.label, card.controls.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(Button.WATCHED.name, Button.WATCHED.label, card.controls.isWatched);
+  const favouritesButton = createButtonMarkup(Button.FAVOURITE.name, Button.FAVOURITE.label, card.controls.isFavourite);
 
   return (
     `<article class="film-card">
