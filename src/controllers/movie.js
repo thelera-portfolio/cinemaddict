@@ -30,10 +30,15 @@ export default class MovieController {
     this._card = card;
     this._comments = comments;
 
+    const oldCardComponent = this._cardComponent;
     this._cardComponent = new FilmCardComponent(this._card, this._comments);
 
     // отрисуем карточку фильма
-    render(this._container, this._cardComponent);
+    if (oldCardComponent) {
+      replace(this._cardComponent, oldCardComponent);
+    } else {
+      render(this._container, this._cardComponent);
+    }
 
     // показ попапа с подробной информацией о фильме
     this._cardComponent.setClickHandler(this._onCardClick);

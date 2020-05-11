@@ -58,14 +58,14 @@ export default class PageController {
   }
 
   renderExtraFilms() {
-    extraFilms.forEach((it) => {
-      const extraFilmsListComponent = new ExtraFilmComponent(it.title);
+    extraFilms.forEach((extraFilm) => {
+      const extraFilmsListComponent = new ExtraFilmComponent(extraFilm.title);
       render(this._container.getElement(), extraFilmsListComponent);
 
       const filmListContainerComponent = new FilmListContainerComponent();
       render(extraFilmsListComponent.getElement(), filmListContainerComponent);
 
-      const filmsToRender = this._getSortedFilms(this._filmsModel.getFilms(), it.sortType, 0, pageViewSettings.extraFilmsCount);
+      const filmsToRender = this._getSortedFilms(this._filmsModel.getFilms(), extraFilm.sortType, 0, pageViewSettings.extraFilmsCount);
 
       const newFilms = this._renderCards(filmListContainerComponent.getElement(), filmsToRender);
       this._showedExtraFilmsControllers = this._showedExtraFilmsControllers.concat(newFilms);
@@ -161,19 +161,13 @@ export default class PageController {
         const isSuccess = this._filmsModel.updateFilm(oldCard.id, newFilmCard);
 
         if (isSuccess) {
-          //const oldFilmController = this._showedFilmsControllers.find((it) => it.card === oldCard);
-          //const oldExtraFilmController = this._showedExtraFilmsControllers.find((it) => it.card === oldCard);
-
+          this._updateFilms(this._showingFilmsCount); // рисуем все карточки заново
           
-          // if (oldFilmController) {
-          //   this._renderCard(oldFilmController, newFilmCard);
-          // }
-
-          // if (oldExtraFilmController) {
-          //   this._renderCard(oldExtraFilmController, newFilmCard);
-          // }
-
-          this._updateFilms(this._showingFilmsCount);
+          const oldExtraFilmController = this._showedExtraFilmsControllers.find((it) => it.card === oldCard);
+          // обновляем экстра-карточку, если нужно
+          if (oldExtraFilmController) {
+            this._renderCard(oldExtraFilmController, newFilmCard);
+          }
         }
       })
     .catch(() => {
@@ -201,12 +195,8 @@ export default class PageController {
       case SortType.BY_RATING:
         sortedFilms = filmsToSort.sort((a, b) => b.rating - a.rating);
         break;
-      // case SortType.BY_COMMENTS:
-      //   const commentsToSort = this._commentsModel.getComments();
-      //   const sortedComments = commentsToSort.sort((a, b) => b.comments.length - a.comments.length);
-      //   sortedFilms = sortedComments.map((comment) => {
-      //     return filmsToSort.find((film) => film.id === comment.filmId);
-      //   });
+      case SortType.BY_COMMENTS:
+        sortedFilms = filmsToSort.sort((a, b) => b.commentsIds.length - a.commentsIds.length);
         break;
       case SortType.BY_DATE:
         sortedFilms = filmsToSort.sort((a, b) => moment(b.releaseDate).format(`x`) - moment(a.releaseDate).format(`x`));
