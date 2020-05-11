@@ -22,9 +22,7 @@ export default class Comment {
   }
 
   static parseComments(data) {
-    return {
-      comments: data.map(Comment.parseComment),
-    };
+    return data.map(Comment.parseComment);
   }
 
   static clone(data) {

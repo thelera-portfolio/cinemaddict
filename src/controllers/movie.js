@@ -1,7 +1,9 @@
+import API from "../api.js";
 import DetailsPopupComponent from "../components/details-popup.js";
 import FilmCardComponent from "../components/card.js";
 import FilmModel from "../models/movie.js";
-import {ESC_BUTTON, FilmControl} from "../utils/consts.js";
+import CommentsModel from "../models/comments.js";
+import {AUTHORIZATION, Button, END_POINT, FilmControl} from "../utils/consts.js";
 import {render, remove, replace} from "../utils/render.js";
 
 export default class MovieController {
@@ -10,6 +12,7 @@ export default class MovieController {
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
     this._onCommentDataChange = onCommentDataChange;
+    this._commentsModel = null;
 
     this._cardComponent = null;
     this._popupComponent = null;
@@ -19,30 +22,18 @@ export default class MovieController {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onCardClick = this._onCardClick.bind(this);
+    this._onCommentChange = this._onCommentChange.bind(this);
+    this._onCommentClick = this._onCommentClick.bind(this);
   }
 
   render(card, comments) {
     this._card = card;
     this._comments = comments;
 
-    const oldCardComponent = this._cardComponent;
-    const oldPopupComponent = this._popupComponent;
-
     this._cardComponent = new FilmCardComponent(this._card, this._comments);
 
     // отрисуем карточку фильма
-    if (oldCardComponent) {
-      replace(this._cardComponent, oldCardComponent);
-    } else {
-      render(this._container, this._cardComponent);
-    }
-
-    if (oldPopupComponent) {
-      this._popupComponent = new DetailsPopupComponent(this._card, this._comments);
-      replace(this._popupComponent, oldPopupComponent);
-
-      this._subscribePopupOnEvents();
-    }
+    render(this._container, this._cardComponent);
 
     // показ попапа с подробной информацией о фильме
     this._cardComponent.setClickHandler(this._onCardClick);
@@ -67,20 +58,18 @@ export default class MovieController {
 
   _onCardClick() {
     this._onViewChange();
+    const api = new API(AUTHORIZATION, END_POINT);
 
-    // api.getFilms()
-    //   .then((comments) => {
-    //     commentModel.setComments(comments);
-    //     const siteBodyElement = document.querySelector(`body`);
-    //     this._popupComponent = new DetailsPopupComponent(this._card, this._comments);
-    //     render(siteBodyElement, this._popupComponent);
-    //   })
+    api.getComments(this._card.id)
+      .then((comments) => {
+        this._commentsModel = new CommentsModel();
+        this._commentsModel.setComments(comments);
+        const siteBodyElement = document.querySelector(`body`);
+        this._popupComponent = new DetailsPopupComponent(this._card, this._commentsModel);
+        render(siteBodyElement, this._popupComponent);
 
-    const siteBodyElement = document.querySelector(`body`);
-    this._popupComponent = new DetailsPopupComponent(this._card, this._comments);
-    render(siteBodyElement, this._popupComponent);
-
-    this._subscribePopupOnEvents();
+        this._subscribePopupOnEvents();
+      })
   }
 
   _onCloseButtonClick() {
@@ -95,7 +84,7 @@ export default class MovieController {
   }
 
   _escKeyDownHandler(evt) {
-    if (evt.key === ESC_BUTTON) {
+    if (evt.key === Button.ESCAPE) {
       const newControls = this._popupComponent.getData();
       const newCard = FilmModel.clone(this._card);
       newCard.controls = newControls;
@@ -107,17 +96,23 @@ export default class MovieController {
     }
   }
 
+  _onCommentChange(oldComment, newComment) {
+    if (newComment === null) { // удалить
+      this._commentsModel.removeComment(this._card, oldComment);
+    } else if (oldComment === null) { // добавить
+      this._commentsModel.addComment(this._card, newComment);
+    }
+  }
+
+  _onCommentClick(comment) {
+    this._onCommentChange(comment, null);
+  }
+
   _subscribePopupOnEvents() {
-    this._popupComponent.setDeleteCommentClickHandler((evt) => {
-      evt.preventDefault();
-
-      const comment = evt.target.dataset;
-
-      this._onCommentDataChange(this._card, comment, null);
-    });
+    this._popupComponent.setDeleteCommentClickHandler(this._onCommentClick);
 
     this._popupComponent.setNewCommentSubmitHandler((newComment) => {
-      this._onCommentDataChange(this._card, null, newComment);
+      this._onCommentChange(null, newComment);
     });
 
     this._popupComponent.setEmotionClickHandler();

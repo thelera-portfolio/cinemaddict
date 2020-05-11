@@ -1,24 +1,24 @@
 import {MAX_DESCRIPTION_LENGTH} from "../utils/consts.js";
 import {fromMinutesToHours} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
-import {Button} from "../utils/consts.js";
+import {CardButton} from "../utils/consts.js";
 import moment from "moment";
 
 const createButtonMarkup = (name, label, isActive = true) =>
   `<button class="film-card__controls-item button film-card__controls-item--${name} ${isActive ? `film-card__controls-item--active` : ``}">${label}</button>`;
 
 
-const createFilmCardTemplate = (card, comments) => {
+const createFilmCardTemplate = (card) => {
   const {description, duration: durationInMinutes, genres, image, rating, releaseDate, title} = card;
 
   const shortDescription = description.length >= MAX_DESCRIPTION_LENGTH ? `${description.slice(0, MAX_DESCRIPTION_LENGTH)}...` : description;
-  const commentsCount = comments.length;
+  const commentsCount = card.commentsIds.length;
   const duration = fromMinutesToHours(durationInMinutes);
   const filmReleaseDate = moment(releaseDate).format(`YYYY`);
 
-  const watchlistButton = createButtonMarkup(Button.WATCHLIST.name, Button.WATCHLIST.label, card.controls.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(Button.WATCHED.name, Button.WATCHED.label, card.controls.isWatched);
-  const favouritesButton = createButtonMarkup(Button.FAVOURITE.name, Button.FAVOURITE.label, card.controls.isFavourite);
+  const watchlistButton = createButtonMarkup(CardButton.WATCHLIST.name, CardButton.WATCHLIST.label, card.controls.isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(CardButton.WATCHED.name, CardButton.WATCHED.label, card.controls.isWatched);
+  const favouritesButton = createButtonMarkup(CardButton.FAVOURITE.name, CardButton.FAVOURITE.label, card.controls.isFavourite);
 
   return (
     `<article class="film-card">

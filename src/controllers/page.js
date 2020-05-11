@@ -10,10 +10,9 @@ import FilmListContainerComponent from "../components/film-list-container.js";
 import moment from "moment";
 
 export default class PageController {
-  constructor(container, filmsModel, commentsModel, api) {
+  constructor(container, filmsModel, api) {
     this._container = container;
     this._filmsModel = filmsModel;
-    this._commentsModel = commentsModel;
     this._api = api;
 
     this._showedFilmsControllers = [];
@@ -28,7 +27,6 @@ export default class PageController {
     this._sortComponent = new SortComponent();
 
     this._onDataChange = this._onDataChange.bind(this);
-    this._onCommentChange = this._onCommentChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
     this._onSortTypeChange = this._onSortTypeChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
@@ -149,7 +147,7 @@ export default class PageController {
 
   _renderCards(container, films) {
     return films.map((film) => {
-      const filmController = new MovieController(container, this._onDataChange, this._onViewChange, this._onCommentChange);
+      const filmController = new MovieController(container, this._onDataChange, this._onViewChange);
 
       this._renderCard(filmController, film);
 
@@ -163,8 +161,8 @@ export default class PageController {
         const isSuccess = this._filmsModel.updateFilm(oldCard.id, newFilmCard);
 
         if (isSuccess) {
-          const oldFilmController = this._showedFilmsControllers.find((it) => it.card === oldCard);
-          const oldExtraFilmController = this._showedExtraFilmsControllers.find((it) => it.card === oldCard);
+          //const oldFilmController = this._showedFilmsControllers.find((it) => it.card === oldCard);
+          //const oldExtraFilmController = this._showedExtraFilmsControllers.find((it) => it.card === oldCard);
 
           
           // if (oldFilmController) {
@@ -183,22 +181,8 @@ export default class PageController {
     });
   }
 
-  _onCommentChange(card, oldComment, newComment) {
-    if (newComment === null) { // удалить
-      this._commentsModel.removeComment(card, oldComment);
-    } else if (oldComment === null) { // добавить
-      this._commentsModel.addComment(card, newComment);
-    }
-
-    const cardController = this._showedFilmsControllers.find((controller) => controller.card === card);
-
-    this._renderCard(cardController, card);
-  }
-
   _renderCard(cardController, card) {
-    const commentsOfFilm = this._commentsModel.getComments().find((comment) => card.id === comment.filmId);
-
-    cardController.render(card, commentsOfFilm.comments);
+    cardController.render(card);
   }
 
   _onViewChange() {
@@ -217,12 +201,12 @@ export default class PageController {
       case SortType.BY_RATING:
         sortedFilms = filmsToSort.sort((a, b) => b.rating - a.rating);
         break;
-      case SortType.BY_COMMENTS:
-        const commentsToSort = this._commentsModel.getComments();
-        const sortedComments = commentsToSort.sort((a, b) => b.comments.length - a.comments.length);
-        sortedFilms = sortedComments.map((comment) => {
-          return filmsToSort.find((film) => film.id === comment.filmId);
-        });
+      // case SortType.BY_COMMENTS:
+      //   const commentsToSort = this._commentsModel.getComments();
+      //   const sortedComments = commentsToSort.sort((a, b) => b.comments.length - a.comments.length);
+      //   sortedFilms = sortedComments.map((comment) => {
+      //     return filmsToSort.find((film) => film.id === comment.filmId);
+      //   });
         break;
       case SortType.BY_DATE:
         sortedFilms = filmsToSort.sort((a, b) => moment(b.releaseDate).format(`x`) - moment(a.releaseDate).format(`x`));

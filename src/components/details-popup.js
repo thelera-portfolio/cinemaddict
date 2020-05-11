@@ -1,15 +1,17 @@
 import {fromMinutesToHours} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {EMOTIONS, PopupButton} from "../utils/consts.js";
+import {Button, EMOTIONS, PopupButton} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
 import {encode} from "he";
 import moment from "moment";
 
 const createCommentsMarkup = (comments) => {
   let markUp = ``;
+
   for (let i = 0; i < comments.length; i++) {
     markUp = markUp.concat(new CommentsComponent(comments[i]).getTemplate());
   }
+
   return markUp;
 };
 
@@ -154,7 +156,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
   constructor(card, comments) {
     super();
     this._card = card;
-    this._comments = comments;
+    this._commentsModel = comments;
     this._emotion = null;
 
     this._closeButtonHandler = null;
@@ -163,10 +165,14 @@ export default class DetailsPopup extends AbstractSmartComponent {
 
     this.setEmotionClickHandler();
     this._subscribeOnEvents();
+
+    this._onCommentsChange = this._onCommentsChange.bind(this);
+
+    this._commentsModel.setDataChangeHandler(this._onCommentsChange);
   }
 
   getTemplate() {
-    return createFilmDetailsPopupTemplate(this._card, this._comments, this._emotion);
+    return createFilmDetailsPopupTemplate(this._card, this._commentsModel.getComments(), this._emotion);
   }
 
   getData() {
@@ -177,6 +183,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
 
+    //this._closeButtonHandler();
     this._closeButtonHandler = handler;
   }
 
@@ -184,20 +191,31 @@ export default class DetailsPopup extends AbstractSmartComponent {
     Array.from(this.getElement()
     .querySelectorAll(`.film-details__comment-delete`))
     .forEach((comment) => {
-      comment.addEventListener(`click`, handler);
+      comment.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        const comment = evt.target.dataset;
+        handler(comment);
+
+        this.rerender();
+      });
     });
 
     this._setDeleteCommentClickHandler = handler;
+
+    //this.rerender();
   }
 
   setNewCommentSubmitHandler(handler) {
     this.getElement()
     .querySelector(`.film-details__comment-input`)
     .addEventListener(`keydown`, (evt) => {
-      if (evt.key === `Enter`) {
+      if (evt.key === Button.ENTER && (evt.ctrlKey || evt.metaKey)) {
         const commentMessage = encode(evt.target.value);
-        if (this._emotion) {
+
+        if (this._emotion && commentMessage) {
           const newComment = this._createNewComment(commentMessage, this._emotion);
+
           handler(newComment);
         }
       }
@@ -216,6 +234,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     .forEach((emojiLabel) => {
       emojiLabel.addEventListener(`click`, (evt) => {
         evt.preventDefault();
+
         const emotion = emojiLabel.getAttribute(`for`).substring(`emoji-`.length);
         createEmojiImageMarkup(emotion);
         this._emotion = emotion;
@@ -241,6 +260,11 @@ export default class DetailsPopup extends AbstractSmartComponent {
       emotion,
       message,
     };
+  }
+
+  _onCommentsChange() {
+    this._clearNewComment();
+    this.rerender();
   }
 
   _subscribeOnEvents() {
@@ -270,5 +294,9 @@ export default class DetailsPopup extends AbstractSmartComponent {
         this._card.controls.isFavourite = !this._card.controls.isFavourite;
         this.rerender();
       });
+  }
+
+  _clearNewComment() {
+    this._emotion = null;
   }
 }

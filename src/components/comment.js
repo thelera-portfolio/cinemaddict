@@ -1,6 +1,7 @@
 import {humanizeDate} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
 import {encode} from "he";
+import moment from "moment";
 
 const createCommentsTemplate = (comment) => {
   const {author, date, emotion, id, message: currentMessage} = comment;

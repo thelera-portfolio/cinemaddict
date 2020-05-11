@@ -18,7 +18,7 @@ export const getRandomIntegerNumber = (min, max) => (min + Math.floor(Math.rando
 export const getRandomFloatNumber = (max) => ((Math.random() * (max)).toFixed(1));
 
 export const humanizeDate = (date) => {
-  return moment(date).startOf(`day`).fromNow();
+  return moment(date).fromNow();
   // return moment(date).format(`YYYY/MM/DD hh:mm`);
 };
 

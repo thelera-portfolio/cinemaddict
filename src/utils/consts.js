@@ -1,6 +1,12 @@
 export const MAX_DESCRIPTION_LENGTH = 139;
-export const ESC_BUTTON = `Escape`;
 export const HIDDEN_CLASS = `visually-hidden`;
+export const AUTHORIZATION = `Basic dXNlchjuhuyi===kBwYXNzd29yZAo=`;
+export const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
+
+export const Button = {
+  ESCAPE: `Escape`,
+  ENTER: `Enter`,
+};
 
 export const MenuItem = {
   FILTERS: `control__filters`,
@@ -88,7 +94,7 @@ export const SortType = {
   BY_COMMENTS: `comments`,
 };
 
-export const Button = {
+export const CardButton = {
   WATCHLIST: {
     name: `add-to-watchlist`,
     label: `Add to watchlist`,
