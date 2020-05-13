@@ -2,6 +2,12 @@ export default class Movie {
   constructor(data) {
     this.actors = data.film_info[`actors`];
     this.age = data.film_info[`age_rating`];
+    this.commentsIds = data[`comments`];
+    this.controls = {
+      isAddedToWatchlist: data.user_details[`watchlist`],
+      isWatched: data.user_details[`already_watched`],
+      isFavourite: data.user_details[`favorite`],
+    };
     this.country = data.film_info.release[`release_country`];
     this.description = data.film_info[`description`];
     this.director = data.film_info[`director`];
@@ -15,12 +21,6 @@ export default class Movie {
     this.releaseDate = data.film_info.release[`date`];
     this.writers = data.film_info[`writers`];
     this.watchingDate = data.user_details[`watching_date`];
-    this.controls = {
-      isAddedToWatchlist: data.user_details[`watchlist`],
-      isWatched: data.user_details[`already_watched`],
-      isFavourite: data.user_details[`favorite`],
-    }
-    this.commentsIds = data[`comments`];
   }
 
   toRAW() {

@@ -1,10 +1,127 @@
 // страница со статистикой
-import AbstractComponent from "./abstract-component.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
+import {getFilmsByFilter} from "../utils/filter.js";
+import {FilterType} from "../utils/consts.js";
+import {getUserRank} from "./rating.js";
+import Chart from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels';
 
-const {rank, watchedCount, duration, topGenre} = [0, 0, 0, 0];
+const getCountedGenres = (films) => {
+  const favouriteFilms = getFilmsByFilter(films, FilterType.FAVOURITES);
 
-const createStatisticsTemplate = () =>
-  `<section class="statistic">
+  const values = GENRES.map((genre) =>
+    favouriteFilms.filter((film) =>
+      film.genres.includes(genre))
+        .length);
+
+  let genresCount = [];
+  GENRES.forEach((genre, i) => genresCount.push(
+      {
+        name: genre,
+        count: values[i],
+      }));
+
+  const sortedGenresCount = genresCount.sort((a, b) => b.count - a.count);
+
+  return sortedGenresCount;
+};
+
+
+const GENRES = [
+  `Action`,
+  `Adventure`,
+  `Animation`,
+  `Comedy`,
+  `Drama`,
+  `Family`,
+  `Horror`,
+  `Sci-Fi`,
+  `Thriller`,
+];
+
+const getTopGenre = (films) => getCountedGenres(films)[0].name;
+
+const renderChart = (films, statisticCtx) => {
+  const BAR_HEIGHT = 50;
+
+  // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
+  statisticCtx.height = BAR_HEIGHT * 9;
+
+  return new Chart(statisticCtx, {
+    plugins: [ChartDataLabels],
+    type: `horizontalBar`,
+    data: {
+      labels: getCountedGenres(films).map((genre) => genre.name),
+      datasets: [{
+        data: getCountedGenres(films).map((genre) => genre.count),
+        backgroundColor: `#ffe800`,
+        hoverBackgroundColor: `#ffe800`,
+        anchor: `start`
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          font: {
+            size: 20
+          },
+          color: `#ffffff`,
+          anchor: `start`,
+          align: `start`,
+          offset: 40,
+        }
+      },
+      scales: {
+        yAxes: [{
+          ticks: {
+            fontColor: `#ffffff`,
+            padding: 100,
+            fontSize: 20
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+          barThickness: 24
+        }],
+        xAxes: [{
+          ticks: {
+            display: false,
+            beginAtZero: true
+          },
+          gridLines: {
+            display: false,
+            drawBorder: false
+          },
+        }],
+      },
+      legend: {
+        display: false
+      },
+      tooltips: {
+        enabled: false
+      }
+    }
+  });
+};
+
+const createStatisticsTemplate = (films) => {
+  const watchedCount = films.filter((film) => film.controls.isWatched).length;
+
+  const duration = films.reduce((filmsDuration, film) => {
+    filmsDuration += film.duration;
+    return filmsDuration;
+  }, 0);
+
+  const durationHours = Math.floor(duration / 60);
+  const durationMinutes = duration % 60;
+
+  const topGenre = getTopGenre(films);
+
+  const rank = getUserRank(watchedCount);
+
+  return (
+    `<section class="statistic">
     <p class="statistic__rank">
       Your rank
       <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
@@ -37,7 +154,7 @@ const createStatisticsTemplate = () =>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${duration} <span class="statistic__item-description">h</span> ${duration} <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${durationHours} <span class="statistic__item-description">h</span> ${durationMinutes} <span class="statistic__item-description">m</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Top genre</h4>
@@ -48,11 +165,39 @@ const createStatisticsTemplate = () =>
     <div class="statistic__chart-wrap">
       <canvas class="statistic__chart" width="1000"></canvas>
     </div>
-  </section>`;
+  </section>`
+  );
+};
 
-export default class Statistics extends AbstractComponent {
+export default class Statistics extends AbstractSmartComponent {
+  constructor(filmsModel) {
+    super();
+
+    this._filmsModel = filmsModel;
+    this._renderCharts();
+  }
+
   getTemplate() {
-    return createStatisticsTemplate();
+    return createStatisticsTemplate(this._filmsModel.getFilms());
+  }
+
+  show() {
+    super.show();
+
+    this.rerender();
+  }
+
+  recoveryListeners() { }
+
+  rerender() {
+    super.rerender();
+
+    this._renderCharts();
+  }
+
+  _renderCharts() {
+    const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
+    renderChart(this._filmsModel.getFilms(), statisticCtx);
   }
 }
 

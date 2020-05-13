@@ -17,14 +17,13 @@ const filmsModel = new FilmsModel();
 
 const navigationComponent = new NavigationComponent();
 const filmsContainerComponent = new AllFilmsComponent();
-const statisticsComponent = new StatisticsComponent();
+const statisticsComponent = new StatisticsComponent(filmsModel);
+const ratingComponent = new RatingComponent(filmsModel);
 
 const filtersController = new FilterController(navigationComponent, filmsModel);
 const pageController = new PageController(filmsContainerComponent, filmsModel, api);
 
 render(siteMainElement, navigationComponent);
-render(siteMainElement, statisticsComponent);
-statisticsComponent.hide();
 
 navigationComponent.setOnChange((menuItem) => {
   switch (menuItem) {
@@ -39,32 +38,16 @@ navigationComponent.setOnChange((menuItem) => {
   }
 });
 
-// api.getFilms()
-//   .then((films) => {
-//     filmsModel.setFilms(films);
-//     return films.map((film) => api.getComments(film.id));
-//   })
-//   .then((allComments) => Promise.all(allComments))
-//   .then((comments) => {
-//     commentsModel.setComments(comments);
-
-//     const watchedFilmsCount = filmsModel.getFilms().reduce((filmsCount, film) => film.isWatched ? filmsCount += 1 : filmsCount, 0);
-
-//     render(siteHeaderElement, new RatingComponent(watchedFilmsCount));
-//     pageController.render();
-//     pageController.renderExtraFilms();
-//     filtersController.render();
-//   });
-
 api.getFilms()
   .then((films) => {
     filmsModel.setFilms(films);
-    const watchedFilmsCount = filmsModel.getFilms().reduce((filmsCount, film) => film.isWatched ? filmsCount += 1 : filmsCount, 0);
 
-    render(siteHeaderElement, new RatingComponent(watchedFilmsCount));
     pageController.render();
     pageController.renderExtraFilms();
     filtersController.render();
+    render(siteHeaderElement, ratingComponent);
+    render(siteMainElement, statisticsComponent);
+    statisticsComponent.hide();
   })
   .catch(() => {
     throw new Error(`Error`);

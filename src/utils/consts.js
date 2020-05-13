@@ -47,11 +47,20 @@ export const EMOTIONS = [
   `angry`,
 ];
 
-export const RANKS = [
-  `Novice`,
-  `Fan`,
-  `Movie Buff`
-];
+export const Rank = {
+  NOVICE: {
+    name: `Novice`,
+    value: 1,
+  },
+  FAN: {
+    name: `Fan`,
+    value: 11,
+  },
+  MOVIE_BUFF: {
+    name: `Movie Buff`,
+    value: 21,
+  },
+};
 
 export const StatsData = {
   MAX_WATCHED_COUNT: 100,

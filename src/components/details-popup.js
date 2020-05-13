@@ -2,6 +2,7 @@ import {fromMinutesToHours} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
 import {Button, EMOTIONS, PopupButton} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
+import CommentModel from "../models/local-comment.js";
 import {encode} from "he";
 import moment from "moment";
 
@@ -42,17 +43,18 @@ const createEmojiTemplate = (emotions, checkedEmotion) => {
   return emotions.map((it) => createEmojiMarkup(it, it === checkedEmotion)).join(``);
 };
 
-const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
+const createFilmDetailsPopupTemplate = (card, comments, options = {}) => {
   const {actors, age, country, description, director, duration: durationInMinutes, genres, image, rating, releaseDate, title, originalTitle, writers} = card;
+  const {emotion, isAddedToWatchlist, isWatched, isFavourite} = options;
 
   const commentsCount = comments.length;
 
   const filmReleaseDate = moment(releaseDate).format(`DD MMMM YYYY`);
   const duration = fromMinutesToHours(durationInMinutes);
 
-  const watchlistButton = createButtonMarkup(PopupButton.WATCHLIST.name, PopupButton.WATCHLIST.label, card.controls.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(PopupButton.WATCHED.name, PopupButton.WATCHED.label, card.controls.isWatched);
-  const favouritesButton = createButtonMarkup(PopupButton.FAVOURITE.name, PopupButton.FAVOURITE.label, card.controls.isFavourite);
+  const watchlistButton = createButtonMarkup(PopupButton.WATCHLIST.name, PopupButton.WATCHLIST.label, isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(PopupButton.WATCHED.name, PopupButton.WATCHED.label, isWatched);
+  const favouritesButton = createButtonMarkup(PopupButton.FAVOURITE.name, PopupButton.FAVOURITE.label, isFavourite);
 
   return (
     `<section class="film-details">
@@ -159,6 +161,11 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._commentsModel = comments;
     this._emotion = null;
 
+    this._isAddedToWatchlist = card.controls.isAddedToWatchlist;
+    this._isWatched = card.controls.isWatched;
+    this._isFavourite = card.controls.isFavourite;
+    this._commentsIds = card.commentsIds;
+
     this._closeButtonHandler = null;
     this._setDeleteCommentClickHandler = null;
     this._setNewCommentSubmitHandler = null;
@@ -172,18 +179,28 @@ export default class DetailsPopup extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return createFilmDetailsPopupTemplate(this._card, this._commentsModel.getComments(), this._emotion);
+    return createFilmDetailsPopupTemplate(this._card, this._commentsModel.getComments(), {
+      emotion: this._emotion,
+      isAddedToWatchlist: this._isAddedToWatchlist,
+      isWatched: this._isWatched,
+      isFavourite: this._isFavourite,
+    });
   }
 
   getData() {
-    return this._card.controls;
+    return {
+      controls: {
+        isAddedToWatchlist: this._isAddedToWatchlist,
+        isWatched: this._isWatched,
+        isFavourite: this._isFavourite,
+      },
+    };
   }
 
   setCloseButtonClickHandler(handler) {
     this.getElement().querySelector(`.film-details__close-btn`)
       .addEventListener(`click`, handler);
 
-    //this._closeButtonHandler();
     this._closeButtonHandler = handler;
   }
 
@@ -194,16 +211,14 @@ export default class DetailsPopup extends AbstractSmartComponent {
       comment.addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        const comment = evt.target.dataset;
-        handler(comment);
+        const commentData = evt.target.dataset;
+        handler(commentData);
 
         this.rerender();
       });
     });
 
     this._setDeleteCommentClickHandler = handler;
-
-    //this.rerender();
   }
 
   setNewCommentSubmitHandler(handler) {
@@ -214,7 +229,8 @@ export default class DetailsPopup extends AbstractSmartComponent {
         const commentMessage = encode(evt.target.value);
 
         if (this._emotion && commentMessage) {
-          const newComment = this._createNewComment(commentMessage, this._emotion);
+          const newCommentData = this._createNewComment(commentMessage, this._emotion);
+          const newComment = new CommentModel(newCommentData);
 
           handler(newComment);
         }
@@ -254,11 +270,9 @@ export default class DetailsPopup extends AbstractSmartComponent {
 
   _createNewComment(message, emotion) {
     return {
-      id: String(new Date() + Math.random()),
-      author: `Alice`,
-      date: new Date(),
-      emotion,
-      message,
+      [`date`]: String(new Date()),
+      [`emotion`]: emotion,
+      [`comment`]: message,
     };
   }
 
@@ -272,9 +286,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        console.log(this._card.controls.isAddedToWatchlist);
-        this._card.controls.isAddedToWatchlist = !this._card.controls.isAddedToWatchlist;
-        console.log(this._card.controls.isAddedToWatchlist);
+        this._isAddedToWatchlist = !this._isAddedToWatchlist;
 
         this.rerender();
       });
@@ -283,7 +295,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        this._card.controls.isWatched = !this._card.controls.isWatched;
+        this._isWatched = !this._isWatched;
 
         this.rerender();
       });
@@ -291,7 +303,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this.getElement().querySelector(`.film-details__control-label--favorite`)
       .addEventListener(`click`, () => {
 
-        this._card.controls.isFavourite = !this._card.controls.isFavourite;
+        this._isFavourite = !this._isFavourite;
         this.rerender();
       });
   }

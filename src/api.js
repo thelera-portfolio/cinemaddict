@@ -1,5 +1,6 @@
 import Movie from "./models/movie.js";
 import Comment from "./models/comment.js";
+import LocalComment from "./models/local-comment.js";
 import {Method, StatusCode, Url} from "./utils/consts.js";
 
 const checkStatus = (response) => {
@@ -31,7 +32,7 @@ export default class API {
 
   updateFilm(id, data) {
     return this._load({
-      url: `movies/${id}`,
+      url: `${Url.MOVIES}/${id}`,
       method: Method.PUT,
       body: JSON.stringify(data.toRAW()),
       headers: new Headers({ "Content-Type": `application/json` })
@@ -40,12 +41,22 @@ export default class API {
       .then(Movie.parseMovie);
   }
 
-  addComment() {
-
+  addComment(id, data) {
+    return this._load({
+      url: `${Url.COMMENTS}/${id}`,
+      method: Method.POST,
+      body: JSON.stringify(data.toRAW()),
+      headers: new Headers({ "Content-Type": `application/json` })
+    })
+      .then((response) => response.json())
+      .then(LocalComment.parseComment);
   }
 
-  deleteComment() {
-    
+  deleteComment(id) {
+    return this._load({
+      url: `${Url.COMMENTS}/${id}`,
+      method: Method.DELETE,
+    })
   }
 
   _load({url, method = Method.GET, body = null, headers = new Headers()}) {

@@ -73,10 +73,12 @@ export default class PageController {
   }
 
   show() {
+    this._sortComponent.show();
     this._container.show();
   }
 
   hide() {
+    this._sortComponent.hide();
     this._container.hide();
   }
 
@@ -93,11 +95,10 @@ export default class PageController {
   _updateFilms(count) {
     this._removeFilms();
 
-    if(this._filmsModel.getFilms().length === 0) {
+    if (this._filmsModel.getFilms().length === 0) {
       render(this._filmsListComponent.getElement(), this._noFilmsComponent);
       return;
     }
-
     this._renderFilms(this._filmsModel.getFilms().slice(0, count));
     this._renderShowMoreButton();
   }
@@ -147,7 +148,7 @@ export default class PageController {
 
   _renderCards(container, films) {
     return films.map((film) => {
-      const filmController = new MovieController(container, this._onDataChange, this._onViewChange);
+      const filmController = new MovieController(container, this._onDataChange, this._onViewChange, this._api);
 
       this._renderCard(filmController, film);
 
@@ -162,7 +163,7 @@ export default class PageController {
 
         if (isSuccess) {
           this._updateFilms(this._showingFilmsCount); // рисуем все карточки заново
-          
+
           const oldExtraFilmController = this._showedExtraFilmsControllers.find((it) => it.card === oldCard);
           // обновляем экстра-карточку, если нужно
           if (oldExtraFilmController) {
