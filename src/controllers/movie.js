@@ -2,7 +2,7 @@ import DetailsPopupComponent from "../components/details-popup.js";
 import FilmCardComponent from "../components/card.js";
 import FilmModel from "../models/movie.js";
 import CommentsModel from "../models/comments.js";
-import {Button, FilmControl} from "../utils/consts.js";
+import {Button, FilmControl, SHAKE_ANIMATION_TIMEOUT} from "../utils/consts.js";
 import {render, remove, replace} from "../utils/render.js";
 
 export default class MovieController {
@@ -54,6 +54,10 @@ export default class MovieController {
     this._subscribeCardControlsOnEvents();
   }
 
+  shake() {
+
+  }
+
   setDefaultView() {
     if (this._popupComponent) {
       remove(this._popupComponent);
@@ -87,28 +91,46 @@ export default class MovieController {
       .then((comments) => {
         this._commentsModel = new CommentsModel();
         this._commentsModel.setComments(comments);
+
         const siteBodyElement = document.querySelector(`body`);
         this._popupComponent = new DetailsPopupComponent(this._card, this._commentsModel);
+
         render(siteBodyElement, this._popupComponent);
+        //this._popupComponent.querySelector(`.`);
 
         this._subscribePopupOnEvents();
       });
   }
 
-  _onCommentChange(oldComment, newComment) {
+  _onCommentChange(oldCommentId, newComment) {
     if (newComment === null) { // удалить
-      this._api.deleteComment(oldComment.id)
-        .then(() => (this._commentsModel.removeComment(oldComment)));
-    } else if (oldComment === null) { // добавить
+      this._api.deleteComment(oldCommentId)
+        .then(() => (this._commentsModel.removeComment(oldCommentId)))
+        .catch (() => {
+          const commentsElements = this._popupComponent.getElement().querySelectorAll(`.film-details__comment`);
+          const commentElement = Array.from(commentsElements).find((element) => element.dataset.id === oldCommentId);
+
+          this._popupComponent.enableCommentButton(oldCommentId);
+          this._popupComponent.shakeComment(commentElement);
+        });
+    } else if (oldCommentId === null) { // добавить
       this._api.addComment(this._card.id, newComment)
         .then((data) => {
+          this._popupComponent.enable();
           this._commentsModel.addComment(this._card, data.comments);
+        })
+        .catch(() => {
+          this._popupComponent.enable();
+          this._popupComponent.shake();
         });
     }
   }
 
-  _onCommentClick(comment) {
-    this._onCommentChange(comment, null);
+  _onCommentClick(commentId) {
+    this._popupComponent.setDeletindButton(commentId);
+    this._popupComponent.disableCommentButton(commentId);
+
+    this._onCommentChange(commentId, null);
   }
 
   _onCloseButtonClick() {
@@ -126,6 +148,8 @@ export default class MovieController {
     this._popupComponent.setDeleteCommentClickHandler(this._onCommentClick);
 
     this._popupComponent.setNewCommentSubmitHandler((newComment) => {
+      this._popupComponent.disable();
+
       this._onCommentChange(null, newComment);
     });
 

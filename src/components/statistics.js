@@ -1,16 +1,25 @@
-// страница со статистикой
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {getFilmsByFilter} from "../utils/filter.js";
-import {FilterType} from "../utils/consts.js";
+import {BAR_HEIGHT, GENRES, TimeFilter} from "../utils/consts.js";
 import {getUserRank} from "./rating.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import moment from "moment";
+
+const getWatchedFilmsByPeriod = (films, period) => {
+  const watchedFilms = films.filter((film) => film.controls.isWatched);
+
+  if (period === TimeFilter.ALLTIME) {
+    return watchedFilms;
+  }
+
+  const startOfPeriod = moment().startOf(period);
+
+  return watchedFilms.filter((film) => moment(film.watchingDate).isAfter(startOfPeriod));
+};
 
 const getCountedGenres = (films) => {
-  const favouriteFilms = getFilmsByFilter(films, FilterType.FAVOURITES);
-
   const values = GENRES.map((genre) =>
-    favouriteFilms.filter((film) =>
+    films.filter((film) =>
       film.genres.includes(genre))
         .length);
 
@@ -26,26 +35,11 @@ const getCountedGenres = (films) => {
   return sortedGenresCount;
 };
 
-
-const GENRES = [
-  `Action`,
-  `Adventure`,
-  `Animation`,
-  `Comedy`,
-  `Drama`,
-  `Family`,
-  `Horror`,
-  `Sci-Fi`,
-  `Thriller`,
-];
-
 const getTopGenre = (films) => getCountedGenres(films)[0].name;
 
 const renderChart = (films, statisticCtx) => {
-  const BAR_HEIGHT = 50;
-
   // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-  statisticCtx.height = BAR_HEIGHT * 9;
+  statisticCtx.height = BAR_HEIGHT * GENRES.length;
 
   return new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
@@ -115,9 +109,7 @@ const createStatisticsTemplate = (films) => {
 
   const durationHours = Math.floor(duration / 60);
   const durationMinutes = duration % 60;
-
   const topGenre = getTopGenre(films);
-
   const rank = getUserRank(watchedCount);
 
   return (
@@ -132,19 +124,19 @@ const createStatisticsTemplate = (films) => {
       <p class="statistic__filters-description">Show stats:</p>
 
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
+      <label for="statistic-all-time" class="statistic__filters-label for="statistic-all-time">All time</label>
 
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-      <label for="statistic-today" class="statistic__filters-label">Today</label>
+      <label for="statistic-today" class="statistic__filters-label for="statistic-today">Today</label>
 
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-      <label for="statistic-week" class="statistic__filters-label">Week</label>
+      <label for="statistic-week" class="statistic__filters-label for="statistic-week">Week</label>
 
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-      <label for="statistic-month" class="statistic__filters-label">Month</label>
+      <label for="statistic-month" class="statistic__filters-label" for="statistic-month">Month</label>
 
       <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-      <label for="statistic-year" class="statistic__filters-label">Year</label>
+      <label for="statistic-year" class="statistic__filters-label for="statistic-year">Year</label>
     </form>
 
     <ul class="statistic__text-list">
@@ -173,31 +165,51 @@ export default class Statistics extends AbstractSmartComponent {
   constructor(filmsModel) {
     super();
 
-    this._filmsModel = filmsModel;
+    this._films = filmsModel;
+    this._currentTimeFilter = TimeFilter.ALLTIME;
     this._renderCharts();
+
+    this._setTimeFilterHandlers();
   }
 
   getTemplate() {
-    return createStatisticsTemplate(this._filmsModel.getFilms());
+    return createStatisticsTemplate(getWatchedFilmsByPeriod(this._films.getFilms(), this._currentTimeFilter));
   }
 
   show() {
     super.show();
 
     this.rerender();
+
+    this._setTimeFilterHandlers();
   }
 
-  recoveryListeners() { }
+  recoveryListeners() {
+    this._setTimeFilterHandlers();
+  }
 
   rerender() {
     super.rerender();
 
     this._renderCharts();
+    this.recoveryListeners();
+  }
+
+  _setTimeFilterHandlers() {
+    this.getElement().querySelector(`.statistic__filters`).addEventListener(`click`, (evt) => {
+      evt.preventDefault();
+
+      const filterData = evt.target.getAttribute(`for`);
+      this._currentTimeFilter = filterData.substring(filterData.length, 10);
+
+      this.rerender();
+    });
   }
 
   _renderCharts() {
     const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
-    renderChart(this._filmsModel.getFilms(), statisticCtx);
+    const watchedFilmsByPeriod = getWatchedFilmsByPeriod(this._films.getFilms(), this._currentTimeFilter);
+    renderChart(watchedFilmsByPeriod, statisticCtx, this._currentTimeFilter);
   }
 }
 

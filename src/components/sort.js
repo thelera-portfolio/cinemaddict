@@ -38,7 +38,7 @@ export default class Sorting extends AbstractComponent {
 
       this.setActiveElement(sortType);
 
-      handler(this._currentSortType);
+      handler();
     });
   }
 

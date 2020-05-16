@@ -1,32 +1,40 @@
-export const MAX_DESCRIPTION_LENGTH = 139;
-export const HIDDEN_CLASS = `visually-hidden`;
 export const AUTHORIZATION = `Basic dXNlchjuhuyi===kBwYXNzd29yZAo=`;
+export const BAR_HEIGHT = 50;
 export const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
+export const HIDDEN_CLASS = `visually-hidden`;
+export const MAX_DESCRIPTION_LENGTH = 139;
+export const SHAKE_ANIMATION_TIMEOUT = 600;
+
+export const GENRES = [
+  `Action`,
+  `Adventure`,
+  `Animation`,
+  `Comedy`,
+  `Drama`,
+  `Family`,
+  `Horror`,
+  `Sci-Fi`,
+  `Thriller`,
+];
+
+export const EMOTIONS = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
+];
 
 export const Button = {
   ESCAPE: `Escape`,
   ENTER: `Enter`,
+  DELETE: `Delete`,
+  DELETING: `Deleting`,
 };
 
 export const MenuItem = {
   FILTERS: `control__filters`,
   STATISTICS: `control__statistics`,
 };
-
-export const MONTH_NAMES = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`
-];
 
 export const Method = {
   GET: `GET`,
@@ -39,13 +47,6 @@ export const StatusCode = {
   SUCCESS: 200,
   REDIRECTION: 300,
 };
-
-export const EMOTIONS = [
-  `smile`,
-  `sleeping`,
-  `puke`,
-  `angry`,
-];
 
 export const Rank = {
   NOVICE: {
@@ -144,6 +145,14 @@ export const FilterType = {
   WATCHLIST: `Watchlist`,
   HISTORY: `History`,
   FAVOURITES: `Favorites`,
+};
+
+export const TimeFilter = {
+  ALLTIME: `all-time`,
+  TODAY: `today`,
+  WEEK: `week`,
+  MONTH: `month`,
+  YEAR: `year`,
 };
 
 export const Url = {

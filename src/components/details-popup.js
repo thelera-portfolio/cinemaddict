@@ -1,16 +1,17 @@
-import {fromMinutesToHours} from "../utils/common.js";
+import {fromMinutesToHours, shake} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {Button, EMOTIONS, PopupButton} from "../utils/consts.js";
+import {Button, EMOTIONS, PopupButton, SHAKE_ANIMATION_TIMEOUT} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
 import CommentModel from "../models/local-comment.js";
 import {encode} from "he";
 import moment from "moment";
 
-const createCommentsMarkup = (comments) => {
+const createCommentsMarkup = (comments, deletingButtonId) => {
   let markUp = ``;
 
   for (let i = 0; i < comments.length; i++) {
-    markUp = markUp.concat(new CommentsComponent(comments[i]).getTemplate());
+    const isDeletingButtonId = deletingButtonId === comments[i].id;
+    markUp = markUp.concat(new CommentsComponent(comments[i], isDeletingButtonId).getTemplate());
   }
 
   return markUp;
@@ -45,7 +46,7 @@ const createEmojiTemplate = (emotions, checkedEmotion) => {
 
 const createFilmDetailsPopupTemplate = (card, comments, options = {}) => {
   const {actors, age, country, description, director, duration: durationInMinutes, genres, image, rating, releaseDate, title, originalTitle, writers} = card;
-  const {emotion, isAddedToWatchlist, isWatched, isFavourite} = options;
+  const {emotion, isAddedToWatchlist, isWatched, isFavourite, deletingButtonId} = options;
 
   const commentsCount = comments.length;
 
@@ -131,7 +132,7 @@ const createFilmDetailsPopupTemplate = (card, comments, options = {}) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
             <ul class="film-details__comments-list">
-              ${createCommentsMarkup(comments)}
+              ${createCommentsMarkup(comments, deletingButtonId)}
             </ul>
 
             <div class="film-details__new-comment">
@@ -165,6 +166,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._isWatched = card.controls.isWatched;
     this._isFavourite = card.controls.isFavourite;
     this._commentsIds = card.commentsIds;
+    this._deletingButtonId = null,
 
     this._closeButtonHandler = null;
     this._setDeleteCommentClickHandler = null;
@@ -178,12 +180,35 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._commentsModel.setDataChangeHandler(this._onCommentsChange);
   }
 
+  disable() {
+    this.getElement().querySelector(`.film-details__inner`).setAttribute(`disabled`, `disabled`);
+  }
+
+  disableCommentButton(id) {
+    const commentsButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    const commentButton = Array.from(commentsButtons).find((button) => button.dataset.id === id);
+
+    commentButton.setAttribute(`disabled`, `disabled`);
+  }
+
+  enable() {
+    this.getElement().querySelector(`.film-details__inner`).removeAttribute(`disabled`);
+  }
+
+  enableCommentButton(id) {
+    const commentsButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    const commentButton = Array.from(commentsButtons).find((button) => button.dataset.id === id);
+
+    commentButton.removeAttribute(`disabled`);
+  }
+
   getTemplate() {
     return createFilmDetailsPopupTemplate(this._card, this._commentsModel.getComments(), {
       emotion: this._emotion,
       isAddedToWatchlist: this._isAddedToWatchlist,
       isWatched: this._isWatched,
       isFavourite: this._isFavourite,
+      deletingButtonId: this._deletingButtonId,
     });
   }
 
@@ -204,6 +229,12 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._closeButtonHandler = handler;
   }
 
+  setDeletindButton(id) {
+    this._deletingButtonId = id;
+
+    this.rerender();
+  }
+
   setDeleteCommentClickHandler(handler) {
     Array.from(this.getElement()
     .querySelectorAll(`.film-details__comment-delete`))
@@ -211,8 +242,8 @@ export default class DetailsPopup extends AbstractSmartComponent {
       comment.addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        const commentData = evt.target.dataset;
-        handler(commentData);
+        const commentId = evt.target.dataset.id;
+        handler(commentId);
 
         this.rerender();
       });
@@ -238,6 +269,21 @@ export default class DetailsPopup extends AbstractSmartComponent {
     });
 
     this._setNewCommentSubmitHandler = handler;
+  }
+
+  shake() {
+    shake(this.getElement());
+
+    const formInput = this.getElement().querySelector(`.film-details__comment-input`);
+    formInput.style.border = `4px solid red`;
+
+    setTimeout(() => {
+      formInput.style.border = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeComment(comment) {
+    shake(comment);
   }
 
   rerender() {

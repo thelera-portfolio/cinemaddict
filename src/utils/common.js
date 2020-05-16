@@ -1,3 +1,4 @@
+import {SHAKE_ANIMATION_TIMEOUT } from "../utils/consts.js";
 import moment from "moment";
 
 export const getRandomDate = (start = new Date(1920, 0, 1), end = new Date()) => {
@@ -24,4 +25,12 @@ export const humanizeDate = (date) => {
 
 export const fromMinutesToHours = (minutes) => {
   return moment(moment.duration(minutes, `minutes`).asMilliseconds()).format(`h[h] mm[m]`);
+};
+
+export const shake = (element) => {
+  element.style.animation = `shake ${SHAKE_ANIMATION_TIMEOUT / 1000}s`;
+
+  setTimeout(() => {
+    element.style.animation = ``;
+  }, SHAKE_ANIMATION_TIMEOUT);
 };

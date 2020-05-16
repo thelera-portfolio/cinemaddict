@@ -21,8 +21,8 @@ export default class Comments {
     this._dataChangeHandlers.push(handler);
   }
 
-  removeComment(comment) {
-    const index = this._comments.findIndex((currentComment) => currentComment.id === comment.id);
+  removeComment(commentId) {
+    const index = this._comments.findIndex((currentComment) => currentComment.id === commentId);
 
     if (index === -1) {
       return false;

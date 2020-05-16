@@ -1,15 +1,20 @@
-import {humanizeDate} from "../utils/common.js";
-import AbstractComponent from "./abstract-component.js";
-import {encode} from "he";
+import { humanizeDate } from "../utils/common.js";
+import AbstractSmartComponent from "./abstract-smart-component.js";
+import { encode } from "he";
 import { Button } from "../utils/consts.js";
 
-const createCommentsTemplate = (comment, isDeletingButton) => {
+const createCommentsTemplate = (comments) => {
+  const markUp = ``;
+  comments.forEach((coment) => markUp.concat(createOneCommentTemplate(comment)));
+
+  return markUp;
+};
+
+const createOneCommentTemplate = (comment) => {
   const {author, date, emotion, id, message: currentMessage} = comment;
   const formattedDate = humanizeDate(date);
 
   const message = encode(currentMessage);
-
-  const buttonText = isDeletingButton ? Button.DELETING : Button.DELETE;
 
   return (
     `<li data-id="${id}" class="film-details__comment">
@@ -21,21 +26,20 @@ const createCommentsTemplate = (comment, isDeletingButton) => {
         <p class="film-details__comment-info">
           <span class="film-details__comment-author">${author}</span>
           <span class="film-details__comment-day">${formattedDate}</span>
-          <button data-id="${id}" class="film-details__comment-delete">${buttonText}</button>
+          <button data-id="${id}" class="film-details__comment-delete"}>Delete</button>
         </p>
       </div>
     </li>`
   );
 };
 
-export default class Comment extends AbstractComponent {
-  constructor(comment, isDeletingButton) {
+export default class Comments extends AbstractSmartComponent {
+  constructor(commentsModel) {
     super();
-    this._comment = comment;
-    this._isDeletingButton = isDeletingButton;
+    this._comments = commentsModel;
   }
 
   getTemplate() {
-    return createCommentsTemplate(this._comment, this._isDeletingButton);
+    return createCommentsTemplate(this._comments.getComments());
   }
 }
