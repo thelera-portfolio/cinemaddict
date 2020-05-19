@@ -121,7 +121,7 @@ export default class Provider {
       return this._api.sync(storeFilms)
         .then((response) => {
           const undatedFilms = getSyncedFilms(response.updated);
-          this._store.setItems(createStoreStructure(undatedFilms));
+          this._filmsStore.setItems(createStoreStructure(undatedFilms));
         });
     }
 

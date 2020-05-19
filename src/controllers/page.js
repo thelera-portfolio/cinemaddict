@@ -147,7 +147,7 @@ export default class PageController {
   }
 
   _onSortTypeChange() {
-    // this._showingFilmsCount = pageViewSettings.showingFilmsCountByButton;
+    this._showingFilmsCount = pageViewSettings.showingFilmsCountByButton;
 
     this._updateFilms(this._showingFilmsCount);
   }

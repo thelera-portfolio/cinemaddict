@@ -135,11 +135,14 @@ export default class MovieController {
   }
 
   _onCloseButtonClick() {
-    const newControls = this._popupComponent.getData().controls;
+    const cardControls = this._popupComponent.getData().controls;
     const newCard = FilmModel.clone(this._card);
-    newCard.controls = newControls;
 
-    this._onDataChange(this._card, newCard);
+    if (JSON.stringify(cardControls) !== JSON.stringify(this._card.controls)) {
+      newCard.controls = cardControls;
+
+      this._onDataChange(this._card, newCard);
+    }
 
     remove(this._popupComponent);
     document.removeEventListener(`keydown`, this._onEscKeyDown);
