@@ -5,6 +5,12 @@ export const HIDDEN_CLASS = `visually-hidden`;
 export const MAX_DESCRIPTION_LENGTH = 139;
 export const SHAKE_ANIMATION_TIMEOUT = 600;
 
+export const StoreInfo = {
+  PREFIX: `cinemaddict-localstorage`,
+  FILMS_VERSION: `films`,
+  COMMENTS_VERSION: `comments`,
+};
+
 export const GENRES = [
   `Action`,
   `Adventure`,

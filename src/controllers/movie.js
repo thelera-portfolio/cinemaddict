@@ -96,7 +96,6 @@ export default class MovieController {
         this._popupComponent = new DetailsPopupComponent(this._card, this._commentsModel);
 
         render(siteBodyElement, this._popupComponent);
-        //this._popupComponent.querySelector(`.`);
 
         this._subscribePopupOnEvents();
       });
@@ -104,9 +103,10 @@ export default class MovieController {
 
   _onCommentChange(oldCommentId, newComment) {
     if (newComment === null) { // удалить
-      this._api.deleteComment(oldCommentId)
+      this._api.deleteComment(oldCommentId, this.card.id)
         .then(() => (this._commentsModel.removeComment(oldCommentId)))
-        .catch (() => {
+        .catch ((err) => {
+          console.log(err);
           const commentsElements = this._popupComponent.getElement().querySelectorAll(`.film-details__comment`);
           const commentElement = Array.from(commentsElements).find((element) => element.dataset.id === oldCommentId);
 
@@ -117,9 +117,10 @@ export default class MovieController {
       this._api.addComment(this._card.id, newComment)
         .then((data) => {
           this._popupComponent.enable();
-          this._commentsModel.addComment(this._card, data.comments);
+          this._commentsModel.addComment(this._card, data);
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log(err);
           this._popupComponent.enable();
           this._popupComponent.shake();
         });
