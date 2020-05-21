@@ -1,44 +1,49 @@
+import CommentsModel from "../models/comments.js";
 import DetailsPopupComponent from "../components/details-popup.js";
 import FilmCardComponent from "../components/card.js";
 import FilmModel from "../models/movie.js";
-import CommentsModel from "../models/comments.js";
 import {Button, FilmControl, SHAKE_ANIMATION_TIMEOUT} from "../utils/consts.js";
 import {render, remove, replace} from "../utils/render.js";
 
 export default class MovieController {
-  constructor(container, onDataChange, onViewChange, api) {
+  constructor(container, onDataChange, onViewChange, api, extraType = null) {
     this._container = container;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
-    this._commentsModel = null;
     this._api = api;
+    this._extraType = extraType;
 
+    this._isCommentsChanged = false;
+
+    this._card = null;
+    this._commentsModel = null;
     this._cardComponent = null;
     this._popupComponent = null;
-    this._card = null;
-    this._comments = null;
 
-    this._onEscKeyDown = this._onEscKeyDown.bind(this);
     this._onCloseButtonClick = this._onCloseButtonClick.bind(this);
     this._onCardClick = this._onCardClick.bind(this);
     this._onCommentChange = this._onCommentChange.bind(this);
     this._onCommentClick = this._onCommentClick.bind(this);
+    this._onEscKeyDown = this._onEscKeyDown.bind(this);
   }
 
   get card() {
     return this._card;
   }
 
+  get extraType() {
+    return this._extraType;
+  }
+
   destroy() {
     remove(this._cardComponent);
   }
 
-  render(card, comments) {
+  render(card) {
     this._card = card;
-    this._comments = comments;
 
     const oldCardComponent = this._cardComponent;
-    this._cardComponent = new FilmCardComponent(this._card, this._comments);
+    this._cardComponent = new FilmCardComponent(this._card);
 
     // отрисуем карточку фильма
     if (oldCardComponent) {
@@ -52,10 +57,6 @@ export default class MovieController {
 
     // кнопки watchlist, watched, favourite
     this._subscribeCardControlsOnEvents();
-  }
-
-  shake() {
-
   }
 
   setDefaultView() {
@@ -73,11 +74,19 @@ export default class MovieController {
 
   _onEscKeyDown(evt) {
     if (evt.key === Button.ESCAPE) {
-      const newControls = this._popupComponent.getData();
+      const cardControls = this._popupComponent.getData().controls;
       const newCard = FilmModel.clone(this._card);
-      newCard.controls = newControls;
 
-      this._onDataChange(this._card, newCard);
+      if (JSON.stringify(cardControls) !== JSON.stringify(this._card.controls) || this._isCommentsChanged) {
+        newCard.controls = cardControls;
+
+        this._onDataChange(this._card, newCard);
+
+        if (this._isCommentsChanged) {
+          this._onCommentsCountChange();
+          this._isCommentsChanged = false;
+        }
+      }
 
       remove(this._popupComponent);
       document.removeEventListener(`keydown`, this._onEscKeyDown);
@@ -102,6 +111,8 @@ export default class MovieController {
   }
 
   _onCommentChange(oldCommentId, newComment) {
+    this._isCommentsChanged = true;
+
     if (newComment === null) { // удалить
       this._api.deleteComment(oldCommentId, this.card.id)
         .then(() => (this._commentsModel.removeComment(oldCommentId)))
@@ -138,10 +149,12 @@ export default class MovieController {
     const cardControls = this._popupComponent.getData().controls;
     const newCard = FilmModel.clone(this._card);
 
-    if (JSON.stringify(cardControls) !== JSON.stringify(this._card.controls)) {
+    if (JSON.stringify(cardControls) !== JSON.stringify(this._card.controls) || this._isCommentsChanged) {
       newCard.controls = cardControls;
 
       this._onDataChange(this._card, newCard);
+
+      this._isCommentsChanged = false;
     }
 
     remove(this._popupComponent);

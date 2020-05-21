@@ -1,12 +1,13 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {BAR_HEIGHT, GENRES, TimeFilter} from "../utils/consts.js";
+import {BAR_HEIGHT, GENRES, FilterType, TimeFilter} from "../utils/consts.js";
+import {getFilmsByFilter} from "../utils/filter.js";
 import {getUserRank} from "./rating.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 import moment from "moment";
 
 const getWatchedFilmsByPeriod = (films, period) => {
-  const watchedFilms = films.filter((film) => film.controls.isWatched);
+  const watchedFilms = getFilmsByFilter(films, FilterType.HISTORY);
 
   if (period === TimeFilter.ALLTIME) {
     return watchedFilms;
@@ -100,8 +101,6 @@ const renderChart = (films, statisticCtx) => {
 };
 
 const createStatisticsTemplate = (films) => {
-  const watchedCount = films.filter((film) => film.controls.isWatched).length;
-
   const duration = films.reduce((filmsDuration, film) => {
     filmsDuration += film.duration;
     return filmsDuration;
@@ -109,8 +108,8 @@ const createStatisticsTemplate = (films) => {
 
   const durationHours = Math.floor(duration / 60);
   const durationMinutes = duration % 60;
-  const topGenre = getTopGenre(films);
-  const rank = getUserRank(watchedCount);
+  const topGenre = films.length > 0 ? getTopGenre(films) : ``;
+  const rank = getUserRank(films.length);
 
   return (
     `<section class="statistic">
@@ -142,7 +141,7 @@ const createStatisticsTemplate = (films) => {
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${watchedCount} <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${films.length} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
@@ -209,7 +208,9 @@ export default class Statistics extends AbstractSmartComponent {
   _renderCharts() {
     const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
     const watchedFilmsByPeriod = getWatchedFilmsByPeriod(this._films.getFilms(), this._currentTimeFilter);
-    renderChart(watchedFilmsByPeriod, statisticCtx, this._currentTimeFilter);
+
+    if (watchedFilmsByPeriod.length > 0) {
+      renderChart(watchedFilmsByPeriod, statisticCtx, this._currentTimeFilter);
+    }
   }
 }
-

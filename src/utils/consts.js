@@ -87,17 +87,6 @@ export const pageViewSettings = {
   showingFilmsCountByButton: 5,
 };
 
-export const extraFilms = [
-  {
-    title: `Top rated`,
-    sortType: `rating`,
-  },
-  {
-    title: `Most commented`,
-    sortType: `comments`,
-  },
-];
-
 export const ClassError = {
   CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
   notImplemented: (method) => `Abstract method is not implemented: ${method}`,

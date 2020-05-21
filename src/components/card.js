@@ -45,11 +45,10 @@ export default class Card extends AbstractComponent {
   constructor(card, comments) {
     super();
     this._card = card;
-    this._comments = comments;
   }
 
   getTemplate() {
-    return createFilmCardTemplate(this._card, this._comments);
+    return createFilmCardTemplate(this._card);
   }
 
   setClickHandler(handler) {

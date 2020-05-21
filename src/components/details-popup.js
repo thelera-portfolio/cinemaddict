@@ -46,7 +46,7 @@ const createEmojiTemplate = (emotions, checkedEmotion) => {
 
 const createFilmDetailsPopupTemplate = (card, comments, options = {}) => {
   const {actors, age, country, description, director, duration: durationInMinutes, genres, image, rating, releaseDate, title, originalTitle, writers} = card;
-  const {emotion, isAddedToWatchlist, isWatched, isFavourite, deletingButtonId} = options;
+  const {emotion, message, isAddedToWatchlist, isWatched, isFavourite, deletingButtonId} = options;
 
   const commentsCount = comments.length;
 
@@ -141,7 +141,7 @@ const createFilmDetailsPopupTemplate = (card, comments, options = {}) => {
               </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${message ? message : ``}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
@@ -161,6 +161,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._card = card;
     this._commentsModel = comments;
     this._emotion = null;
+    this._newCommentMessage = null;
 
     this._isAddedToWatchlist = card.controls.isAddedToWatchlist;
     this._isWatched = card.controls.isWatched;
@@ -182,6 +183,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
 
   disable() {
     this.getElement().querySelector(`.film-details__inner`).setAttribute(`disabled`, `disabled`);
+    this.getElement().querySelector(`.film-details__comment-input`).setAttribute(`disabled`, `disabled`);
   }
 
   disableCommentButton(id) {
@@ -193,6 +195,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
 
   enable() {
     this.getElement().querySelector(`.film-details__inner`).removeAttribute(`disabled`);
+    this.getElement().querySelector(`.film-details__comment-input`).removeAttribute(`disabled`);
   }
 
   enableCommentButton(id) {
@@ -205,6 +208,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
   getTemplate() {
     return createFilmDetailsPopupTemplate(this._card, this._commentsModel.getComments(), {
       emotion: this._emotion,
+      message: this._newCommentMessage,
       isAddedToWatchlist: this._isAddedToWatchlist,
       isWatched: this._isWatched,
       isFavourite: this._isFavourite,
@@ -254,13 +258,17 @@ export default class DetailsPopup extends AbstractSmartComponent {
 
   setNewCommentSubmitHandler(handler) {
     this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`input`, (evt) => {
+        this._newCommentMessage = evt.target.value;
+      });
+
+    this.getElement()
     .querySelector(`.film-details__comment-input`)
     .addEventListener(`keydown`, (evt) => {
       if (evt.key === Button.ENTER && (evt.ctrlKey || evt.metaKey)) {
-        const commentMessage = encode(evt.target.value);
-
-        if (this._emotion && commentMessage) {
-          const newCommentData = this._createNewComment(commentMessage, this._emotion);
+        if (this._emotion && this._newCommentMessage) {
+          const newCommentData = this._createNewComment(this._newCommentMessage, this._emotion);
           const newComment = new CommentModel(newCommentData);
 
           handler(newComment);
@@ -356,5 +364,6 @@ export default class DetailsPopup extends AbstractSmartComponent {
 
   _clearNewComment() {
     this._emotion = null;
+    this._newCommentMessage = null;
   }
 }
