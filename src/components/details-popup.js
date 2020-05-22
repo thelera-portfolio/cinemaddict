@@ -316,6 +316,11 @@ export default class DetailsPopup extends AbstractSmartComponent {
         this._emotion = emotion;
 
         this.rerender();
+
+        const inputField = this.getElement().querySelector(`.film-details__comment-input`);
+        inputField.focus();
+        inputField.selectionStart = inputField.value.length;
+
       });
     });
   }
