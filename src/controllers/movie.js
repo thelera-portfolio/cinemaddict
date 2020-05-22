@@ -2,7 +2,7 @@ import CommentsModel from "../models/comments.js";
 import DetailsPopupComponent from "../components/details-popup.js";
 import FilmCardComponent from "../components/card.js";
 import FilmModel from "../models/movie.js";
-import {Button, FilmControl, SHAKE_ANIMATION_TIMEOUT} from "../utils/consts.js";
+import {Button, ErrorMessage, FilmControl, SHAKE_ANIMATION_TIMEOUT} from "../utils/consts.js";
 import {render, remove, replace} from "../utils/render.js";
 
 export default class MovieController {
@@ -48,9 +48,9 @@ export default class MovieController {
     // отрисуем карточку фильма
     if (oldCardComponent) {
       replace(this._cardComponent, oldCardComponent);
-    } else {
-      render(this._container, this._cardComponent);
     }
+
+    render(this._container, this._cardComponent);
 
     // показ попапа с подробной информацией о фильме
     this._cardComponent.setClickHandler(this._onCardClick);
@@ -70,6 +70,40 @@ export default class MovieController {
     newCard.controls[value] = !newCard.controls[value];
 
     this._onDataChange(this._card, newCard);
+  }
+
+  _subscribePopupOnEvents() {
+    this._popupComponent.setRemoveCommentClickHandler(this._onCommentClick);
+
+    this._popupComponent.setNewCommentSubmitHandler((newComment) => {
+      this._popupComponent.disable();
+
+      this._onCommentChange(null, newComment);
+    });
+
+    this._popupComponent.setEmotionClickHandler();
+    this._popupComponent.setCloseButtonClickHandler(this._onCloseButtonClick);
+    document.addEventListener(`keydown`, this._onEscKeyDown);
+  }
+
+  _subscribeCardControlsOnEvents() {
+    this._cardComponent.setAddToWatchlistClickHandler((evt) => {
+      evt.preventDefault();
+
+      this._changeControlsData(FilmControl.WATCHLIST);
+    });
+
+    this._cardComponent.setMarkAsWatchedClickHandler((evt) => {
+      evt.preventDefault();
+
+      this._changeControlsData(FilmControl.WATCH);
+    });
+
+    this._cardComponent.setAddToFavouritesClickHandler((evt) => {
+      evt.preventDefault();
+
+      this._changeControlsData(FilmControl.FAVOURITE);
+    });
   }
 
   _onEscKeyDown(evt) {
@@ -107,42 +141,10 @@ export default class MovieController {
         render(siteBodyElement, this._popupComponent);
 
         this._subscribePopupOnEvents();
+      })
+      .catch(() => {
+        return Promise.reject(new Error(ErrorMessage.CONNECTION));
       });
-  }
-
-  _onCommentChange(oldCommentId, newComment) {
-    this._isCommentsChanged = true;
-
-    if (newComment === null) { // удалить
-      this._api.deleteComment(oldCommentId, this.card.id)
-        .then(() => (this._commentsModel.removeComment(oldCommentId)))
-        .catch ((err) => {
-          console.log(err);
-          const commentsElements = this._popupComponent.getElement().querySelectorAll(`.film-details__comment`);
-          const commentElement = Array.from(commentsElements).find((element) => element.dataset.id === oldCommentId);
-
-          this._popupComponent.enableCommentButton(oldCommentId);
-          this._popupComponent.shakeComment(commentElement);
-        });
-    } else if (oldCommentId === null) { // добавить
-      this._api.addComment(this._card.id, newComment)
-        .then((data) => {
-          this._popupComponent.enable();
-          this._commentsModel.addComment(this._card, data);
-        })
-        .catch((err) => {
-          console.log(err);
-          this._popupComponent.enable();
-          this._popupComponent.shake();
-        });
-    }
-  }
-
-  _onCommentClick(commentId) {
-    this._popupComponent.setDeletindButton(commentId);
-    this._popupComponent.disableCommentButton(commentId);
-
-    this._onCommentChange(commentId, null);
   }
 
   _onCloseButtonClick() {
@@ -161,37 +163,40 @@ export default class MovieController {
     document.removeEventListener(`keydown`, this._onEscKeyDown);
   }
 
-  _subscribePopupOnEvents() {
-    this._popupComponent.setDeleteCommentClickHandler(this._onCommentClick);
+  _onCommentChange(oldCommentId, newComment) {
+    this._isCommentsChanged = true;
 
-    this._popupComponent.setNewCommentSubmitHandler((newComment) => {
-      this._popupComponent.disable();
+    if (newComment === null) { // удалить
+      this._api.removeComment(oldCommentId)
+        .then(() => (this._commentsModel.removeComment(oldCommentId)))
+        .catch(() => {
+          const commentsElements = this._popupComponent.getElement().querySelectorAll(`.film-details__comment`);
+          const commentElement = Array.from(commentsElements).find((element) => element.dataset.id === oldCommentId);
 
-      this._onCommentChange(null, newComment);
-    });
+          this._popupComponent.enableCommentButton(oldCommentId);
+          this._popupComponent.shakeComment(commentElement);
 
-    this._popupComponent.setEmotionClickHandler();
-    this._popupComponent.setCloseButtonClickHandler(this._onCloseButtonClick);
-    document.addEventListener(`keydown`, this._onEscKeyDown);
+          setTimeout(() => {
+            this._popupComponent.setDeletindButton(null);
+          }, SHAKE_ANIMATION_TIMEOUT);
+        });
+    } else if (oldCommentId === null) { // добавить
+      this._api.addComment(this._card.id, newComment)
+        .then((comment) => {
+          this._popupComponent.enable();
+          this._commentsModel.addComment(this._card, comment);
+        })
+        .catch(() => {
+          this._popupComponent.enable();
+          this._popupComponent.shake();
+        });
+    }
   }
 
-  _subscribeCardControlsOnEvents() {
-    this._cardComponent.setAddToWatchlistClickHandler((evt) => {
-      evt.preventDefault();
+  _onCommentClick(commentId) {
+    this._popupComponent.setDeletindButton(commentId);
+    this._popupComponent.disableCommentButton(commentId);
 
-      this._changeControlsData(FilmControl.WATCHLIST);
-    });
-
-    this._cardComponent.setMarkAsWatchedClickHandler((evt) => {
-      evt.preventDefault();
-
-      this._changeControlsData(FilmControl.WATCH);
-    });
-
-    this._cardComponent.setAddToFavouritesClickHandler((evt) => {
-      evt.preventDefault();
-
-      this._changeControlsData(FilmControl.FAVOURITE);
-    });
+    this._onCommentChange(commentId, null);
   }
 }

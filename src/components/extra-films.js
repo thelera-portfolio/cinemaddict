@@ -8,6 +8,7 @@ const createExtraFilmTemplate = (title) =>
 export default class ExtraFilms extends AbstractComponent {
   constructor(title) {
     super();
+
     this._title = title;
   }
 

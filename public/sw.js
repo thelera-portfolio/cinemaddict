@@ -1,10 +1,12 @@
-const CACHE_PREFIX = `cinemaddict-cache`;
-const CACHE_VER = `v1`;
-const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VER}`;
+const CashInfo = {
+  PREFIX: `cinemaddict-cache`,
+  VER: `v1`,
+  NAME: `${this.PREFIX}-${this.VERSION}`,
+}
 
 self.addEventListener(`install`, (evt) => {
   evt.waitUntil(
-    caches.open(CACHE_NAME)
+    caches.open(CashInfo.CACHE_NAME)
       .then((cache) => {
         return cache.addAll([
           `/`,
@@ -50,7 +52,7 @@ self.addEventListener(`activate`, (evt) => {
               // Удаляем только те кэши,
               // которые начинаются с нашего префикса,
               // но не совпадают по версии
-              if (key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME) {
+              if (key.startsWith(CashInfo.PREFIX) && key !== CashInfo.NAME) {
                 return caches.delete(key);
               }
 
@@ -92,7 +94,7 @@ self.addEventListener(`fetch`, (evt) => {
             const clonedResponse = response.clone();
 
             // Копию кладём в кэш
-            caches.open(CACHE_NAME)
+            caches.open(CashInfo.NAME)
               .then((cache) => cache.put(request, clonedResponse));
 
             // Оригинал передаём дальше

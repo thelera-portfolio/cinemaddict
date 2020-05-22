@@ -1,16 +1,17 @@
 import {createElement} from "../utils/render.js";
-import {ClassError, HIDDEN_CLASS} from "../utils/consts.js";
+import {ErrorMessage, HIDDEN} from "../utils/consts.js";
 
 export default class AbstractComponent {
   constructor() {
     if (new.target === AbstractComponent) {
-      throw new Error(ClassError.CONSTRUCTOR);
+      throw new Error(ErrorMessage.CONSTRUCTOR);
     }
+
     this._element = null;
   }
 
   getTemplate() {
-    throw new Error(ClassError.notImplemented(`getTemplate`));
+    throw new Error(ErrorMessage.getNotImplemented(`getTemplate`));
   }
 
   getElement() {
@@ -27,13 +28,13 @@ export default class AbstractComponent {
 
   show() {
     if (this._element) {
-      this._element.classList.remove(HIDDEN_CLASS);
+      this._element.classList.remove(HIDDEN);
     }
   }
 
   hide() {
     if (this._element) {
-      this._element.classList.add(HIDDEN_CLASS);
+      this._element.classList.add(HIDDEN);
     }
   }
 }

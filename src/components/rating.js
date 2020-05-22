@@ -1,8 +1,7 @@
-// звание пользователя
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {Rank} from "../utils/consts.js";
-import {getFilmsByFilter} from "../utils/filter.js";
 import {FilterType} from "../utils/consts.js";
+import {getFilmsByFilter} from "../utils/filter.js";
+import {Rank} from "../utils/consts.js";
 
 export const getUserRank = (count) => {
   let rank = ``;
@@ -17,7 +16,7 @@ export const getUserRank = (count) => {
 };
 
 const createUserProfileRatingTemplate = (films) => {
-  const watchedFilmsCount = getFilmsByFilter(FilterType.HISTORY).length;
+  const watchedFilmsCount = getFilmsByFilter(films, FilterType.HISTORY).length;
 
   const rank = getUserRank(watchedFilmsCount);
 

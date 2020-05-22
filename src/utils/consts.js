@@ -1,105 +1,18 @@
-export const AUTHORIZATION = `Basic dXNlchjuhuyi===kBwYXNzd29yZAo=`;
-export const BAR_HEIGHT = 50;
-export const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
-export const HIDDEN_CLASS = `visually-hidden`;
-export const MAX_DESCRIPTION_LENGTH = 139;
-export const SHAKE_ANIMATION_TIMEOUT = 600;
+const AUTHORIZATION = `Basic dXNlchjuhuyi===kBwYXNzd29yZAo=`;
+const BAR_HEIGHT = 50;
+const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`;
+const HIDDEN = `visually-hidden`;
+const MAX_DESCRIPTION_LENGTH = 139;
+const SHAKE_ANIMATION_TIMEOUT = 1000;
 
-export const StoreInfo = {
-  PREFIX: `cinemaddict-localstorage`,
-  FILMS_VERSION: `films`,
-  COMMENTS_VERSION: `comments`,
-};
-
-export const GENRES = [
-  `Action`,
-  `Adventure`,
-  `Animation`,
-  `Comedy`,
-  `Drama`,
-  `Family`,
-  `Horror`,
-  `Sci-Fi`,
-  `Thriller`,
-];
-
-export const EMOTIONS = [
-  `smile`,
-  `sleeping`,
-  `puke`,
-  `angry`,
-];
-
-export const Button = {
+const Button = {
   ESCAPE: `Escape`,
   ENTER: `Enter`,
   DELETE: `Delete`,
   DELETING: `Deleting`,
 };
 
-export const MenuItem = {
-  FILTERS: `control__filters`,
-  STATISTICS: `control__statistics`,
-};
-
-export const Method = {
-  GET: `GET`,
-  POST: `POST`,
-  PUT: `PUT`,
-  DELETE: `DELETE`
-};
-
-export const StatusCode = {
-  SUCCESS: 200,
-  REDIRECTION: 300,
-};
-
-export const Rank = {
-  NOVICE: {
-    name: `Novice`,
-    value: 1,
-  },
-  FAN: {
-    name: `Fan`,
-    value: 11,
-  },
-  MOVIE_BUFF: {
-    name: `Movie Buff`,
-    value: 21,
-  },
-};
-
-export const StatsData = {
-  MAX_WATCHED_COUNT: 100,
-  MAX_HOURS_DURATION: 100
-};
-
-export const RenderPosition = {
-  BEFOREEND: `beforeend`,
-  AFTERBEGIN: `afterbegin`,
-  BEFORE: `before`,
-};
-
-export const pageViewSettings = {
-  filmsCount: 20,
-  extraFilmsCount: 2,
-  showingFilmsCountOnStart: 5,
-  showingFilmsCountByButton: 5,
-};
-
-export const ClassError = {
-  CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
-  notImplemented: (method) => `Abstract method is not implemented: ${method}`,
-};
-
-export const SortType = {
-  DEFAULT: `default`,
-  BY_DATE: `date`,
-  BY_RATING: `rating`,
-  BY_COMMENTS: `comments`,
-};
-
-export const CardButton = {
+const CardButton = {
   WATCHLIST: {
     name: `add-to-watchlist`,
     label: `Add to watchlist`,
@@ -114,7 +27,65 @@ export const CardButton = {
   },
 };
 
-export const PopupButton = {
+const emotions = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
+];
+
+const ErrorMessage = {
+  CONNECTION: `No internet connection`,
+  CONSTRUCTOR: `Can't instantiate AbstractComponent, only concrete one.`,
+  getNotImplemented: (method) => `Abstract method is not implemented: ${method}`,
+  SYNCHRONIZATION: `Sync data failed`,
+};
+
+const FilmControl = {
+  WATCHLIST: `isAddedToWatchlist`,
+  WATCH: `isWatched`,
+  FAVOURITE: `isFavourite`,
+};
+
+const FilterType = {
+  ALL: `All movies`,
+  WATCHLIST: `Watchlist`,
+  HISTORY: `History`,
+  FAVOURITES: `Favorites`,
+};
+
+const genres = [
+  `Action`,
+  `Adventure`,
+  `Animation`,
+  `Comedy`,
+  `Drama`,
+  `Family`,
+  `Horror`,
+  `Sci-Fi`,
+  `Thriller`,
+];
+
+const MenuItem = {
+  FILTERS: `control__filters`,
+  STATISTICS: `control__statistics`,
+};
+
+const Method = {
+  GET: `GET`,
+  POST: `POST`,
+  PUT: `PUT`,
+  DELETE: `DELETE`
+};
+
+const pageViewSettings = {
+  filmsCount: 20,
+  extraFilmsCount: 2,
+  showingFilmsCountOnStart: 5,
+  showingFilmsCountByButton: 5,
+};
+
+const PopupButton = {
   WATCHLIST: {
     name: `watchlist`,
     label: `Add to watchlist`,
@@ -129,20 +100,50 @@ export const PopupButton = {
   },
 };
 
-export const FilmControl = {
-  WATCHLIST: `isAddedToWatchlist`,
-  WATCH: `isWatched`,
-  FAVOURITE: `isFavourite`,
+const Rank = {
+  NOVICE: {
+    name: `Novice`,
+    value: 1,
+  },
+  FAN: {
+    name: `Fan`,
+    value: 11,
+  },
+  MOVIE_BUFF: {
+    name: `Movie Buff`,
+    value: 21,
+  },
 };
 
-export const FilterType = {
-  ALL: `All movies`,
-  WATCHLIST: `Watchlist`,
-  HISTORY: `History`,
-  FAVOURITES: `Favorites`,
+const RenderPosition = {
+  BEFOREEND: `beforeend`,
+  AFTERBEGIN: `afterbegin`,
+  BEFORE: `before`,
 };
 
-export const TimeFilter = {
+const SortType = {
+  DEFAULT: `default`,
+  BY_DATE: `date`,
+  BY_RATING: `rating`,
+  BY_COMMENTS: `comments`,
+};
+
+const StatsData = {
+  MAX_WATCHED_COUNT: 100,
+  MAX_HOURS_DURATION: 100
+};
+
+const StatusCode = {
+  SUCCESS: 200,
+  REDIRECTION: 300,
+};
+
+const StoreInfo = {
+  PREFIX: `cinemaddict-localstorage`,
+  VERSION: `films`,
+};
+
+const TimeFilter = {
   ALLTIME: `all-time`,
   TODAY: `today`,
   WEEK: `week`,
@@ -150,7 +151,12 @@ export const TimeFilter = {
   YEAR: `year`,
 };
 
-export const Url = {
+const Url = {
   MOVIES: `movies`,
   COMMENTS: `comments`,
 };
+
+export {AUTHORIZATION, BAR_HEIGHT, END_POINT, HIDDEN, MAX_DESCRIPTION_LENGTH,
+  SHAKE_ANIMATION_TIMEOUT, Button, CardButton,
+  ErrorMessage, emotions, FilmControl, FilterType, genres, MenuItem, Method, pageViewSettings,
+  PopupButton, Rank, RenderPosition, SortType, StatsData, StatusCode, StoreInfo, TimeFilter, Url};

@@ -1,7 +1,7 @@
-import {humanizeDate} from "../utils/common.js";
 import AbstractComponent from "./abstract-component.js";
+import {Button} from "../utils/consts.js";
+import {humanizeDate} from "../utils/common.js";
 import {encode} from "he";
-import { Button } from "../utils/consts.js";
 
 const createCommentsTemplate = (comment, isDeletingButton) => {
   const {author, date, emotion, id, message: currentMessage} = comment;
@@ -31,6 +31,7 @@ const createCommentsTemplate = (comment, isDeletingButton) => {
 export default class Comment extends AbstractComponent {
   constructor(comment, isDeletingButton) {
     super();
+
     this._comment = comment;
     this._isDeletingButton = isDeletingButton;
   }

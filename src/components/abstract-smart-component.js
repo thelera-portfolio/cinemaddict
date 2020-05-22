@@ -1,9 +1,9 @@
 import AbstractComponent from "./abstract-component.js";
-import {ClassError} from "../utils/consts.js";
+import {ErrorMessage} from "../utils/consts.js";
 
 export default class AbstractSmartComponent extends AbstractComponent {
   recoveryListeners() {
-    throw new Error(ClassError.notImplemented(`recoveryListeners`));
+    throw new Error(ErrorMessage.getNotImplemented(`recoveryListeners`));
   }
 
   rerender() {

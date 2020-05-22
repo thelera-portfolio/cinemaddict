@@ -1,8 +1,8 @@
 import {FilmControl, FilterType} from "../utils/consts.js";
 
-export const getFilterByProperty = (array, property) => array.filter((item) => item.controls[property]);
+const getFilterByProperty = (array, property) => array.filter((item) => item.controls[property]);
 
-export const getFilmsByFilter = (films, filterType) => {
+const getFilmsByFilter = (films, filterType) => {
   switch (filterType) {
     case FilterType.ALL:
       return films;
@@ -16,3 +16,5 @@ export const getFilmsByFilter = (films, filterType) => {
 
   return films;
 };
+
+export {getFilterByProperty, getFilmsByFilter};

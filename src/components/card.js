@@ -7,7 +7,6 @@ import moment from "moment";
 const createButtonMarkup = (name, label, isActive = true) =>
   `<button class="film-card__controls-item button film-card__controls-item--${name} ${isActive ? `film-card__controls-item--active` : ``}">${label}</button>`;
 
-
 const createFilmCardTemplate = (card) => {
   const {description, duration: durationInMinutes, genres, image, rating, releaseDate, title} = card;
 
@@ -42,8 +41,9 @@ const createFilmCardTemplate = (card) => {
 };
 
 export default class Card extends AbstractComponent {
-  constructor(card, comments) {
+  constructor(card) {
     super();
+
     this._card = card;
   }
 
@@ -57,6 +57,10 @@ export default class Card extends AbstractComponent {
     this.getElement().querySelector(`.film-card__comments`).addEventListener(`click`, handler);
   }
 
+  setAddToFavouritesClickHandler(handler) {
+    this.getElement().querySelector(`.film-card__controls-item--favorite`)
+      .addEventListener(`click`, handler);
+  }
 
   setAddToWatchlistClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`)
@@ -65,11 +69,6 @@ export default class Card extends AbstractComponent {
 
   setMarkAsWatchedClickHandler(handler) {
     this.getElement().querySelector(`.film-card__controls-item--mark-as-watched`)
-      .addEventListener(`click`, handler);
-  }
-
-  setAddToFavouritesClickHandler(handler) {
-    this.getElement().querySelector(`.film-card__controls-item--favorite`)
       .addEventListener(`click`, handler);
   }
 }

@@ -5,20 +5,14 @@ export default class Comments {
     this._dataChangeHandlers = []; // массив для сбора наблюдателей * observers *
   }
 
-  getComments() {
-    return this._comments;
-  }
+  addComment(film, comment) {
+    this._comments = [].concat(this._comments, comment);
 
-  setComments(comments) {
-    this._comments = comments;
-
-    // уведомляем подписавшихся на обновления, что модель изменилась
     this._callHandlers(this._dataChangeHandlers);
   }
 
-  // подписаться на обновление * addObserver *
-  setDataChangeHandler(handler) {
-    this._dataChangeHandlers.push(handler);
+  getComments() {
+    return this._comments;
   }
 
   removeComment(commentId) {
@@ -35,10 +29,16 @@ export default class Comments {
     return true;
   }
 
-  addComment(film, comment) {
-    this._comments = [].concat(this._comments, comment);
+  setComments(comments) {
+    this._comments = comments;
 
+    // уведомляем подписавшихся на обновления, что модель изменилась
     this._callHandlers(this._dataChangeHandlers);
+  }
+
+  // подписаться на обновление * addObserver *
+  setDataChangeHandler(handler) {
+    this._dataChangeHandlers.push(handler);
   }
 
   // уведомление наблюдателей * notify *

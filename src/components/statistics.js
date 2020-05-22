@@ -1,9 +1,9 @@
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {BAR_HEIGHT, GENRES, FilterType, TimeFilter} from "../utils/consts.js";
-import {getFilmsByFilter} from "../utils/filter.js";
-import {getUserRank} from "./rating.js";
 import Chart from "chart.js";
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {BAR_HEIGHT, genres, FilterType, TimeFilter} from "../utils/consts.js";
+import {getFilmsByFilter} from "../utils/filter.js";
+import {getUserRank} from "./rating.js";
 import moment from "moment";
 
 const getWatchedFilmsByPeriod = (films, period) => {
@@ -19,13 +19,13 @@ const getWatchedFilmsByPeriod = (films, period) => {
 };
 
 const getCountedGenres = (films) => {
-  const values = GENRES.map((genre) =>
+  const values = genres.map((genre) =>
     films.filter((film) =>
       film.genres.includes(genre))
         .length);
 
   let genresCount = [];
-  GENRES.forEach((genre, i) => genresCount.push(
+  genres.forEach((genre, i) => genresCount.push(
       {
         name: genre,
         count: values[i],
@@ -40,7 +40,7 @@ const getTopGenre = (films) => getCountedGenres(films)[0].name;
 
 const renderChart = (films, statisticCtx) => {
   // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-  statisticCtx.height = BAR_HEIGHT * GENRES.length;
+  statisticCtx.height = BAR_HEIGHT * genres.length;
 
   return new Chart(statisticCtx, {
     plugins: [ChartDataLabels],
@@ -175,14 +175,6 @@ export default class Statistics extends AbstractSmartComponent {
     return createStatisticsTemplate(getWatchedFilmsByPeriod(this._films.getFilms(), this._currentTimeFilter));
   }
 
-  show() {
-    super.show();
-
-    this.rerender();
-
-    this._setTimeFilterHandlers();
-  }
-
   recoveryListeners() {
     this._setTimeFilterHandlers();
   }
@@ -192,6 +184,14 @@ export default class Statistics extends AbstractSmartComponent {
 
     this._renderCharts();
     this.recoveryListeners();
+  }
+
+  show() {
+    super.show();
+
+    this.rerender();
+
+    this._setTimeFilterHandlers();
   }
 
   _setTimeFilterHandlers() {

@@ -1,10 +1,16 @@
-import {fromMinutesToHours, shake} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {Button, EMOTIONS, PopupButton, SHAKE_ANIMATION_TIMEOUT} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
 import CommentModel from "../models/local-comment.js";
-import {encode} from "he";
+import {Button, emotions, PopupButton, SHAKE_ANIMATION_TIMEOUT} from "../utils/consts.js";
+import {fromMinutesToHours, shake} from "../utils/common.js";
 import moment from "moment";
+
+const createButtonMarkup = (name, label, isChecked) => {
+  return (
+    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${isChecked ? `checked` : ``}>
+    <label for="${name}" class="film-details__control-label film-details__control-label--${name}">${label}</label>`
+  );
+};
 
 const createCommentsMarkup = (comments, deletingButtonId) => {
   let markUp = ``;
@@ -15,13 +21,6 @@ const createCommentsMarkup = (comments, deletingButtonId) => {
   }
 
   return markUp;
-};
-
-const createButtonMarkup = (name, label, isChecked) => {
-  return (
-    `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${isChecked ? `checked` : ``}>
-    <label for="${name}" class="film-details__control-label film-details__control-label--${name}">${label}</label>`
-  );
 };
 
 const createEmojiImageMarkup = (emotion) => {
@@ -40,7 +39,7 @@ const createEmojiMarkup = (emotion, isEmojiChecked) => {
   );
 };
 
-const createEmojiTemplate = (emotions, checkedEmotion) => {
+const createEmojiTemplate = (checkedEmotion) => {
   return emotions.map((it) => createEmojiMarkup(it, it === checkedEmotion)).join(``);
 };
 
@@ -145,7 +144,7 @@ const createFilmDetailsPopupTemplate = (card, comments, options = {}) => {
               </label>
 
               <div class="film-details__emoji-list">
-                ${createEmojiTemplate(EMOTIONS, emotion)}
+                ${createEmojiTemplate(emotions, emotion)}
               </div>
             </div>
           </section>
@@ -158,6 +157,7 @@ const createFilmDetailsPopupTemplate = (card, comments, options = {}) => {
 export default class DetailsPopup extends AbstractSmartComponent {
   constructor(card, comments) {
     super();
+
     this._card = card;
     this._commentsModel = comments;
     this._emotion = null;
@@ -167,10 +167,10 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._isWatched = card.controls.isWatched;
     this._isFavourite = card.controls.isFavourite;
     this._commentsIds = card.commentsIds;
-    this._deletingButtonId = null,
+    this._deletingButtonId = null;
 
     this._closeButtonHandler = null;
-    this._setDeleteCommentClickHandler = null;
+    this._setRemoveCommentClickHandler = null;
     this._setNewCommentSubmitHandler = null;
 
     this.setEmotionClickHandler();
@@ -216,6 +216,18 @@ export default class DetailsPopup extends AbstractSmartComponent {
     });
   }
 
+  recoveryListeners() {
+    this.setEmotionClickHandler();
+    this.setCloseButtonClickHandler(this._closeButtonHandler);
+    this.setRemoveCommentClickHandler(this._setRemoveCommentClickHandler);
+    this.setNewCommentSubmitHandler(this._setNewCommentSubmitHandler);
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
   getData() {
     return {
       controls: {
@@ -239,7 +251,7 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this.rerender();
   }
 
-  setDeleteCommentClickHandler(handler) {
+  setRemoveCommentClickHandler(handler) {
     Array.from(this.getElement()
     .querySelectorAll(`.film-details__comment-delete`))
     .forEach((comment) => {
@@ -248,12 +260,10 @@ export default class DetailsPopup extends AbstractSmartComponent {
 
         const commentId = evt.target.dataset.id;
         handler(commentId);
-
-        this.rerender();
       });
     });
 
-    this._setDeleteCommentClickHandler = handler;
+    this._setRemoveCommentClickHandler = handler;
   }
 
   setNewCommentSubmitHandler(handler) {
@@ -294,10 +304,6 @@ export default class DetailsPopup extends AbstractSmartComponent {
     shake(comment);
   }
 
-  rerender() {
-    super.rerender();
-  }
-
   setEmotionClickHandler() {
     Array.from(this.getElement()
     .querySelectorAll(`.film-details__emoji-label`))
@@ -314,25 +320,12 @@ export default class DetailsPopup extends AbstractSmartComponent {
     });
   }
 
-  recoveryListeners() {
-    this.setEmotionClickHandler();
-    this.setCloseButtonClickHandler(this._closeButtonHandler);
-    this.setDeleteCommentClickHandler(this._setDeleteCommentClickHandler);
-    this.setNewCommentSubmitHandler(this._setNewCommentSubmitHandler);
-    this._subscribeOnEvents();
-  }
-
   _createNewComment(message, emotion) {
     return {
       [`date`]: String(new Date()),
       [`emotion`]: emotion,
       [`comment`]: message,
     };
-  }
-
-  _onCommentsChange() {
-    this._clearNewComment();
-    this.rerender();
   }
 
   _subscribeOnEvents() {
@@ -365,5 +358,10 @@ export default class DetailsPopup extends AbstractSmartComponent {
   _clearNewComment() {
     this._emotion = null;
     this._newCommentMessage = null;
+  }
+
+  _onCommentsChange() {
+    this._clearNewComment();
+    this.rerender();
   }
 }

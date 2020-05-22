@@ -1,4 +1,3 @@
-// раздел с фильмами
 import AbstractComponent from "./abstract-component.js";
 
 const createAllFilmsTemplate = () =>

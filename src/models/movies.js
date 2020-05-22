@@ -1,5 +1,5 @@
-import {getFilmsByFilter} from "../utils/filter.js";
 import {FilterType} from "../utils/consts.js";
+import {getFilmsByFilter} from "../utils/filter.js";
 
 export default class Films {
   constructor() {
@@ -10,12 +10,12 @@ export default class Films {
     this._filterChangeHandlers = [];
   }
 
-  getFilms() {
-    return getFilmsByFilter(this._films, this._activeFilterType);
-  }
-
   getAllFilms() {
     return this._films;
+  }
+
+  getFilms() {
+    return getFilmsByFilter(this._films, this._activeFilterType);
   }
 
   setFilms(films) {

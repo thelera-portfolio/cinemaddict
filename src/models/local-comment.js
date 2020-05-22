@@ -1,11 +1,11 @@
-import Movie from "../models/movie.js";
 import Comment from "../models/comment.js";
+import Movie from "../models/movie.js";
 
 export default class LocalComment {
-  constructor(data) {
-    this.message = data[`comment`];
-    this.date = data[`date`];
-    this.emotion = data[`emotion`];
+  constructor(comment) {
+    this.message = comment[`comment`];
+    this.date = comment[`date`];
+    this.emotion = comment[`emotion`];
   }
 
   toRAW() {
@@ -16,18 +16,18 @@ export default class LocalComment {
     };
   }
 
-  static parseComment(data) {
+  static clone(comment) {
+    return new LocalComment(comment.toRAW());
+  }
+
+  static parseComment(comment) {
     return {
-      movie: new Movie(data.movie),
-      comments: new Comment(data.comments[data.comments.length - 1]),
+      movie: new Movie(comment.movie),
+      comments: new Comment(comment.comments[comment.comments.length - 1]),
     };
   }
 
-  static parseComments(data) {
-    return data.map(LocalComment.parseComment);
-  }
-
-  static clone(data) {
-    return new LocalComment(data.toRAW());
+  static parseComments(comment) {
+    return comment.map(LocalComment.parseComment);
   }
 }

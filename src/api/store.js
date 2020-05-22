@@ -7,24 +7,15 @@ export default class Store {
   getItems() {
     try {
       return JSON.parse(this._storage.getItem(this._storeKey) || {});
-    } catch(err) {
-      return {};
-    }
-  }
-
-  getItem(key) {
-    try {
-      return (this.getItems()[key] || {});
     } catch (err) {
-      console.log(err);
       return {};
     }
   }
 
   setItems(items) {
     this._storage.setItem(
-      this._storeKey,
-      JSON.stringify(items)
+        this._storeKey,
+        JSON.stringify(items)
     );
   }
 
@@ -32,20 +23,20 @@ export default class Store {
     const store = this.getItems();
 
     this._storage.setItem(
-      this._storeKey,
-      JSON.stringify(
-        Object.assign({}, store, {[key]: value})
-      ));
+        this._storeKey,
+        JSON.stringify(
+            Object.assign({}, store, {[key]: value})
+        ));
   }
 
-  deleteItem(keyOne, keyTwo) {
+  removeItem(keyOne, keyTwo) {
     const store = this.getItems();
 
     delete store[keyTwo][keyOne];
 
     this._storage.setItem(
-      this._storeKey,
-      JSON.stringify(store)
+        this._storeKey,
+        JSON.stringify(store)
     );
   }
 }
