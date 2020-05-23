@@ -189,7 +189,7 @@ export default class PageController {
   _updateExtraFilms(extraFilm) {
     this._removeExtraFilms(extraFilm);
 
-    const filmsToRender = this._getSortedFilms(this._filmsModel.getFilms(), extraFilm.sortType, 0, pageViewSettings.extraFilmsCount);
+    const filmsToRender = this._getSortedFilms(this._filmsModel.getAllFilms(), extraFilm.sortType, 0, pageViewSettings.extraFilmsCount);
 
     if (filmsToRender.length > 0) {
       extraFilm.component.show();
@@ -209,6 +209,7 @@ export default class PageController {
           this._updateFilms(this._showingFilmsCount); // рисуем все карточки заново
 
           this._updateExtraFilms(ExtraFilm.COMMENT);
+          this._updateExtraFilms(ExtraFilm.RATING);
         }
       })
       .catch((err) => {

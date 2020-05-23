@@ -144,11 +144,26 @@ const StoreInfo = {
 };
 
 const TimeFilter = {
-  ALLTIME: `all-time`,
-  TODAY: `today`,
-  WEEK: `week`,
-  MONTH: `month`,
-  YEAR: `year`,
+  ALLTIME: {
+    name: `All time`,
+    label: `all-time`,
+  },
+  TODAY: {
+    name: `Today`,
+    label: `today`,
+  },
+  WEEK: {
+    name: `Week`,
+    label: `week`,
+  },
+  MONTH: {
+    name: `Month`,
+    label: `month`,
+  },
+  YEAR: {
+    name: `Year`,
+    label: `year`,
+  },
 };
 
 const Url = {

@@ -15,9 +15,10 @@ const createButtonMarkup = (name, label, isChecked) => {
 const createCommentsMarkup = (comments, deletingButtonId) => {
   let markUp = ``;
 
-  for (let i = 0; i < comments.length; i++) {
-    const isDeletingButtonId = deletingButtonId === comments[i].id;
-    markUp = markUp.concat(new CommentsComponent(comments[i], isDeletingButtonId).getTemplate());
+  for (const comment of comments) {
+    const isDeletingButtonId = deletingButtonId === comment.id;
+
+    markUp = markUp.concat(new CommentsComponent(comment, isDeletingButtonId).getTemplate());
   }
 
   return markUp;

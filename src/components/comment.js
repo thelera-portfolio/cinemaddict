@@ -3,7 +3,7 @@ import {Button} from "../utils/consts.js";
 import {humanizeDate} from "../utils/common.js";
 import {encode} from "he";
 
-const createCommentsTemplate = (comment, isDeletingButton) => {
+const createCommentTemplate = (comment, isDeletingButton) => {
   const {author, date, emotion, id, message: currentMessage} = comment;
   const formattedDate = humanizeDate(date);
 
@@ -37,6 +37,6 @@ export default class Comment extends AbstractComponent {
   }
 
   getTemplate() {
-    return createCommentsTemplate(this._comment, this._isDeletingButton);
+    return createCommentTemplate(this._comment, this._isDeletingButton);
   }
 }

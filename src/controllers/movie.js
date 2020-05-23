@@ -116,10 +116,7 @@ export default class MovieController {
 
         this._onDataChange(this._card, newCard);
 
-        if (this._isCommentsChanged) {
-          this._onCommentsCountChange();
-          this._isCommentsChanged = false;
-        }
+        this._isCommentsChanged = false;
       }
 
       remove(this._popupComponent);

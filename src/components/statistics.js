@@ -6,10 +6,73 @@ import {getFilmsByFilter} from "../utils/filter.js";
 import {getUserRank} from "./rating.js";
 import moment from "moment";
 
+const createFilterMarkup = (filter, isCkecked) => {
+  const {name, label} = filter;
+
+  return (
+    `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${label}" value="${label}" ${isCkecked ? `checked` : ``}>
+    <label for="statistic-${label}" class="statistic__filters-label for="statistic-${label}">${name}</label>`
+  );
+};
+
+const createStatisticsTemplate = (films, currentFilter) => {
+  const duration = films.reduce((filmsDuration, film) => {
+    filmsDuration += film.duration;
+    return filmsDuration;
+  }, 0);
+
+  let timeFiltersMarkup = ``;
+  for (const filter in TimeFilter) {
+    if (filter) {
+      timeFiltersMarkup = timeFiltersMarkup.concat(createFilterMarkup(TimeFilter[filter], currentFilter === TimeFilter[filter].label));
+    }
+  }
+
+  const durationHours = Math.floor(duration / 60);
+  const durationMinutes = duration % 60;
+  const topGenre = films.length > 0 ? getTopGenre(films) : ``;
+  const rank = getUserRank(films.length);
+
+  return (
+    `<section class="statistic">
+    <p class="statistic__rank">
+      Your rank
+      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+      <span class="statistic__rank-label">${rank}</span>
+    </p>
+
+    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
+      <p class="statistic__filters-description">Show stats:</p>
+
+      ${timeFiltersMarkup}
+    </form>
+
+    <ul class="statistic__text-list">
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">You watched</h4>
+        <p class="statistic__item-text">${films.length} <span class="statistic__item-description">movies</span></p>
+      </li>
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">Total duration</h4>
+        <p class="statistic__item-text">${durationHours} <span class="statistic__item-description">h</span> ${durationMinutes} <span class="statistic__item-description">m</span></p>
+      </li>
+      <li class="statistic__text-item">
+        <h4 class="statistic__item-title">Top genre</h4>
+        <p class="statistic__item-text">${topGenre}</p>
+      </li>
+    </ul>
+
+    <div class="statistic__chart-wrap">
+      <canvas class="statistic__chart" width="1000"></canvas>
+    </div>
+  </section>`
+  );
+};
+
 const getWatchedFilmsByPeriod = (films, period) => {
   const watchedFilms = getFilmsByFilter(films, FilterType.HISTORY);
 
-  if (period === TimeFilter.ALLTIME) {
+  if (period === TimeFilter.ALLTIME.label) {
     return watchedFilms;
   }
 
@@ -100,79 +163,19 @@ const renderChart = (films, statisticCtx) => {
   });
 };
 
-const createStatisticsTemplate = (films) => {
-  const duration = films.reduce((filmsDuration, film) => {
-    filmsDuration += film.duration;
-    return filmsDuration;
-  }, 0);
-
-  const durationHours = Math.floor(duration / 60);
-  const durationMinutes = duration % 60;
-  const topGenre = films.length > 0 ? getTopGenre(films) : ``;
-  const rank = getUserRank(films.length);
-
-  return (
-    `<section class="statistic">
-    <p class="statistic__rank">
-      Your rank
-      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${rank}</span>
-    </p>
-
-    <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
-      <p class="statistic__filters-description">Show stats:</p>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label for="statistic-all-time">All time</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-      <label for="statistic-today" class="statistic__filters-label for="statistic-today">Today</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-      <label for="statistic-week" class="statistic__filters-label for="statistic-week">Week</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-      <label for="statistic-month" class="statistic__filters-label" for="statistic-month">Month</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-      <label for="statistic-year" class="statistic__filters-label for="statistic-year">Year</label>
-    </form>
-
-    <ul class="statistic__text-list">
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${films.length} <span class="statistic__item-description">movies</span></p>
-      </li>
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${durationHours} <span class="statistic__item-description">h</span> ${durationMinutes} <span class="statistic__item-description">m</span></p>
-      </li>
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">${topGenre}</p>
-      </li>
-    </ul>
-
-    <div class="statistic__chart-wrap">
-      <canvas class="statistic__chart" width="1000"></canvas>
-    </div>
-  </section>`
-  );
-};
-
 export default class Statistics extends AbstractSmartComponent {
   constructor(filmsModel) {
     super();
 
     this._films = filmsModel;
-    this._currentTimeFilter = TimeFilter.ALLTIME;
+    this._currentTimeFilter = TimeFilter.ALLTIME.label;
     this._renderCharts();
 
     this._setTimeFilterHandlers();
   }
 
   getTemplate() {
-    return createStatisticsTemplate(getWatchedFilmsByPeriod(this._films.getFilms(), this._currentTimeFilter));
+    return createStatisticsTemplate(getWatchedFilmsByPeriod(this._films.getAllFilms(), this._currentTimeFilter), this._currentTimeFilter);
   }
 
   recoveryListeners() {
@@ -199,7 +202,10 @@ export default class Statistics extends AbstractSmartComponent {
       evt.preventDefault();
 
       const filterData = evt.target.getAttribute(`for`);
-      this._currentTimeFilter = filterData.substring(filterData.length, 10);
+
+      if (filterData) {
+        this._currentTimeFilter = filterData.substring(filterData.length, `statistic-`.length);
+      }
 
       this.rerender();
     });
@@ -207,7 +213,7 @@ export default class Statistics extends AbstractSmartComponent {
 
   _renderCharts() {
     const statisticCtx = this.getElement().querySelector(`.statistic__chart`);
-    const watchedFilmsByPeriod = getWatchedFilmsByPeriod(this._films.getFilms(), this._currentTimeFilter);
+    const watchedFilmsByPeriod = getWatchedFilmsByPeriod(this._films.getAllFilms(), this._currentTimeFilter);
 
     if (watchedFilmsByPeriod.length > 0) {
       renderChart(watchedFilmsByPeriod, statisticCtx, this._currentTimeFilter);

@@ -61,12 +61,14 @@ self.addEventListener(`activate`, (evt) => {
             })
             .filter((key) => key !== null)
         )
-      )
+    ).catch((err) => {
+      console.log(err);
+    })
   );
 });
 
 self.addEventListener(`fetch`, (evt) => {
-  const { request } = evt;
+  const {request} = evt;
 
   evt.respondWith(
     caches.match(request)
@@ -95,11 +97,17 @@ self.addEventListener(`fetch`, (evt) => {
 
             // Копию кладём в кэш
             caches.open(CashInfo.NAME)
-              .then((cache) => cache.put(request, clonedResponse));
+              .then((cache) => cache.put(request, clonedResponse)).catch((err) => {
+                console.log(err);
+              });
 
             // Оригинал передаём дальше
             return response;
+          }).catch((err) => {
+            console.log(err);
           });
+      }).catch((err) => {
+        console.log(err);
       })
   );
 });
