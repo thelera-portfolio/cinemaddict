@@ -87,7 +87,7 @@ const getCountedGenres = (films) => {
       film.genres.includes(genre))
         .length);
 
-  let genresCount = [];
+  const genresCount = [];
   genres.forEach((genre, i) => genresCount.push(
       {
         name: genre,

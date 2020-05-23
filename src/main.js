@@ -14,8 +14,6 @@ import {AUTHORIZATION, END_POINT, MenuItem, StoreInfo} from "./utils/consts.js";
 import {ExtraFilm} from "./controllers/page.js";
 import {render, remove} from "./utils/render.js";
 
-const STORE_NAME = `${StoreInfo.PREFIX}-${StoreInfo.FILMS_VERSION}`;
-
 const siteFooterElement = document.querySelector(`.footer`);
 const siteHeaderElement = document.querySelector(`.header`);
 const siteMainElement = document.querySelector(`.main`);
@@ -62,10 +60,10 @@ apiWithProvider.getFilms()
     pageController.renderExtraFilms(ExtraFilm.RATING);
     pageController.renderExtraFilms(ExtraFilm.COMMENT);
     filtersController.render();
-    
+
     render(siteMainElement, statisticsComponent);
     statisticsComponent.hide();
-    
+
   })
   .catch((err) => {
     throw new Error(err);
@@ -88,7 +86,6 @@ window.addEventListener(`online`, () => {
   apiWithProvider.sync();
 });
 
-window.addEventListener(`offline`, (evt) => {
+window.addEventListener(`offline`, () => {
   document.title += ` [offline]`;
 });
-  
