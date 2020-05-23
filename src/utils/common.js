@@ -45,7 +45,6 @@ const getRandomFloatNumber = (max) => ((Math.random() * (max)).toFixed(1));
 
 const humanizeDate = (date) => {
   return moment(date).fromNow();
-  // return moment(date).format(`YYYY/MM/DD hh:mm`);
 };
 
 const isOnline = () => {

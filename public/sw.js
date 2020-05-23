@@ -62,7 +62,7 @@ self.addEventListener(`activate`, (evt) => {
             .filter((key) => key !== null)
         )
     ).catch((err) => {
-      console.log(err);
+      throw new Error(err);
     })
   );
 });
@@ -98,16 +98,16 @@ self.addEventListener(`fetch`, (evt) => {
             // Копию кладём в кэш
             caches.open(CashInfo.NAME)
               .then((cache) => cache.put(request, clonedResponse)).catch((err) => {
-                console.log(err);
+                throw new Error(err);
               });
 
             // Оригинал передаём дальше
             return response;
           }).catch((err) => {
-            console.log(err);
+            throw new Error(err);
           });
       }).catch((err) => {
-        console.log(err);
+        throw new Error(err);
       })
   );
 });

@@ -78,7 +78,7 @@ window.addEventListener(`load`, () => {
     .then(() => {
       // Действие, в случае успешной регистрации ServiceWorker
     }).catch((err) => {
-      //console.log(err);
+      throw new Error(err);
     });
 });
 
