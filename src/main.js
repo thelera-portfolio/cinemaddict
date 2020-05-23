@@ -1,37 +1,45 @@
 import AllFilmsComponent from "./components/films.js";
-import API from "./api.js";
-import CommentsModel from "./models/comments.js";
+import API from "./api/index.js";
+import FilmsLoadingComponent from "./components/films-loading.js";
 import FilmsModel from "./models/movies.js";
 import FilterController from "./controllers/filter.js";
+import FooterStatistics from "./components/footer-statistics.js";
 import NavigationComponent from "./components/navigation.js";
 import PageController from "./controllers/page.js";
+import Provider from "./api/provider.js";
 import RatingComponent from "./components/rating.js";
 import StatisticsComponent from "./components/statistics.js";
-import {render} from "./utils/render.js";
-import {MenuItem} from "./utils/consts.js";
+import Store from "./api/store.js";
+import {AUTHORIZATION, END_POINT, MenuItem, StoreInfo} from "./utils/consts.js";
+import {ExtraFilm} from "./controllers/page.js";
+import {render, remove} from "./utils/render.js";
 
-const AUTHORIZATION = `Basic dXNlchjuhuyi===kBwYXNzd29yZAo=`;
-const END_POINT = `https://11.ecmascript.pages.academy/cinemaddict`
+const STORE_NAME = `${StoreInfo.PREFIX}-${StoreInfo.FILMS_VERSION}`;
 
-const siteMainElement = document.querySelector(`.main`);
+const siteFooterElement = document.querySelector(`.footer`);
 const siteHeaderElement = document.querySelector(`.header`);
+const siteMainElement = document.querySelector(`.main`);
 
 const api = new API(AUTHORIZATION, END_POINT);
 const filmsModel = new FilmsModel();
-const commentsModel = new CommentsModel();
+const filmsStore = new Store(StoreInfo.NAME, window.localStorage);
+const apiWithProvider = new Provider(api, filmsStore);
 
-const navigationComponent = new NavigationComponent();
 const filmsContainerComponent = new AllFilmsComponent();
-const statisticsComponent = new StatisticsComponent();
+const filmsLoadingComponent = new FilmsLoadingComponent();
+const footerStatisticsComponent = new FooterStatistics(filmsModel);
+const navigationComponent = new NavigationComponent();
+const ratingComponent = new RatingComponent(filmsModel);
+const statisticsComponent = new StatisticsComponent(filmsModel);
 
 const filtersController = new FilterController(navigationComponent, filmsModel);
-const pageController = new PageController(filmsContainerComponent, filmsModel, commentsModel, api);
+const pageController = new PageController(filmsContainerComponent, filmsModel, apiWithProvider);
 
-render(siteMainElement, navigationComponent);
-render(siteMainElement, statisticsComponent);
-statisticsComponent.hide();
+render(siteHeaderElement, ratingComponent);
+render(siteMainElement, filmsLoadingComponent);
+render(siteFooterElement, footerStatisticsComponent);
 
-navigationComponent.setOnChange((menuItem) => {
+navigationComponent.setOnChangeHandler((menuItem) => {
   switch (menuItem) {
     case MenuItem.FILTERS:
       statisticsComponent.hide();
@@ -44,19 +52,43 @@ navigationComponent.setOnChange((menuItem) => {
   }
 });
 
-api.getFilms()
+apiWithProvider.getFilms()
   .then((films) => {
     filmsModel.setFilms(films);
-    return films.map((film) => api.getComments(film.id));
-  })
-  .then((allComments) => Promise.all(allComments))
-  .then((comments) => {
-    commentsModel.setComments(comments);
-
-    const watchedFilmsCount = filmsModel.getFilms().reduce((filmsCount, film) => film.isWatched ? filmsCount += 1 : filmsCount, 0);
-
-    render(siteHeaderElement, new RatingComponent(watchedFilmsCount));
+    ratingComponent.rerender();
+    footerStatisticsComponent.rerender();
+    render(siteMainElement, navigationComponent);
     pageController.render();
-    pageController.renderExtraFilms();
+    pageController.renderExtraFilms(ExtraFilm.RATING);
+    pageController.renderExtraFilms(ExtraFilm.COMMENT);
     filtersController.render();
+    
+    render(siteMainElement, statisticsComponent);
+    statisticsComponent.hide();
+    
+  })
+  .catch((err) => {
+    throw new Error(err);
   });
+
+window.addEventListener(`load`, () => {
+  remove(filmsLoadingComponent);
+
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      // Действие, в случае успешной регистрации ServiceWorker
+    }).catch((err) => {
+      throw new Error(err);
+    });
+});
+
+window.addEventListener(`online`, () => {
+  document.title = document.title.replace(` [offline]`, ``);
+
+  apiWithProvider.sync();
+});
+
+window.addEventListener(`offline`, (evt) => {
+  document.title += ` [offline]`;
+});
+  

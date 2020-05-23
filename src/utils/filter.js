@@ -1,18 +1,20 @@
-import {FilterType} from "../utils/consts.js";
+import {FilmControl, FilterType} from "../utils/consts.js";
 
-export const getFilterByProperty = (array, property) => array.filter((item) => item[property]);
+const getFilterByProperty = (array, property) => array.filter((item) => item.controls[property]);
 
-export const getFilmsByFilter = (films, filterType) => {
+const getFilmsByFilter = (films, filterType) => {
   switch (filterType) {
     case FilterType.ALL:
       return films;
     case FilterType.WATCHLIST:
-      return getFilterByProperty(films, `isAddedToWatchlist`);
+      return getFilterByProperty(films, FilmControl.WATCHLIST);
     case FilterType.HISTORY:
-      return getFilterByProperty(films, `isWatched`);
+      return getFilterByProperty(films, FilmControl.WATCH);
     case FilterType.FAVOURITES:
-      return getFilterByProperty(films, `isFavourite`);
+      return getFilterByProperty(films, FilmControl.FAVOURITE);
   }
 
   return films;
 };
+
+export {getFilterByProperty, getFilmsByFilter};

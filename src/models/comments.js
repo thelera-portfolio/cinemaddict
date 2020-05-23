@@ -5,8 +5,28 @@ export default class Comments {
     this._dataChangeHandlers = []; // массив для сбора наблюдателей * observers *
   }
 
+  addComment(film, comment) {
+    this._comments = [].concat(this._comments, comment);
+
+    this._callHandlers(this._dataChangeHandlers);
+  }
+
   getComments() {
     return this._comments;
+  }
+
+  removeComment(commentId) {
+    const index = this._comments.findIndex((currentComment) => currentComment.id === commentId);
+
+    if (index === -1) {
+      return false;
+    }
+
+    this._comments = [].concat(this._comments.slice(0, index), this._comments.slice(index + 1));
+
+    this._callHandlers(this._dataChangeHandlers);
+
+    return true;
   }
 
   setComments(comments) {
@@ -19,29 +39,6 @@ export default class Comments {
   // подписаться на обновление * addObserver *
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
-  }
-
-  removeComment(film, comment) {
-    const commentsOfFilm = this._comments.find((currentComment) => currentComment.filmId === film.id);
-
-    const index = commentsOfFilm.comments.findIndex((currentComment) => currentComment.id === comment.id);
-
-    if (index === -1) {
-      return false;
-    }
-
-    commentsOfFilm.comments = [].concat(commentsOfFilm.comments.slice(0, index), commentsOfFilm.comments.slice(index + 1));
-
-    this._callHandlers(this._dataChangeHandlers);
-
-    return true;
-  }
-
-  addComment(film, comment) {
-    const commentsOfFilm = this._comments.find((currentComment) => currentComment.filmId === film.id);
-    commentsOfFilm.comments.push(comment);
-
-    this._callHandlers(this._dataChangeHandlers);
   }
 
   // уведомление наблюдателей * notify *

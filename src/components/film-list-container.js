@@ -10,4 +10,3 @@ export default class FilmsList extends AbstractComponent {
     return createFilmListContainerTemplate();
   }
 }
-

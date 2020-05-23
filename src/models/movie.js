@@ -1,24 +1,26 @@
 export default class Movie {
-  constructor(data) {
-    this.actors = data.film_info[`actors`];
-    this.age = data.film_info[`age_rating`];
-    this.country = data.film_info.release[`release_country`];
-    this.description = data.film_info[`description`];
-    this.director = data.film_info[`director`];
-    this.duration = data.film_info[`runtime`];
-    this.genres = data.film_info[`genre`];
-    this.id = data[`id`];
-    this.image = data.film_info[`poster`];
-    this.originalTitle = data.film_info[`alternative_title`];
-    this.title = data.film_info[`title`];
-    this.rating = data.film_info[`total_rating`];
-    this.releaseDate = data.film_info.release[`date`];
-    this.writers = data.film_info[`writers`];
-    this.watchingDate = data.user_details[`watching_date`];
-    this.isAddedToWatchlist = data.user_details[`watchlist`];
-    this.isWatched = data.user_details[`already_watched`];
-    this.isFavourite = data.user_details[`favorite`];
-    this.commentsIds = data[`comments`];
+  constructor(film) {
+    this.actors = film.film_info[`actors`];
+    this.age = film.film_info[`age_rating`];
+    this.commentsIds = film[`comments`];
+    this.controls = {
+      isAddedToWatchlist: film.user_details[`watchlist`],
+      isWatched: film.user_details[`already_watched`],
+      isFavourite: film.user_details[`favorite`],
+    };
+    this.country = film.film_info.release[`release_country`];
+    this.description = film.film_info[`description`];
+    this.director = film.film_info[`director`];
+    this.duration = film.film_info[`runtime`];
+    this.genres = film.film_info[`genre`];
+    this.id = film[`id`];
+    this.image = film.film_info[`poster`];
+    this.originalTitle = film.film_info[`alternative_title`];
+    this.title = film.film_info[`title`];
+    this.rating = film.film_info[`total_rating`];
+    this.releaseDate = film.film_info.release[`date`];
+    this.writers = film.film_info[`writers`];
+    this.watchingDate = film.user_details[`watching_date`];
   }
 
   toRAW() {
@@ -42,24 +44,24 @@ export default class Movie {
         "description": this.description,
       },
       "user_details": {
-        "watchlist": this.isAddedToWatchlist,
-        "already_watched": this.isWatched,
+        "watchlist": this.controls.isAddedToWatchlist,
+        "already_watched": this.controls.isWatched,
         "watching_date": this.watchingDate,
-        "favorite": this.isFavourite,
+        "favorite": this.controls.isFavourite,
       },
       "comments": this.commentsIds,
     };
   }
 
-  static parseMovie(data) {
-    return new Movie(data);
+  static clone(film) {
+    return new Movie(film.toRAW());
   }
 
-  static parseMovies(data) {
-    return data.map(Movie.parseMovie);
+  static parseMovie(film) {
+    return new Movie(film);
   }
 
-  static clone(data) {
-    return new Movie(data.toRAW());
+  static parseMovies(film) {
+    return film.map(Movie.parseMovie);
   }
 }

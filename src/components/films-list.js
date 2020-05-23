@@ -1,4 +1,3 @@
-// основной список фильмов
 import AbstractComponent from "./abstract-component.js";
 
 const createMainFilmListTemplate = () =>

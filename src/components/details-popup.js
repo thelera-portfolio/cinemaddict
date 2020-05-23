@@ -1,23 +1,27 @@
-import {fromMinutesToHours} from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart-component.js";
-import {EMOTIONS, PopupButton} from "../utils/consts.js";
 import CommentsComponent from "../components/comment.js";
-import {encode} from "he";
+import CommentModel from "../models/local-comment.js";
+import {Button, emotions, PopupButton, SHAKE_ANIMATION_TIMEOUT} from "../utils/consts.js";
+import {fromMinutesToHours, shake} from "../utils/common.js";
 import moment from "moment";
-
-const createCommentsMarkup = (comments) => {
-  let markUp = ``;
-  for (let i = 0; i < comments.length; i++) {
-    markUp = markUp.concat(new CommentsComponent(comments[i]).getTemplate());
-  }
-  return markUp;
-};
 
 const createButtonMarkup = (name, label, isChecked) => {
   return (
     `<input type="checkbox" class="film-details__control-input visually-hidden" id="${name}" name="${name}" ${isChecked ? `checked` : ``}>
     <label for="${name}" class="film-details__control-label film-details__control-label--${name}">${label}</label>`
   );
+};
+
+const createCommentsMarkup = (comments, deletingButtonId) => {
+  let markUp = ``;
+
+  for (const comment of comments) {
+    const isDeletingButtonId = deletingButtonId === comment.id;
+
+    markUp = markUp.concat(new CommentsComponent(comment, isDeletingButtonId).getTemplate());
+  }
+
+  return markUp;
 };
 
 const createEmojiImageMarkup = (emotion) => {
@@ -36,21 +40,22 @@ const createEmojiMarkup = (emotion, isEmojiChecked) => {
   );
 };
 
-const createEmojiTemplate = (emotions, checkedEmotion) => {
+const createEmojiTemplate = (checkedEmotion) => {
   return emotions.map((it) => createEmojiMarkup(it, it === checkedEmotion)).join(``);
 };
 
-const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
+const createFilmDetailsPopupTemplate = (card, comments, options = {}) => {
   const {actors, age, country, description, director, duration: durationInMinutes, genres, image, rating, releaseDate, title, originalTitle, writers} = card;
+  const {emotion, message, isAddedToWatchlist, isWatched, isFavourite, deletingButtonId} = options;
 
   const commentsCount = comments.length;
 
   const filmReleaseDate = moment(releaseDate).format(`DD MMMM YYYY`);
   const duration = fromMinutesToHours(durationInMinutes);
 
-  const watchlistButton = createButtonMarkup(PopupButton.WATCHLIST.name, PopupButton.WATCHLIST.label, card.isAddedToWatchlist);
-  const watchedButton = createButtonMarkup(PopupButton.WATCHED.name, PopupButton.WATCHED.label, card.isWatched);
-  const favouritesButton = createButtonMarkup(PopupButton.FAVOURITE.name, PopupButton.FAVOURITE.label, card.isFavourite);
+  const watchlistButton = createButtonMarkup(PopupButton.WATCHLIST.name, PopupButton.WATCHLIST.label, isAddedToWatchlist);
+  const watchedButton = createButtonMarkup(PopupButton.WATCHED.name, PopupButton.WATCHED.label, isWatched);
+  const favouritesButton = createButtonMarkup(PopupButton.FAVOURITE.name, PopupButton.FAVOURITE.label, isFavourite);
 
   return (
     `<section class="film-details">
@@ -127,7 +132,7 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
             <h3 class="film-details__comments-title">Comments <span class="film-details__comments-count">${commentsCount}</span></h3>
 
             <ul class="film-details__comments-list">
-              ${createCommentsMarkup(comments)}
+              ${createCommentsMarkup(comments, deletingButtonId)}
             </ul>
 
             <div class="film-details__new-comment">
@@ -136,11 +141,11 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
               </div>
 
               <label class="film-details__comment-label">
-                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment"></textarea>
+                <textarea class="film-details__comment-input" placeholder="Select reaction below and write comment here" name="comment">${message ? message : ``}</textarea>
               </label>
 
               <div class="film-details__emoji-list">
-                ${createEmojiTemplate(EMOTIONS, emotion)}
+                ${createEmojiTemplate(emotions, emotion)}
               </div>
             </div>
           </section>
@@ -153,22 +158,85 @@ const createFilmDetailsPopupTemplate = (card, comments, emotion) => {
 export default class DetailsPopup extends AbstractSmartComponent {
   constructor(card, comments) {
     super();
+
     this._card = card;
-    this._comments = comments;
+    this._commentsModel = comments;
     this._emotion = null;
+    this._newCommentMessage = null;
+
+    this._isAddedToWatchlist = card.controls.isAddedToWatchlist;
+    this._isWatched = card.controls.isWatched;
+    this._isFavourite = card.controls.isFavourite;
+    this._commentsIds = card.commentsIds;
+    this._deletingButtonId = null;
 
     this._closeButtonHandler = null;
-    this._addToWatchlistClickHandler = null;
-    this._markAsWatchedClickHandler = null;
-    this._addToFavouritesClickHandler = null;
-    this._setDeleteCommentClickHandler = null;
+    this._setRemoveCommentClickHandler = null;
     this._setNewCommentSubmitHandler = null;
 
     this.setEmotionClickHandler();
+    this._subscribeOnEvents();
+
+    this._onCommentsChange = this._onCommentsChange.bind(this);
+
+    this._commentsModel.setDataChangeHandler(this._onCommentsChange);
+  }
+
+  disable() {
+    this.getElement().querySelector(`.film-details__inner`).setAttribute(`disabled`, `disabled`);
+    this.getElement().querySelector(`.film-details__comment-input`).setAttribute(`disabled`, `disabled`);
+  }
+
+  disableCommentButton(id) {
+    const commentsButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    const commentButton = Array.from(commentsButtons).find((button) => button.dataset.id === id);
+
+    commentButton.setAttribute(`disabled`, `disabled`);
+  }
+
+  enable() {
+    this.getElement().querySelector(`.film-details__inner`).removeAttribute(`disabled`);
+    this.getElement().querySelector(`.film-details__comment-input`).removeAttribute(`disabled`);
+  }
+
+  enableCommentButton(id) {
+    const commentsButtons = this.getElement().querySelectorAll(`.film-details__comment-delete`);
+    const commentButton = Array.from(commentsButtons).find((button) => button.dataset.id === id);
+
+    commentButton.removeAttribute(`disabled`);
   }
 
   getTemplate() {
-    return createFilmDetailsPopupTemplate(this._card, this._comments, this._emotion);
+    return createFilmDetailsPopupTemplate(this._card, this._commentsModel.getComments(), {
+      emotion: this._emotion,
+      message: this._newCommentMessage,
+      isAddedToWatchlist: this._isAddedToWatchlist,
+      isWatched: this._isWatched,
+      isFavourite: this._isFavourite,
+      deletingButtonId: this._deletingButtonId,
+    });
+  }
+
+  recoveryListeners() {
+    this.setEmotionClickHandler();
+    this.setCloseButtonClickHandler(this._closeButtonHandler);
+    this.setRemoveCommentClickHandler(this._setRemoveCommentClickHandler);
+    this.setNewCommentSubmitHandler(this._setNewCommentSubmitHandler);
+    this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+  }
+
+  getData() {
+    return {
+      controls: {
+        isAddedToWatchlist: this._isAddedToWatchlist,
+        isWatched: this._isWatched,
+        isFavourite: this._isFavourite,
+      },
+    };
   }
 
   setCloseButtonClickHandler(handler) {
@@ -178,45 +246,42 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._closeButtonHandler = handler;
   }
 
-  setAddToWatchlistClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--watchlist`)
-      .addEventListener(`click`, handler);
+  setDeletindButton(id) {
+    this._deletingButtonId = id;
 
-    this._addToWatchlistClickHandler = handler;
+    this.rerender();
   }
 
-  setMarkAsWatchedClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--watched`)
-      .addEventListener(`click`, handler);
-
-    this._markAsWatchedClickHandler = handler;
-  }
-
-  setAddToFavouritesClickHandler(handler) {
-    this.getElement().querySelector(`.film-details__control-label--favorite`)
-      .addEventListener(`click`, handler);
-
-    this._addToFavouritesClickHandler = handler;
-  }
-
-  setDeleteCommentClickHandler(handler) {
+  setRemoveCommentClickHandler(handler) {
     Array.from(this.getElement()
     .querySelectorAll(`.film-details__comment-delete`))
     .forEach((comment) => {
-      comment.addEventListener(`click`, handler);
+      comment.addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        const commentId = evt.target.dataset.id;
+        handler(commentId);
+      });
     });
 
-    this._setDeleteCommentClickHandler = handler;
+    this._setRemoveCommentClickHandler = handler;
   }
 
   setNewCommentSubmitHandler(handler) {
     this.getElement()
+      .querySelector(`.film-details__comment-input`)
+      .addEventListener(`input`, (evt) => {
+        this._newCommentMessage = evt.target.value;
+      });
+
+    this.getElement()
     .querySelector(`.film-details__comment-input`)
     .addEventListener(`keydown`, (evt) => {
-      if (evt.key === `Enter`) {
-        const commentMessage = encode(evt.target.value);
-        if (this._emotion) {
-          const newComment = this._createNewComment(commentMessage, this._emotion);
+      if (evt.key === Button.ENTER && (evt.ctrlKey || evt.metaKey)) {
+        if (this._emotion && this._newCommentMessage) {
+          const newCommentData = this._createNewComment(this._newCommentMessage, this._emotion);
+          const newComment = new CommentModel(newCommentData);
+
           handler(newComment);
         }
       }
@@ -225,8 +290,19 @@ export default class DetailsPopup extends AbstractSmartComponent {
     this._setNewCommentSubmitHandler = handler;
   }
 
-  rerender() {
-    super.rerender();
+  shake() {
+    shake(this.getElement());
+
+    const formInput = this.getElement().querySelector(`.film-details__comment-input`);
+    formInput.style.border = `4px solid red`;
+
+    setTimeout(() => {
+      formInput.style.border = ``;
+    }, SHAKE_ANIMATION_TIMEOUT);
+  }
+
+  shakeComment(comment) {
+    shake(comment);
   }
 
   setEmotionClickHandler() {
@@ -235,32 +311,63 @@ export default class DetailsPopup extends AbstractSmartComponent {
     .forEach((emojiLabel) => {
       emojiLabel.addEventListener(`click`, (evt) => {
         evt.preventDefault();
+
         const emotion = emojiLabel.getAttribute(`for`).substring(`emoji-`.length);
         createEmojiImageMarkup(emotion);
         this._emotion = emotion;
 
         this.rerender();
+
+        const inputField = this.getElement().querySelector(`.film-details__comment-input`);
+        inputField.focus();
+        inputField.selectionStart = inputField.value.length;
+
       });
     });
   }
 
-  recoveryListeners() {
-    this.setEmotionClickHandler();
-    this.setCloseButtonClickHandler(this._closeButtonHandler);
-    this.setAddToWatchlistClickHandler(this._addToWatchlistClickHandler);
-    this.setMarkAsWatchedClickHandler(this._markAsWatchedClickHandler);
-    this.setAddToFavouritesClickHandler(this._addToFavouritesClickHandler);
-    this.setDeleteCommentClickHandler(this._setDeleteCommentClickHandler);
-    this.setNewCommentSubmitHandler(this._setNewCommentSubmitHandler);
-  }
-
   _createNewComment(message, emotion) {
     return {
-      id: String(new Date() + Math.random()),
-      author: `Alice`,
-      date: new Date(),
-      emotion,
-      message,
+      [`date`]: String(new Date()),
+      [`emotion`]: emotion,
+      [`comment`]: message,
     };
+  }
+
+  _subscribeOnEvents() {
+    this.getElement().querySelector(`.film-details__control-label--watchlist`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        this._isAddedToWatchlist = !this._isAddedToWatchlist;
+
+        this.rerender();
+      });
+
+    this.getElement().querySelector(`.film-details__control-label--watched`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        this._isWatched = !this._isWatched;
+
+        this.rerender();
+      });
+
+    this.getElement().querySelector(`.film-details__control-label--favorite`)
+      .addEventListener(`click`, () => {
+
+        this._isFavourite = !this._isFavourite;
+        this.rerender();
+      });
+  }
+
+  _clearNewComment() {
+    this._emotion = null;
+    this._newCommentMessage = null;
+  }
+
+  _onCommentsChange() {
+    this._clearNewComment();
+    this.rerender();
   }
 }

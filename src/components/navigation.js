@@ -10,7 +10,7 @@ export default class Navigation extends AbstractComponent {
     return createNavigationTemplate();
   }
 
-  setOnChange(handler) {
+  setOnChangeHandler(handler) {
     this.getElement().addEventListener(`click`, (evt) => {
       const menuItem = evt.target.id;
 
