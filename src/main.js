@@ -63,7 +63,6 @@ apiWithProvider.getFilms()
 
     render(siteMainElement, statisticsComponent);
     statisticsComponent.hide();
-
   })
   .catch((err) => {
     throw new Error(err);
