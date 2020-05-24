@@ -61,7 +61,7 @@ export default class Movie {
     return new Movie(film);
   }
 
-  static parseMovies(film) {
-    return film.map(Movie.parseMovie);
+  static parseMovies(films) {
+    return films.map(Movie.parseMovie);
   }
 }
